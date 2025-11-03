@@ -1,0 +1,5 @@
+last_file_number: 0
+interval_in_seconds: 3600
+file_name_prefix: gi
+
+file format: (prefix)(file_number)
