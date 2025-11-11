@@ -7,7 +7,7 @@ from datetime import timedelta, timezone, tzinfo
 from suntime import Sun, SunTimeException
 import time
 import cameraControl as cc
-import Sunrise_Stuff as ss
+import primaryPython.timeCycle as ss
 #import water_control as water
 
 # Setup variables and GPIO
