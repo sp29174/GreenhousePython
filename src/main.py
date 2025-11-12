@@ -1,3 +1,7 @@
+# 11/11/2025
+# 
+# The main file.
+
 import PIL
 from PIL import Image, ImageTk
 import tkinter as tk
@@ -8,7 +12,7 @@ from suntime import Sun, SunTimeException
 import time
 import cameraControl as cc
 import primaryPython.timeCycle as ss
-#import water_control as water
+import water_control as water
 
 # Setup variables and GPIO
 norm_font = 'Calibri 18'
@@ -22,9 +26,11 @@ light_length = 16
 def testing():
 	print(light_length)
 	
-# get stuff from the entry box
-# clear the entry box
-# set the value of light_length to new value
+# new_light_control
+# 
+# Get user input and store it
+# Clear the input
+# Set light_length to the stored input value
 
 def new_light_control():
 
@@ -130,7 +136,7 @@ moisture_frame.pack(padx = 10, pady = 10)
 top_right_frame.pack(padx=10, pady=10)
 layer1_frame.pack(padx = 20, pady = 20)
 
-# lower layer stuff
+# lower layer
 layer2_frame = ttk.Frame(master = window)
 
 # captures picture, command= cameraCapture
@@ -151,7 +157,7 @@ light_cycle.pack(padx = 25, pady = 5)
 enter_button.pack(padx = 25, pady = 5)
 layer2_frame.pack(padx = 5, pady = 5)
 
-
+# TODO: Fix
 def repeater():
 	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
 	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)
@@ -159,7 +165,7 @@ def repeater():
 	print(four_pm.time())
 	print(current_time.time() > four_pm.time())
 	if current_time.time() > four_pm.time():
-		ss.lights()
+		ss.light(light_length)
 	window.after(2000, repeater)
 		
 window.after(2000, repeater)
