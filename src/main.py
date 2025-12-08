@@ -13,6 +13,7 @@ import time
 import cameraControl as cc
 import primaryPython.timeCycle as ss
 import water_control as water
+import mcp as MCP
 
 # Setup variables and GPIO
 norm_font = 'Calibri 18'
@@ -170,4 +171,5 @@ def repeater():
 		
 window.after(2000, repeater)
 window.mainloop()
+
 
