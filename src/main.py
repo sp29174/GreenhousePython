@@ -79,7 +79,7 @@ layer1_frame = ttk.Frame(master = window)
 
 # image information
 image_frame = ttk.Frame(master = layer1_frame)
-image = Image.open("UMBER.jpg")#this should not be hardcoded
+image = Image.open("placeholder.jpg")#this should not be hardcoded
 image2 = image.resize((640, 480))
 last_plant_image = ImageTk.PhotoImage(image2)
 image_label = ttk.Label(master = image_frame, image = last_plant_image)
@@ -172,6 +172,7 @@ def repeater():
 		
 window.after(200, repeater)
 window.mainloop()
+
 
 
 
