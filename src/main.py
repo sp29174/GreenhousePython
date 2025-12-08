@@ -99,9 +99,9 @@ top_right_frame = ttk.Frame(master = layer1_frame)
 last_capture = ttk.Label(master = top_right_frame, text = 'Last capture was taken ___ minutes ago.', font = norm_font)
 zone_frame = ttk.Frame(master = top_right_frame)
 zone_label = ttk.Label(master = zone_frame, text = "Zone Moistures", font = norm_font)
-bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: ")# + str(MCP.get_data(0)))
-bzone2 = ttk.Button(master = zone_frame, text = "Middle Bed: ")# + str(MCP.get_data(1)))
-bzone3 = ttk.Button(master = zone_frame, text = "Right Bed: ")# + str(MCP.get_data(2)))
+bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: ") + str(MCP.get_data(0)))
+bzone2 = ttk.Button(master = zone_frame, text = "Middle Bed: ") + str(MCP.get_data(1)))
+bzone3 = ttk.Button(master = zone_frame, text = "Right Bed: ") + str(MCP.get_data(2)))
 
 moisture_frame = ttk.Frame(master = top_right_frame)
 moisture_label = ttk.Label(master = moisture_frame, text = "Select Moisture Level", font = norm_font)
@@ -170,3 +170,4 @@ def repeater():
 		
 window.after(2000, repeater)
 window.mainloop()
+
