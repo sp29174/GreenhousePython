@@ -43,7 +43,7 @@ def cameraCapture(attributes):
 def lastFileName():
     attributes = getDataAttributes()
     if (attributes[0] == 0):
-        return "UMBER.jpg"
+        return "placeholder.jpg"
     return "/home/Gardener/GreenhousePython/images/" + attributes[2] + str(attributes[0]) + ".jpg"
 
 def create_video(image_paths, output_video_path, fps=24, size=None):
