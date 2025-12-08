@@ -11,7 +11,7 @@ from datetime import timedelta, timezone, tzinfo
 from suntime import Sun, SunTimeException
 import time
 import cameraControl as cc
-import primaryPython.timeCycle as ss
+import primaryPython.timeCycle as ss#this refrence doesn't actually exist
 import water_control as water
 import mcp as MCP
 
@@ -68,7 +68,7 @@ time = 0
 # window
 window = tk.Tk()
 window.title =('Greenhouse')
-window.geometry('1920x1080')
+window.geometry('1920x1080')#This needs to be changed
 
 # title
 title_label = ttk.Label(master = window, text = 'Greenhouse', font = 'Calibri 50 bold')
@@ -79,7 +79,7 @@ layer1_frame = ttk.Frame(master = window)
 
 # image information
 image_frame = ttk.Frame(master = layer1_frame)
-image = Image.open("UMBER.jpg")
+image = Image.open("UMBER.jpg")#this should not be hardcoded
 image2 = image.resize((640, 480))
 last_plant_image = ImageTk.PhotoImage(image2)
 image_label = ttk.Label(master = image_frame, image = last_plant_image)
@@ -108,7 +108,7 @@ moisture_frame = ttk.Frame(master = top_right_frame)
 moisture_label = ttk.Label(master = moisture_frame, text = "Select Moisture Level", font = norm_font)
 top_buttons = ttk.Frame(master = moisture_frame)
 bottom_buttons = ttk.Frame(master = moisture_frame)
-bmoisture0 = ttk.Button(master = top_buttons, text = "0%")
+bmoisture0 = ttk.Button(master = top_buttons, text = "0%")#these should not be hardcoded
 bmoisture1 = ttk.Button(master = top_buttons, text = "20%")
 bmoisture2 = ttk.Button(master = top_buttons, text = "40%")
 bmoisture3 = ttk.Button(master = bottom_buttons, text = "60%")
@@ -142,6 +142,7 @@ layer2_frame = ttk.Frame(master = window)
 
 # captures picture, command= cameraCapture
 # ISSUE: taking picture on boot
+#I disagree, that's a feature!
 manual_pic_button = ttk.Button(master = layer2_frame, text = "Take Manual\nPicture", command = image_update)
 
 # should start recording function
@@ -160,16 +161,17 @@ layer2_frame.pack(padx = 5, pady = 5)
 
 # TODO: Fix
 def repeater():
-	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
-	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)
+	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
+	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
 	print(current_time.time())
 	print(four_pm.time())
 	print(current_time.time() > four_pm.time())
 	if current_time.time() > four_pm.time():
 		ss.light(light_length)
-	window.after(2000, repeater)
+	window.after(200, repeater)
 		
-window.after(2000, repeater)
+window.after(200, repeater)
 window.mainloop()
+
 
 
