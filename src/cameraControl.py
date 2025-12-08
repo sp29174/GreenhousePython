@@ -8,7 +8,7 @@ import PIL as Image
 
 #gives the camera attributes
 def getDataAttributes():
-    dataIndex = open("/home/Gardener/GreenhousePython/images/dataIndex.txt", "r")#this should not be hard-coded.
+    dataIndex = open("/home/Gardener/GreenhousePython/src/dataIndex.txt", "r")#this should not be hard-coded.
     last_file_number = dataIndex.readline().split()[1]
     last_file_number = int(last_file_number)
     
@@ -22,7 +22,7 @@ def getDataAttributes():
 
 # sets attributes in dataindex.txt file
 def setAttributes(attributes):
-    dataIndex = open("/home/Gardener/GreenhousePython/images/dataIndex.txt", "w")
+    dataIndex = open("/home/Gardener/GreenhousePython/src/dataIndex.txt", "w")
     dataIndex.writelines(["last_file_number: " + str(attributes[0]), '\n',
                           "interval_in_seconds: " + str(attributes[1]), '\n',
                           "file_name_prefix: " + attributes[2]])
