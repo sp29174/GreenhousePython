@@ -9,7 +9,7 @@ GPIO.setup(21, GPIO.OUT)
 
 def lights(light_length):
   latitude = 43.0972
-  longitude = 89.5043
+  longitude = -89.5043
 
   mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
 
@@ -36,3 +36,4 @@ def lights(light_length):
   else:
     light_on = False
   GPIO.output(21, True)
+
