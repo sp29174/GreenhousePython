@@ -1,0 +1,23 @@
+#TODO: add classifiers and readme, fix stupid packages
+
+[project]
+name = "GreenhousePython"
+version = "0.0.0"
+description = "It's a python thing that automates a greenhouse."
+license = "MIT"
+license-files = [ "LICENSE*", "LICENCE*", "COPYING*", "AUTHORS*", "NOTICE*", "LICENSES/**/*" ]
+requires-python = ">=3.10"
+authors = [ { name = "We need to actually go and get the names of the people who should go here." } ]
+maintainers = [ { name = "We need to actually go and get the names of the people who should go here." } ]
+keywords = [ "greenhouse", "automation", "the music of the spheres" ]
+
+[project.urls]
+homepage = "https://mcpasd.k12.wi.us/"
+repository = "https://github.com/sp29174/GreenhousePython"
+documentation = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+
+[tool.poetry]
+package-mode = false
+packages = [ { include = "*" } ]
+
+[tool.poetry.dependencies]
