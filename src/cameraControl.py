@@ -8,7 +8,7 @@ import pillow as Image
 
 #gives the camera attributes
 def getDataAttributes():
-    dataIndex = open("./dataIndex.txt", "r")#this should not be hard-coded.
+    dataIndex = open("./dataIndex.txt", "r")
     last_file_number = dataIndex.readline().split()[1]
     last_file_number = int(last_file_number)
     
