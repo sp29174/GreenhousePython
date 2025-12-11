@@ -8,7 +8,7 @@ import pillow as Image
 
 #gives the camera attributes
 def getDataAttributes():
-    dataIndex = open("/home/Gardener/GreenhousePython/src/dataIndex.txt", "r")#this should not be hard-coded.
+    dataIndex = open("./dataIndex.txt", "r")#this should not be hard-coded.
     last_file_number = dataIndex.readline().split()[1]
     last_file_number = int(last_file_number)
     
@@ -22,7 +22,7 @@ def getDataAttributes():
 
 # sets attributes in dataindex.txt file
 def setAttributes(attributes):
-    dataIndex = open("/home/Gardener/GreenhousePython/src/dataIndex.txt", "w")
+    dataIndex = open("./dataIndex.txt", "w")
     dataIndex.writelines(["last_file_number: " + str(attributes[0]), '\n',
                           "interval_in_seconds: " + str(attributes[1]), '\n',
                           "file_name_prefix: " + attributes[2]])
@@ -33,7 +33,7 @@ def cameraCapture(attributes):
     picam2 = Picamera2()
     camera_config = picam2.create_still_configuration()
     picam2.start()
-    name = "/home/Gardener/GreenhousePython/images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
+    name = "../images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
     picam2.capture_file(name)
     attributes[0] += 1
     setAttributes(attributes)
@@ -44,7 +44,7 @@ def lastFileName():
     attributes = getDataAttributes()
     if (attributes[0] == 0):
         return "placeholder.jpg"
-    return "/home/Gardener/GreenhousePython/images/" + attributes[2] + str(attributes[0]) + ".jpg"
+    return "../images/" + attributes[2] + str(attributes[0]) + ".jpg"
 
 def create_video(image_paths, output_video_path, fps=24, size=None):
     if not image_paths:
