@@ -6,7 +6,7 @@ version = "0.0.0"
 description = "It's a python thing that automates a greenhouse."
 license = "MIT"
 license-files = [ "LICENSE*", "LICENCE*", "COPYING*", "AUTHORS*", "NOTICE*", "LICENSES/**/*" ]
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 authors = [ { name = "We need to actually go and get the names of the people who should go here." } ]
 maintainers = [ { name = "We need to actually go and get the names of the people who should go here." } ]
 keywords = [ "greenhouse", "automation", "the music of the spheres" ]
