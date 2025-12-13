@@ -11,7 +11,7 @@ from datetime import timedelta, timezone, tzinfo
 from suntime import Sun, SunTimeException
 import time
 import cameraControl as cc
-import primaryPython.lights as ss#should be fixed
+import lights as ss#should be fixed
 import water_control as water
 import mcp as MCP
 
@@ -172,6 +172,7 @@ def repeater():
 		
 window.after(200, repeater)
 window.mainloop()
+
 
 
 
