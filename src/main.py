@@ -16,6 +16,7 @@ import water_control as water
 import mcp as MCP
 
 # Setup variables and GPIO
+global light_length
 norm_font = 'Calibri 18'
 recording_status = "Start Recording"
 light_length = 16
@@ -47,7 +48,7 @@ def new_light_control():
 			light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.")
 		except ValueError as e:
 			print("Invalid value entered. Please enter a valid value.")
-			print("length is still " + light_length)
+			print("length is still " + str(light_length))
 
 
 
@@ -100,7 +101,7 @@ top_right_frame = ttk.Frame(master = layer1_frame)
 last_capture = ttk.Label(master = top_right_frame, text = 'Last capture was taken ___ minutes ago.', font = norm_font)
 zone_frame = ttk.Frame(master = top_right_frame)
 zone_label = ttk.Label(master = zone_frame, text = "Zone Moistures", font = norm_font)
-bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: " + str(MCP.get_data(0)))
+bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: " + str(MCP.get_data(0)))#These only update once
 bzone2 = ttk.Button(master = zone_frame, text = "Middle Bed: " + str(MCP.get_data(1)))
 bzone3 = ttk.Button(master = zone_frame, text = "Right Bed: " + str(MCP.get_data(2)))
 
@@ -172,6 +173,7 @@ def repeater():
 		
 window.after(200, repeater)
 window.mainloop()
+
 
 
 
