@@ -2,8 +2,8 @@
 # 
 # The main file.
 
-import pillow
-from pillow import Image, ImageTk
+import PIL
+from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
 import datetime
@@ -172,6 +172,7 @@ def repeater():
 		
 window.after(200, repeater)
 window.mainloop()
+
 
 
 
