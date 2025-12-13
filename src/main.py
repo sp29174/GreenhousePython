@@ -16,7 +16,6 @@ import water_control as water
 import mcp as MCP
 
 # Setup variables and GPIO
-global light_length
 norm_font = 'Calibri 18'
 recording_status = "Start Recording"
 light_length = 16
@@ -35,7 +34,7 @@ def testing():
 # Set light_length to the stored input value
 
 def new_light_control():
-
+	global light_length
 	new_light_length = light_cycle.get()
 	light_cycle.delete(0, len(new_light_length))
 	if(new_light_length != ""):
@@ -173,6 +172,7 @@ def repeater():
 		
 window.after(200, repeater)
 window.mainloop()
+
 
 
 
