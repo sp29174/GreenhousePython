@@ -13,7 +13,7 @@ keywords = [ "greenhouse", "automation", "the music of the spheres" ]
 dependencies = [ "RPi.GPIO", "picamera2", "opencv-python", "pillow", "suntime", "Adafruit-Blinka", "adafruit-circuitpython-mcp3xxx", "poetry" ]
 
 [build-system]
-requires = ["poetry-core>2.0.0,<3.0,0"]
+requires = ["poetry-core>2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [project.urls]
