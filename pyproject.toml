@@ -10,7 +10,7 @@ requires-python = ">=3.9,<4.0"
 authors = [ { name = "We need to actually go and get the names of the people who should go here." } ]
 maintainers = [ { name = "We need to actually go and get the names of the people who should go here." } ]
 keywords = [ "greenhouse", "automation", "the music of the spheres" ]
-dependencies = [ "RPi.GPIO", "rpi-libcamera", "rpi-kms", "picamera2", "opencv-python", "pillow", "suntime", "Adafruit-Blinka", "adafruit-circuitpython-mcp3xxx", "poetry" ]
+dependencies = [ "RPi.GPIO", "rpi-libcamera", "rpi-kms", "wheel", "picamera2", "opencv-python", "pillow", "suntime", "Adafruit-Blinka", "adafruit-circuitpython-mcp3xxx", "poetry" ]
 
 [build-system]
 requires = ["poetry-core>2.0.0,<3.0.0"]
