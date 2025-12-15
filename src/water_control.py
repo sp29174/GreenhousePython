@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-import mcp_testing as MCP
+import mcp as MCP
 
 
 GPIO.setmode(GPIO.BCM)
@@ -11,7 +11,7 @@ MAX_VALUE = 50000
 #break things into 20% intervals from 0 to 50k based on the values returned from the MCP
 
 def water(percent):
-	if(percent is 0):
+	if(percent == 0):
 		GPIO.output(16, GPIO.LOW)
 		print("low")
 		return

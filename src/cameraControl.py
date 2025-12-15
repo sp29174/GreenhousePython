@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 from picamera2 import Picamera2, Preview
 import time
 import cv2
-import pillow as Image
+import PIL as Image
 
 # solenoid opens when 12V applied at 0.3A
 
@@ -56,7 +56,7 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
         raise ValueError("Cannot read image at path")
     
     if size is None:
-        heigh, width, _ = first_frame.shape
+        height, width, _ = first_frame.shape
         size = (width, height)
     
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -64,7 +64,7 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
     
     for path in image_paths:
         frame = cv2.imread(path)
-        if fram is None:
+        if frame is None:
             print(f"Warning: Could not read {path}, skipping.")
             continue
         frame_resized = cv2.resize(frame, size)
@@ -72,23 +72,4 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
         
     out.release()
     print(f"Vido saved to {output_video_path}")
-    
-'''listVideo = {'/home/Gardener/GreenhousePython/images/gi1',
-             '/home/Gardener/GreenhousePython/images/gi2',
-             '/home/Gardener/GreenhousePython/images/gi3',
-             '/home/Gardener/GreenhousePython/images/gi4',
-             '/home/Gardener/GreenhousePython/images/gi5'}
-for x in listVideo:
-    print(type(x))
-create_video(listVideo, '/home/Gardener/GreenhousePython/images/ahhhhh')
-    '''
-    
-'''
-picam2 = Picamera2()
-camera_config = picam2.create_still_configuration()
-print(camera_config)
-picam2.configure(camera_config)
-picam2.start()
-time.sleep(2)
-picam2.capture_file("test.jpg")
-'''
+

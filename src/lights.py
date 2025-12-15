@@ -9,7 +9,7 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(21, GPIO.OUT)
 
-def lights(light_length):
+def light(light_length):
   latitude = 43.0972
   longitude = 89.5043
 
@@ -38,3 +38,4 @@ def lights(light_length):
   else:
     light_on = False
   GPIO.output(21, True)
+

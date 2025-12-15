@@ -2,8 +2,8 @@
 # 
 # The main file.
 
-import pillow
-from pillow import Image, ImageTk
+import PIL
+from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
 import datetime
@@ -11,7 +11,7 @@ from datetime import timedelta, timezone, tzinfo
 from suntime import Sun, SunTimeException
 import time
 import cameraControl as cc
-import primaryPython.lights as ss#should be fixed
+import lights as ss#should be fixed
 import water_control as water
 import mcp as MCP
 
@@ -34,7 +34,7 @@ def testing():
 # Set light_length to the stored input value
 
 def new_light_control():
-
+	global light_length
 	new_light_length = light_cycle.get()
 	light_cycle.delete(0, len(new_light_length))
 	if(new_light_length != ""):
@@ -47,7 +47,7 @@ def new_light_control():
 			light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.")
 		except ValueError as e:
 			print("Invalid value entered. Please enter a valid value.")
-			print("length is still " + light_length)
+			print("length is still " + str(light_length))
 
 
 
@@ -100,7 +100,7 @@ top_right_frame = ttk.Frame(master = layer1_frame)
 last_capture = ttk.Label(master = top_right_frame, text = 'Last capture was taken ___ minutes ago.', font = norm_font)
 zone_frame = ttk.Frame(master = top_right_frame)
 zone_label = ttk.Label(master = zone_frame, text = "Zone Moistures", font = norm_font)
-bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: " + str(MCP.get_data(0)))
+bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: " + str(MCP.get_data(0)))#These only update once
 bzone2 = ttk.Button(master = zone_frame, text = "Middle Bed: " + str(MCP.get_data(1)))
 bzone3 = ttk.Button(master = zone_frame, text = "Right Bed: " + str(MCP.get_data(2)))
 
@@ -172,6 +172,10 @@ def repeater():
 		
 window.after(200, repeater)
 window.mainloop()
+
+
+
+
 
 
 
