@@ -1,4 +1,5 @@
-Greenhouse Automation Project
+                                                                                                                                                Greenhouse Automation Project
+                                                                                                                                                
 Welcome to the Greenhouse Automation System – a smart, Raspberry Pi-powered solution that automates plant care with automated watering (or grow lights), real-time moisture monitoring, and stunning timelapse videos. Perfect for hobbyists, educators, or IoT enthusiasts building sustainable green spaces!
 
 🚀 Project Overview
