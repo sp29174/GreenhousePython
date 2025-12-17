@@ -1,9 +1,10 @@
-                                                                                                                                                Greenhouse Automation Project
+                                                     Greenhouse Automation Project
                                                                                                                                                 
 Welcome to the Greenhouse Automation System – a smart, Raspberry Pi-powered solution that automates plant care with automated watering (or grow lights), real-time moisture monitoring, and stunning timelapse videos. Perfect for hobbyists, educators, or IoT enthusiasts building sustainable green spaces!
 
 🚀 Project Overview
-	💡This project integrates sensors, relays, a GUI, and camera control to create a fully autonomous greenhouse:
+
+This project integrates sensors, relays, a GUI, and camera control to create a fully autonomous greenhouse:
 		
 	💡Monitors soil moisture via MCP sensor.
 		
@@ -22,6 +23,7 @@ Welcome to the Greenhouse Automation System – a smart, Raspberry Pi-powered so
 	💡Single-relay design: Prioritize watering or lights (not both).
 
 🛠️ Quick Start
+
 	💡Navigate to project directory:
 			cd /home/Gardener/GreenhousePython/primaryPython
 			
