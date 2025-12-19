@@ -8,7 +8,7 @@ import PIL as Image
 
 #gives the camera attributes
 def getDataAttributes():
-    dataIndex = open("/home/Gardener/GreenhousePython/images/dataIndex.txt", "r")
+    dataIndex = open("./dataIndex.txt", "r")
     last_file_number = dataIndex.readline().split()[1]
     last_file_number = int(last_file_number)
     
@@ -22,7 +22,7 @@ def getDataAttributes():
 
 # sets attributes in dataindex.txt file
 def setAttributes(attributes):
-    dataIndex = open("/home/Gardener/GreenhousePython/images/dataIndex.txt", "w")
+    dataIndex = open("./dataIndex.txt", "w")
     dataIndex.writelines(["last_file_number: " + str(attributes[0]), '\n',
                           "interval_in_seconds: " + str(attributes[1]), '\n',
                           "file_name_prefix: " + attributes[2]])
@@ -33,7 +33,7 @@ def cameraCapture(attributes):
     picam2 = Picamera2()
     camera_config = picam2.create_still_configuration()
     picam2.start()
-    name = "/home/Gardener/GreenhousePython/images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
+    name = "../images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
     picam2.capture_file(name)
     attributes[0] += 1
     setAttributes(attributes)
@@ -43,8 +43,8 @@ def cameraCapture(attributes):
 def lastFileName():
     attributes = getDataAttributes()
     if (attributes[0] == 0):
-        return "UMBER.jpg"
-    return "/home/Gardener/GreenhousePython/images/" + attributes[2] + str(attributes[0]) + ".jpg"
+        return "placeholder.jpg"
+    return "../images/" + attributes[2] + str(attributes[0]) + ".jpg"
 
 def create_video(image_paths, output_video_path, fps=24, size=None):
     if not image_paths:
@@ -56,7 +56,7 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
         raise ValueError("Cannot read image at path")
     
     if size is None:
-        heigh, width, _ = first_frame.shape
+        height, width, _ = first_frame.shape
         size = (width, height)
     
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -64,7 +64,7 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
     
     for path in image_paths:
         frame = cv2.imread(path)
-        if fram is None:
+        if frame is None:
             print(f"Warning: Could not read {path}, skipping.")
             continue
         frame_resized = cv2.resize(frame, size)
@@ -72,23 +72,4 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
         
     out.release()
     print(f"Vido saved to {output_video_path}")
-    
-'''listVideo = {'/home/Gardener/GreenhousePython/images/gi1',
-             '/home/Gardener/GreenhousePython/images/gi2',
-             '/home/Gardener/GreenhousePython/images/gi3',
-             '/home/Gardener/GreenhousePython/images/gi4',
-             '/home/Gardener/GreenhousePython/images/gi5'}
-for x in listVideo:
-    print(type(x))
-create_video(listVideo, '/home/Gardener/GreenhousePython/images/ahhhhh')
-    '''
-    
-'''
-picam2 = Picamera2()
-camera_config = picam2.create_still_configuration()
-print(camera_config)
-picam2.configure(camera_config)
-picam2.start()
-time.sleep(2)
-picam2.capture_file("test.jpg")
-'''
+

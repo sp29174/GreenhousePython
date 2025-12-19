@@ -11,8 +11,9 @@ from datetime import timedelta, timezone, tzinfo
 from suntime import Sun, SunTimeException
 import time
 import cameraControl as cc
-import primaryPython.timeCycle as ss
+import lights as ss#should be fixed
 import water_control as water
+import mcp as MCP
 
 # Setup variables and GPIO
 norm_font = 'Calibri 18'
@@ -33,7 +34,7 @@ def testing():
 # Set light_length to the stored input value
 
 def new_light_control():
-
+	global light_length
 	new_light_length = light_cycle.get()
 	light_cycle.delete(0, len(new_light_length))
 	if(new_light_length != ""):
@@ -46,7 +47,7 @@ def new_light_control():
 			light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.")
 		except ValueError as e:
 			print("Invalid value entered. Please enter a valid value.")
-			print("length is still " + light_length)
+			print("length is still " + str(light_length))
 
 
 
@@ -67,7 +68,7 @@ time = 0
 # window
 window = tk.Tk()
 window.title =('Greenhouse')
-window.geometry('1920x1080')
+window.geometry('1920x1080')#This needs to be changed
 
 # title
 title_label = ttk.Label(master = window, text = 'Greenhouse', font = 'Calibri 50 bold')
@@ -78,7 +79,7 @@ layer1_frame = ttk.Frame(master = window)
 
 # image information
 image_frame = ttk.Frame(master = layer1_frame)
-image = Image.open("UMBER.jpg")
+image = Image.open("../images/placeholder.jpg")#this should not be hardcoded
 image2 = image.resize((640, 480))
 last_plant_image = ImageTk.PhotoImage(image2)
 image_label = ttk.Label(master = image_frame, image = last_plant_image)
@@ -99,15 +100,15 @@ top_right_frame = ttk.Frame(master = layer1_frame)
 last_capture = ttk.Label(master = top_right_frame, text = 'Last capture was taken ___ minutes ago.', font = norm_font)
 zone_frame = ttk.Frame(master = top_right_frame)
 zone_label = ttk.Label(master = zone_frame, text = "Zone Moistures", font = norm_font)
-bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: ")# + str(MCP.get_data(0)))
-bzone2 = ttk.Button(master = zone_frame, text = "Middle Bed: ")# + str(MCP.get_data(1)))
-bzone3 = ttk.Button(master = zone_frame, text = "Right Bed: ")# + str(MCP.get_data(2)))
+bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: " + str(MCP.get_data(0)))#These only update once
+bzone2 = ttk.Button(master = zone_frame, text = "Middle Bed: " + str(MCP.get_data(1)))
+bzone3 = ttk.Button(master = zone_frame, text = "Right Bed: " + str(MCP.get_data(2)))
 
 moisture_frame = ttk.Frame(master = top_right_frame)
 moisture_label = ttk.Label(master = moisture_frame, text = "Select Moisture Level", font = norm_font)
 top_buttons = ttk.Frame(master = moisture_frame)
 bottom_buttons = ttk.Frame(master = moisture_frame)
-bmoisture0 = ttk.Button(master = top_buttons, text = "0%")
+bmoisture0 = ttk.Button(master = top_buttons, text = "0%")#these should not be hardcoded
 bmoisture1 = ttk.Button(master = top_buttons, text = "20%")
 bmoisture2 = ttk.Button(master = top_buttons, text = "40%")
 bmoisture3 = ttk.Button(master = bottom_buttons, text = "60%")
@@ -141,6 +142,7 @@ layer2_frame = ttk.Frame(master = window)
 
 # captures picture, command= cameraCapture
 # ISSUE: taking picture on boot
+#I disagree, that's a feature!
 manual_pic_button = ttk.Button(master = layer2_frame, text = "Take Manual\nPicture", command = image_update)
 
 # should start recording function
@@ -159,14 +161,28 @@ layer2_frame.pack(padx = 5, pady = 5)
 
 # TODO: Fix
 def repeater():
-	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
-	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)
+	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
+	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
 	print(current_time.time())
 	print(four_pm.time())
 	print(current_time.time() > four_pm.time())
 	if current_time.time() > four_pm.time():
 		ss.light(light_length)
-	window.after(2000, repeater)
+	window.after(200, repeater)#timedelta should not be hardcoded, also this will overflow the stack eventually.
 		
-window.after(2000, repeater)
+window.after(200, repeater)
 window.mainloop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+

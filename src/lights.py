@@ -1,3 +1,5 @@
+#Yes, I reverted the changes. This script needs to be able to operate for variable lengths of time, and the revised script didn't do that. Furthermore, I'd like to do some testing on this script, because, again, I think I fixed it in the development before the initial commit.
+#TLDR, beautiful solution to the wrong problem.
 import datetime
 from datetime import timedelta, timezone, tzinfo
 from suntime import Sun, SunTimeException
@@ -7,7 +9,7 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(21, GPIO.OUT)
 
-def lights(light_length):
+def light(light_length):
   latitude = 43.0972
   longitude = 89.5043
 
@@ -36,3 +38,4 @@ def lights(light_length):
   else:
     light_on = False
   GPIO.output(21, True)
+
