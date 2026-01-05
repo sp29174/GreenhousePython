@@ -22,13 +22,14 @@ light_length = 16
 attributes = cc.getDataAttributes()
 time = 0
 header_font = 'Calibri 50 bold'
+resolution = '1920x1080'
 	
 # GUI ****************************************************************************************	
 
 # window
 window = tk.Tk()
 window.title =('Greenhouse')
-window.geometry('1920x1080')#This needs to be changed
+window.geometry(resolution)#This needs to be changed
 
 # title
 title_label = ttk.Label(master = window, text = 'Greenhouse', font = header_font)
@@ -170,6 +171,7 @@ def repeater():
 		
 window.after(200, repeater)
 window.mainloop()
+
 
 
 
