@@ -1,6 +1,6 @@
-                                                     Greenhouse Automation Project
+                                                     Terrestrial Vitrification Project
                                                                                                                                                 
-Welcome to the Greenhouse Automation System – a smart, Raspberry Pi-powered solution that automates plant care with automated watering (or grow lights), real-time moisture monitoring, and stunning timelapse videos. Perfect for hobbyists, educators, or IoT enthusiasts building sustainable green spaces!
+Welcome to the Terrestrial Vitrification Project – a smart, Raspberry Pi-powered solution that automates plant care with automated watering and grow lights, real-time moisture monitoring, and (allegedly) stunning timelapse videos. Better yet, it's open-source! Perfect for hobbyists, educators, or IoT enthusiasts building sustainable green spaces!
 
 🚀 Project Overview
 
@@ -12,15 +12,15 @@ This project integrates sensors, relays, a GUI, and camera control to create a f
 		
 	💡Captures hourly timelapse photos and compiles them into videos.
 		
-	💡Built with Python for easy customization and expansion.
+	💡Built with Python for easy customization.
 		
 🗝️ Key Features:
 		
 	💡User-friendly GUI (main.py) for control and status.
 		
-	💡Modular components: lighting (lights.py), moisture reading (mcp.py), watering relay (water_control.py), and camera (cameraControl.py).
+	💡Wide-open source: You can make this project better! Think of the possibilities.
 		
-	💡Single-relay design: Prioritize watering or lights (not both).
+	💡Remote design: Tired of having to touch grass to monitor the greenhouse? Now you don't have to!
 
 🛠️ Quick Start
 
@@ -38,8 +38,10 @@ This launches the GUI, integrating all modules.
 📁 File Structure:
 
 primaryPython/
-├── main.py              # Central GUI hub
+├── src/              # Central GUI hub
 
+	└── main.py
+	
 ├── lights.py            # Grow light scheduling
 
 ├── mcp.py               # Moisture sensor data
