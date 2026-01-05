@@ -26,7 +26,7 @@ light_length = 16
 header_font = 'Calibri 50 bold'
 resolution = '1920x1080'
 latitude = 43.0972
-longitude = 89.5043
+longitude = -89.5043
 dt = 200
 lightPin = 21
 waterPin = 16
@@ -307,6 +307,7 @@ GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
