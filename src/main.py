@@ -23,6 +23,9 @@ attributes = cc.getDataAttributes()
 time = 0
 header_font = 'Calibri 50 bold'
 resolution = '1920x1080'
+latitude = 43.0972
+longitude = 89.5043
+timedelta = 200
 	
 # GUI ****************************************************************************************	
 
@@ -160,17 +163,20 @@ def image_update():
 	
 # TODO: Fix
 def repeater():
+	global timedelta
+	global latitude
+	global longitude
 	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
 	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
 	print(current_time.time())
 	print(four_pm.time())
 	print(current_time.time() > four_pm.time())
 	if current_time.time() > four_pm.time():
-		ss.light(light_length)
-	window.after(200, repeater)#timedelta should not be hardcoded, also this will overflow the stack eventually.
-		
-window.after(200, repeater)
+		ss.light(light_length,latitude,longitude)
+	window.after(timedelta, repeater)
+window.after(timedelta, repeater)
 window.mainloop()
+
 
 
 
