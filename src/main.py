@@ -19,12 +19,11 @@ import mcp as MCP
 norm_font = 'Calibri 18'
 recording_status = "Start Recording"
 light_length = 16
-	
-# GUI ****************************************************************************************	
-
-#get attributes
 attributes = cc.getDataAttributes()
 time = 0
+header_font = 'Calibri 50 bold'
+	
+# GUI ****************************************************************************************	
 
 # window
 window = tk.Tk()
@@ -32,7 +31,7 @@ window.title =('Greenhouse')
 window.geometry('1920x1080')#This needs to be changed
 
 # title
-title_label = ttk.Label(master = window, text = 'Greenhouse', font = 'Calibri 50 bold')
+title_label = ttk.Label(master = window, text = 'Greenhouse', font = header_font)
 title_label.pack()
 
 #first layer
@@ -171,6 +170,7 @@ def repeater():
 		
 window.after(200, repeater)
 window.mainloop()
+
 
 
 
