@@ -7,4 +7,5 @@ cd ~/ && sudo apt full-upgrade && cd ./GreenhousePython && poetry update -vvv &&
 #To uninstall, please run this command:
 cd ~/ && poetry env remove --all && pipx uninstall-all -vvv && rm -rf ./GreenhousePython && sudo apt purge git pipx gcc gcc-aarch64-linux-gnu libcap-dev python3-dev && sudo apt full-upgrade && reboot
 
-#NOTE that we define "the uninstaller works" to be true iff running $2, $3, and $7 produces *precisely the same disk* as running sudo apt full-upgrade.
+#NOTE that we define "the uninstaller works" to be true iff running $2, $3, $4, and $8 produces *precisely the same disk* as running sudo do-release-upgrade -d, then running sudo apt full-upgrade.
+#NOTE that the uninstaller does not work.
