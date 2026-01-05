@@ -16,13 +16,13 @@ import time
 import busio
 import digitalio
 import board
-import mcp as MCP
+import adafruit_mcp3xxx.mcp3008 as MCP
+from adafruit_mcp3xxx.analog_in import AnalogIn
 
 # Setup variables and GPIO ****************************************************************************************
 norm_font = 'Calibri 18'
 recording_status = "Start Recording"
 light_length = 16
-attrs = getDataAttributes()
 header_font = 'Calibri 50 bold'
 resolution = '1920x1080'
 latitude = 43.0972
@@ -31,6 +31,9 @@ dt = 200
 lightPin = 21
 waterPin = 16
 MAX_VALUE = 50000
+
+
+chan_list = [chan0, chan1, chan2]
 	
 # GUI ****************************************************************************************	
 
@@ -285,11 +288,44 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
     out.release()
     print(f"Vido saved to {output_video_path}")
 
+def see_data():
+	print('Chan 0 Raw ADC Value: ', chan0.value)
+	print('Chan 0 ADC Voltage: ' + str(chan0.voltage) + 'V')
+	print('Chan 1 Raw ADC Value: ', chan1.value)
+	print('Chan 1 ADC Voltage: ' + str(chan1.voltage) + 'V')
+	print('Chan 2 Raw ADC Value: ', chan2.value)
+	print('Chan 2 ADC Voltage: ' + str(chan2.voltage) + 'V')
+	time.sleep(2)
+
+def get_data(num):
+	num = int(num)
+	return(chan_list[num].value)
+
+def compare(num):
+	for x in chan_list:
+		if(num*100 / x > 120 or num*100 / x < 80):
+			return False
+	return True
+	
+see_data()
+
+#get attrs
+attrs = getDataAttributes()
+# create the spi bus
+spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+# create the cs (chip select)
+cs = digitalio.DigitalInOut(board.CE0)
+# create the mcp object
+mcp = MCP.MCP3008(spi, cs)
+chan0 = AnalogIn(mcp, MCP.P0)#these pins should not be hard-coded!
+chan1 = AnalogIn(mcp, MCP.P1)
+chan2 = AnalogIn(mcp, MCP.P2)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
