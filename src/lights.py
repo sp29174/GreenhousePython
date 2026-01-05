@@ -9,9 +9,7 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(21, GPIO.OUT)
 
-def light(light_length):
-  latitude = 43.0972
-  longitude = 89.5043
+def light(light_length,latitude,longitude):
 
   mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
 
@@ -38,4 +36,5 @@ def light(light_length):
   else:
     light_on = False
   GPIO.output(21, True)
+
 
