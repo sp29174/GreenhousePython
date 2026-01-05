@@ -38,6 +38,7 @@ This launches the GUI, integrating all modules.
 📁 File Structure:
 
 primaryPython/
+
 ├── src/              # Central GUI hub
 
 	└── main.py
