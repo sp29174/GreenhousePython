@@ -12,7 +12,6 @@ from datetime import timedelta, timezone, tzinfo
 from suntime import Sun, SunTimeException
 import time
 import cameraControl as cc
-import lights as ss#should be fixed
 import mcp as MCP
 
 # Setup variables and GPIO ****************************************************************************************
@@ -25,9 +24,10 @@ header_font = 'Calibri 50 bold'
 resolution = '1920x1080'
 latitude = 43.0972
 longitude = 89.5043
-timedelta = 200
+dt = 200
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(16, GPIO.OUT)
+GPIO.setup(21, GPIO.OUT)
 MAX_VALUE = 50000
 	
 # GUI ****************************************************************************************	
@@ -187,32 +187,37 @@ def repeater(timedelta,latitude,longitude):
 	print(four_pm.time())
 	print(current_time.time() > four_pm.time())
 	if current_time.time() > four_pm.time():
-		ss.light(light_length,latitude,longitude)
-	window.after(timedelta, lambda : repeater(timedelta,latitude,longitude))
+		light(light_length,latitude,longitude)
+	window.after(dt, lambda : repeater(dt,latitude,longitude))
+
+def light(light_length,latitude,longitude):
+
+  mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
+
+  sun = Sun(latitude, longitude)
+
+  light_on = False
+
+  # Get today's sunrise and sunset in CST
+  today_sr = sun.get_sunrise_time() + timedelta(hours=7)
+  today_ss = sun.get_sunset_time() + timedelta(hours=7)
+  if today_sr > mcpasd:
+    today_sr = today_sr - timedelta(days=1)
+  if today_sr > today_ss:
+    today_ss = today_ss + timedelta(days=1)
+    
+  today_suntime = today_ss - today_sr
+
+  light_on = today_suntime - today_suntime + timedelta(hours = light_length)
+
+  today_suntime = mcpasd - today_sr
+
+  if(mcpasd.time() > today_ss.time() and today_suntime < light_on):
+    light_on = True
+  else:
+    light_on = False
+  GPIO.output(21, True)
 	
 GPIO.cleanup()
-window.after(timedelta, lambda : repeater(timedelta,latitude,longitude))
+window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
