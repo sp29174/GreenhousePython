@@ -24,6 +24,16 @@ This project integrates sensors, relays, a GUI, and camera control to create a f
 
 🛠️ Quick Start
 
+	😵‍💫Check: are you on the right system? 
+
+		If you are on anything other than a Raspberry Pi running Ubuntu Server, you are on an unsupported platform. While this project may expand to cover you in the future, it doesn't right now. On the other hand, we certainly aren't going to try to stop you from ignoring this paragraph and building this anyway; just don't expect a warantee or whatever. 
+
+	😵‍💫Check: are you a superuser?
+
+		💡Open a terminal and type 
+			sudo echo "hello world"
+		If this does not work, then you need to take this up with your administrator, because although we won't stop you from circumventing this, they certainly will.
+
 	💡Navigate to project directory:
 			cd /home/Gardener/GreenhousePython/primaryPython
 			
