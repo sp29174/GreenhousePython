@@ -197,7 +197,6 @@ def repeater(dt,latitude,longitude):
 def light(light_length,latitude,longitude):
   mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
   sun = Sun(latitude, longitude)
-  light_on = False
   # Get today's sunrise and sunset in CST
   today_sr = sun.get_sunrise_time() + timedelta(hours=7)
   today_ss = sun.get_sunset_time() + timedelta(hours=7)
@@ -310,4 +309,5 @@ GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
