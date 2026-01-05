@@ -180,7 +180,7 @@ def image_update():
     image_label.image = img
 	
 # TODO: Fix
-def repeater(timedelta,latitude,longitude):
+def repeater(dt,latitude,longitude):
 	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
 	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
 	print(current_time.time())
@@ -221,3 +221,4 @@ def light(light_length,latitude,longitude):
 GPIO.cleanup()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
