@@ -19,7 +19,7 @@ import board
 import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
-# Setup variables and GPIO ****************************************************************************************
+# CFG ****************************************************************************************
 norm_font = 'Calibri 18'
 recording_status = "Start Recording"
 light_length = 16
@@ -72,9 +72,9 @@ top_right_frame = ttk.Frame(master = layer1_frame)
 last_capture = ttk.Label(master = top_right_frame, text = 'Last capture was taken ___ minutes ago.', font = norm_font)
 zone_frame = ttk.Frame(master = top_right_frame)
 zone_label = ttk.Label(master = zone_frame, text = "Zone Moistures", font = norm_font)
-bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: " + str(MCP.get_data(0)))#These only update once
-bzone2 = ttk.Button(master = zone_frame, text = "Middle Bed: " + str(MCP.get_data(1)))
-bzone3 = ttk.Button(master = zone_frame, text = "Right Bed: " + str(MCP.get_data(2)))
+bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: " + str(get_data(0)))#These only update once
+bzone2 = ttk.Button(master = zone_frame, text = "Middle Bed: " + str(get_data(1)))
+bzone3 = ttk.Button(master = zone_frame, text = "Right Bed: " + str(get_data(2)))
 
 moisture_frame = ttk.Frame(master = top_right_frame)
 moisture_label = ttk.Label(master = moisture_frame, text = "Select Moisture Level", font = norm_font)
@@ -167,7 +167,7 @@ def water(percent):
 		return
 	moisture = 0
 	for x in range(3):
-		moisture += MCP.get_data(x)
+		moisture += get_data(x)
 	moisture = moisture / 3
 	if(MAX_VALUE / (100 / percent) > moisture):
 		GPIO.output(waterPin, GPIO.HIGH)
@@ -306,9 +306,11 @@ def compare(num):
 		if(num*100 / x > 120 or num*100 / x < 80):
 			return False
 	return True
-	
-see_data()
 
+
+# startup ****************************************************************************************
+
+see_data()
 #get attrs
 attrs = getDataAttributes()
 # create the spi bus
@@ -325,6 +327,7 @@ GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
