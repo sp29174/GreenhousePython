@@ -85,3 +85,5 @@ Contact:
 Fork the repo, create a branch, and submit a PR! Start with "good first issues" like timelapse scripting. Let's grow this project together 🌱
 
 License: MIT
+
+:rage1: Ain't nobody got no time for that! My greenhouse is on fire, what do I do?
