@@ -31,8 +31,6 @@ dt = 200
 lightPin = 21
 waterPin = 16
 MAX_VALUE = 50000
-
-
 chan_list = [chan0, chan1, chan2]
 	
 # GUI ****************************************************************************************	
@@ -309,5 +307,6 @@ GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
