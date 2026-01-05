@@ -72,12 +72,12 @@ moisture_frame = ttk.Frame(master = top_right_frame)
 moisture_label = ttk.Label(master = moisture_frame, text = "Select Moisture Level", font = norm_font)
 top_buttons = ttk.Frame(master = moisture_frame)
 bottom_buttons = ttk.Frame(master = moisture_frame)
-bmoisture0 = ttk.Button(master = top_buttons, text = "0%")#these should not be hardcoded
-bmoisture1 = ttk.Button(master = top_buttons, text = "20%")
-bmoisture2 = ttk.Button(master = top_buttons, text = "40%")
-bmoisture3 = ttk.Button(master = bottom_buttons, text = "60%")
-bmoisture4 = ttk.Button(master = bottom_buttons, text = "80%")
-bmoisture5 = ttk.Button(master = bottom_buttons, text = "100%")
+bmoisture0 = ttk.Button(master = top_buttons, text = "0%", command = lambda : water.water(0))#these should not be hardcoded
+bmoisture1 = ttk.Button(master = top_buttons, text = "20%", command = lambda : water.water(20))
+bmoisture2 = ttk.Button(master = top_buttons, text = "40%", command = lambda : water.water(40))
+bmoisture3 = ttk.Button(master = bottom_buttons, text = "60%", command = lambda : water.water(60))
+bmoisture4 = ttk.Button(master = bottom_buttons, text = "80%", command = lambda : water.water(80))
+bmoisture5 = ttk.Button(master = bottom_buttons, text = "100%", command = lambda : water.water(100))
 
 # far right packing
 last_capture.pack(padx = 10, pady = 20)
@@ -176,6 +176,7 @@ def repeater():
 	window.after(timedelta, repeater)
 window.after(timedelta, repeater)
 window.mainloop()
+
 
 
 
