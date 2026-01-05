@@ -30,13 +30,12 @@ This project integrates sensors, relays, a GUI, and camera control to create a f
 
 	😵‍💫Check: are you a superuser?
 
-		💡Open a terminal and type 
+		💡Open a terminal and type: 
 			sudo echo "hello world"
 		If this does not work, then you need to take this up with your administrator, because although we won't stop you from circumventing this, they certainly will.
 
-	💡Navigate to project directory:
-			cd /home/Gardener/GreenhousePython/primaryPython
-			
+	⏰The scary part: We haven't tested this stuff very thuroughly yet, and so ***IF THIS BREAKS YOUR SYSTEM, DON'T BE SURPRISED.*** With that out of the way:
+	
 	💡Activate virtual environment:
 		source vir/bin/activate
 			
