@@ -178,10 +178,7 @@ def image_update(image_label,attributes):
     image_label.image = img
 	
 # TODO: Fix
-def repeater():
-	global timedelta
-	global latitude
-	global longitude
+def repeater(timedelta,latitude,longitude):
 	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
 	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
 	print(current_time.time())
@@ -189,11 +186,12 @@ def repeater():
 	print(current_time.time() > four_pm.time())
 	if current_time.time() > four_pm.time():
 		ss.light(light_length,latitude,longitude)
-	window.after(timedelta, repeater)
+	window.after(timedelta, lambda : repeater(timedelta,latitude,longitude))
 	
 GPIO.cleanup()
-window.after(timedelta, repeater)
+window.after(timedelta, lambda : repeater(timedelta,latitude,longitude))
 window.mainloop()
+
 
 
 
