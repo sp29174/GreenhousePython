@@ -112,7 +112,7 @@ layer2_frame = ttk.Frame(master = window)
 # captures picture, command= cameraCapture
 # ISSUE: taking picture on boot
 #I disagree, that's a feature!
-manual_pic_button = ttk.Button(master = layer2_frame, text = "Take Manual\nPicture", command = lambda : image_update(attrs))
+manual_pic_button = ttk.Button(master = layer2_frame, text = "Take Manual\nPicture", command = lambda : image_update(attrs,theCamera))
 
 # should start recording function
 start_record = ttk.Button(master = layer2_frame, text = recording_status)
@@ -297,11 +297,12 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 see_data()
-camera = Picamera2()
-camera = picam2.create_still_configuration()
-camera.start()
+theCamera = Picamera2()
+camera_cfg = picam2.create_still_configuration()
+theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
