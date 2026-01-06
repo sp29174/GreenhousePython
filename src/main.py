@@ -31,7 +31,6 @@ dt = 200
 lightPin = 21
 waterPin = 16
 MAX_VALUE = 50000
-chan_list = [chan0, chan1, chan2]
 	
 # GUI ****************************************************************************************	
 
@@ -302,11 +301,13 @@ mcp = MCP.MCP3008(spi, cs)
 chan0 = AnalogIn(mcp, MCP.P0)#these pins should not be hard-coded!
 chan1 = AnalogIn(mcp, MCP.P1)
 chan2 = AnalogIn(mcp, MCP.P2)
+chan_list = [chan0, chan1, chan2]
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
