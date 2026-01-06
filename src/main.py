@@ -289,7 +289,6 @@ def compare(num):
 
 # startup ****************************************************************************************
 
-see_data()
 #get attrs
 attrs = getDataAttributes()
 # create the spi bus
@@ -305,8 +304,10 @@ chan_list = [chan0, chan1, chan2]
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
+see_data()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
