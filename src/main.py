@@ -170,9 +170,9 @@ def water(control_parameter):
 		GPIO.output(waterPin, GPIO.LOW)
 		print("low")
 		
-def image_update(attrs):
+def image_update(attrs,camera):
     global image_label
-    cameraCapture(attrs)
+    cameraCapture(attrs,camera)
     img = ImageTk.PhotoImage(Image.open(lastFileName()))
     image_label.configure(image=img) 
     image_label.image = img
@@ -224,15 +224,11 @@ def setAttributes(attributes):
     dataIndex.close()
 
 #input camera attributes and capture image, updates attributes and returns new attributes
-def cameraCapture(attributes):
-    picam2 = Picamera2()
-    camera_config = picam2.create_still_configuration()
-    picam2.start()
+def cameraCapture(attributes,camera):
     name = "../images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
-    picam2.capture_file(name)
+    camera.capture_file(name)
     attributes[0] += 1
     setAttributes(attributes)
-    picam2.close()
     return attributes
 
 def lastFileName():
@@ -301,8 +297,12 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 see_data()
+camera = Picamera2()
+camera = picam2.create_still_configuration()
+camera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
