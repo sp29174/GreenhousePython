@@ -172,7 +172,7 @@ def water(percent):
 	else:
 		GPIO.output(waterPin, GPIO.LOW)
 		print("low")
-
+		
 def image_update(attrs):
 	global image_label
     cameraCapture(attrs)
@@ -307,6 +307,7 @@ GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
