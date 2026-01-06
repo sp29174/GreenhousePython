@@ -78,11 +78,11 @@ moisture_label = ttk.Label(master = moisture_frame, text = "Select Moisture Leve
 top_buttons = ttk.Frame(master = moisture_frame)
 bottom_buttons = ttk.Frame(master = moisture_frame)
 bmoisture0 = ttk.Button(master = top_buttons, text = "0%", command = lambda : water(0))#these should not be hardcoded
-bmoisture1 = ttk.Button(master = top_buttons, text = "20%", command = lambda : water(20))
-bmoisture2 = ttk.Button(master = top_buttons, text = "40%", command = lambda : water(40))
-bmoisture3 = ttk.Button(master = bottom_buttons, text = "60%", command = lambda : water(60))
-bmoisture4 = ttk.Button(master = bottom_buttons, text = "80%", command = lambda : water(80))
-bmoisture5 = ttk.Button(master = bottom_buttons, text = "100%", command = lambda : water(100))
+bmoisture1 = ttk.Button(master = top_buttons, text = "20%", command = lambda : water(0.2))
+bmoisture2 = ttk.Button(master = top_buttons, text = "40%", command = lambda : water(0.4))
+bmoisture3 = ttk.Button(master = bottom_buttons, text = "60%", command = lambda : water(0.6))
+bmoisture4 = ttk.Button(master = bottom_buttons, text = "80%", command = lambda : water(0.8))
+bmoisture5 = ttk.Button(master = bottom_buttons, text = "100%", command = lambda : water(1))
 
 # far right packing
 last_capture.pack(padx = 10, pady = 20)
@@ -157,16 +157,13 @@ def new_light_control():
 			print("length is still " + str(light_length))
 
 #break things into 20% intervals from 0 to 50k based on the values returned from the MCP
-def water(percent):
-	if(percent == 0):
-		GPIO.output(waterPin, GPIO.LOW)
-		print("low")
-		return
+def water(control_parameter):
+	global MAX_VALUE
 	moisture = 0
-	for x in range(3):
+	for x in range(3):#this logic must be fixed, it does not comply w/ the design reqs
 		moisture += get_data(x)
 	moisture = moisture / 3
-	if(MAX_VALUE / (100 / percent) > moisture):
+	if(MAX_VALUE * control_parameter > moisture):
 		GPIO.output(waterPin, GPIO.HIGH)
 		print("high")
 	else:
@@ -281,7 +278,7 @@ def get_data(num):
 
 def compare(num):
 	for x in chan_list:
-		if(num*100 / x > 120 or num*100 / x < 80):
+		if(num > 1.2 * x or num < 0.8 * x):
 			return False
 	return True
 
@@ -306,6 +303,7 @@ GPIO.setup(lightPin, GPIO.OUT)
 see_data()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
