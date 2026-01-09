@@ -46,7 +46,7 @@ layer1_frame = ttk.Frame(master = window)
 
 # image information
 image_frame = ttk.Frame(master = layer1_frame)
-image = Image.open("../images/placeholder.jpg")#this should not be hardcoded
+image = Image.open(lastFileName())
 image2 = image.resize((640, 480))
 last_plant_image = ImageTk.PhotoImage(image2)
 image_label = ttk.Label(master = image_frame, image = last_plant_image)
@@ -231,7 +231,7 @@ def cameraCapture(attributes,camera):
 def lastFileName():
     attributes = getDataAttributes()
     if (attributes[0] == 0):
-        return "placeholder.jpg"
+        return "../images/placeholder.jpg"
     return "../images/" + attributes[2] + str(attributes[0]) + ".jpg"
 
 def create_video(image_paths, output_video_path, fps=24, size=None):
@@ -300,6 +300,7 @@ camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
