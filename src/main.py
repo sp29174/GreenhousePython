@@ -183,12 +183,11 @@ def repeater(dt,latitude,longitude):
 	print(four_pm.time())
 	print(current_time.time() > four_pm.time())
 	if current_time.time() > four_pm.time():
-		light(light_length,latitude,longitude)
+		light(light_length,latitude,longitude,theSun)
 	window.after(dt, lambda : repeater(dt,latitude,longitude))
 
-def light(light_length,latitude,longitude):
+def light(light_length,latitude,longitude,sun):
   mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
-  sun = Sun(latitude, longitude)
   # Get today's sunrise and sunset in CST
   today_sr = sun.get_sunrise_time() + timedelta(hours=7)
   today_ss = sun.get_sunset_time() + timedelta(hours=7)
@@ -295,11 +294,13 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 see_data()
+theSun = Sun(latitude, longitude)
 theCamera = Picamera2()
 camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
