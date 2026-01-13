@@ -228,11 +228,11 @@ def setAttributes(attributes):
 def cameraCapture(attributes,camera):
 	if not camera_nonsense:
 		return attributes
-    name = "../images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
-    camera.capture_file(name)
-    attributes[0] += 1
-    setAttributes(attributes)
-    return attributes
+	name = "../images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
+	camera.capture_file(name)
+	attributes[0] += 1
+	setAttributes(attributes)
+	return attributes
 
 def lastFileName():
     attributes = getDataAttributes()
@@ -308,6 +308,7 @@ camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
