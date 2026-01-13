@@ -243,12 +243,12 @@ def lastFileName():
 def create_video(image_paths, output_video_path, fps=24, size=None):
 	if not camera_nonsense:
 		break
-    if not image_paths:
-        raise ValueError("The list of image paths is empty")
-    print(":IORHGUIGHUBHSULIGH")
-    print(image_paths[0])
-    first_frame = cv2.imread(image_paths[0])
-    if first_frame is None:
+	if not image_paths:
+		raise ValueError("The list of image paths is empty")
+	print(":IORHGUIGHUBHSULIGH")
+	print(image_paths[0])
+	first_frame = cv2.imread(image_paths[0])
+	if first_frame is None:
         raise ValueError("Cannot read image at path")
     if size is None:
         height, width, _ = first_frame.shape
@@ -308,6 +308,7 @@ camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
