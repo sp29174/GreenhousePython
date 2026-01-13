@@ -257,10 +257,10 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
 	out = cv2.VideoWriter(output_video_path, fourcc, fps, size)
 	for path in image_paths:
 		frame = cv2.imread(path)
-        if frame is None:
-            print(f"Warning: Could not read {path}, skipping.")
-            continue
-        frame_resized = cv2.resize(frame, size)
+		if frame is None:
+			print(f"Warning: Could not read {path}, skipping.")
+			continue
+	frame_resized = cv2.resize(frame, size)
 	out.write(frame_resized)
 	out.release()
 	print(f"Vido saved to {output_video_path}")
@@ -308,6 +308,7 @@ camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
