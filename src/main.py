@@ -249,21 +249,21 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
 	print(image_paths[0])
 	first_frame = cv2.imread(image_paths[0])
 	if first_frame is None:
-        raise ValueError("Cannot read image at path")
-    if size is None:
-        height, width, _ = first_frame.shape
-        size = (width, height)
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(output_video_path, fourcc, fps, size)
-    for path in image_paths:
-        frame = cv2.imread(path)
+		raise ValueError("Cannot read image at path")
+	if size is None:
+		height, width, _ = first_frame.shape
+		size = (width, height)
+	fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+	out = cv2.VideoWriter(output_video_path, fourcc, fps, size)
+	for path in image_paths:
+		frame = cv2.imread(path)
         if frame is None:
             print(f"Warning: Could not read {path}, skipping.")
             continue
         frame_resized = cv2.resize(frame, size)
-        out.write(frame_resized)
-    out.release()
-    print(f"Vido saved to {output_video_path}")
+	out.write(frame_resized)
+	out.release()
+	print(f"Vido saved to {output_video_path}")
 
 def see_data():
 	print('Chan 0 Raw ADC Value: ', chan0.value)
@@ -308,6 +308,7 @@ camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
