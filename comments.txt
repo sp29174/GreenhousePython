@@ -3,3 +3,4 @@ Comments:
 08 DEC 2025: Now this is looking a little more like a real repo!
 15 DEC 2025: I've officially got the first line of main.py to run. Victory!
 17 DEC 2025: libkms++-dev is currently not on the default package index of any LTS distribution of ubuntu. There goes an hour of my life!
+13 JAN 2025: I'm sick and tired of having the wrong version of libcamera-dev. With this kludgy patch, no more!
