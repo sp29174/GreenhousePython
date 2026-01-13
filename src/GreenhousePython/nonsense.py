@@ -9,7 +9,7 @@ class cv2:
     return None
 
 class Picamera2:
-  def __init__():
+  def __init__(self):
     pass
-  def start():
+  def start(self):
     pass
