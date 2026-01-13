@@ -2,6 +2,7 @@
 # 
 # The main file.
 camera_nonsense = False
+file_debug = True
 
 if camera_nonsense:
 	from picamera2 import Picamera2
@@ -113,7 +114,7 @@ def light(light_length,latitude,longitude,sun):
   GPIO.output(lightPin, light_on)
 	
 def getDataAttributes():
-    dataIndex = open("~/GreenhousePython/src/dataIndex.txt", "r")#this must be fixed
+    dataIndex = open("dataIndex.txt", "r")#this must be fixed
     last_file_number = dataIndex.readline().split()[1]
     last_file_number = int(last_file_number)
     interval_in_seconds = dataIndex.readline().split()[1]
@@ -124,7 +125,7 @@ def getDataAttributes():
 
 # sets attributes in dataindex.txt file
 def setAttributes(attributes):
-    dataIndex = open("./dataIndex.txt", "w")
+    dataIndex = open("dataIndex.txt", "w")
     dataIndex.writelines(["last_file_number: " + str(attributes[0]), '\n', "interval_in_seconds: " + str(attributes[1]), '\n', "file_name_prefix: " + attributes[2]])
     dataIndex.close()
 
@@ -308,6 +309,7 @@ camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
