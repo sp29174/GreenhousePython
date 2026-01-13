@@ -113,7 +113,7 @@ def light(light_length,latitude,longitude,sun):
   GPIO.output(lightPin, light_on)
 	
 def getDataAttributes():
-    dataIndex = open("./dataIndex.txt", "r")
+    dataIndex = open("~/GreenhousePython/src/dataIndex.txt", "r")#this must be fixed
     last_file_number = dataIndex.readline().split()[1]
     last_file_number = int(last_file_number)
     interval_in_seconds = dataIndex.readline().split()[1]
@@ -308,6 +308,7 @@ camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
