@@ -1,11 +1,13 @@
 # 11/11/2025
 # 
 # The main file.
+camera_nonsense = False
 
-from picamera2 import Picamera2
-import cv2
-import RPi.GPIO as GPIO
-from PIL import Image, ImageTk
+if camera_nonsense:
+	from picamera2 import Picamera2
+	import cv2
+	import RPi.GPIO as GPIO
+	from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
 import datetime
@@ -300,6 +302,7 @@ camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
