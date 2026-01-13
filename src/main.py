@@ -6,9 +6,9 @@ camera_nonsense = False
 if camera_nonsense:
 	from picamera2 import Picamera2
 	import cv2
-	from PIL import Image, ImageTk
 else:
-	from nonsense import Picamera2, cv2, Image, ImageTk
+	from nonsense import Picamera2, cv2
+from PIL import Image, ImageTk
 import RPi.GPIO as GPIO
 import tkinter as tk
 from tkinter import ttk
@@ -304,6 +304,7 @@ camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
