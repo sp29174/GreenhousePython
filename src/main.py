@@ -35,6 +35,22 @@ lightPin = 21
 waterPin = 16
 MAX_VALUE = 65535
 
+# init part 1
+
+# create the spi bus
+spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+# create the cs (chip select)
+cs = digitalio.DigitalInOut(board.CE0)
+# create the mcp object
+mcp = MCP.MCP3008(spi, cs)
+chan0 = AnalogIn(mcp, MCP.P0)#these pins should not be hard-coded!
+chan1 = AnalogIn(mcp, MCP.P1)
+chan2 = AnalogIn(mcp, MCP.P2)
+chan_list = [chan0, chan1, chan2]
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(waterPin, GPIO.OUT)
+GPIO.setup(lightPin, GPIO.OUT)
+
 # methods   ***********************************************************************************
 
 def testing():
@@ -289,19 +305,6 @@ layer2_frame.pack(padx = 5, pady = 5)
 
 #get attrs
 attrs = getDataAttributes()
-# create the spi bus
-spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
-# create the cs (chip select)
-cs = digitalio.DigitalInOut(board.CE0)
-# create the mcp object
-mcp = MCP.MCP3008(spi, cs)
-chan0 = AnalogIn(mcp, MCP.P0)#these pins should not be hard-coded!
-chan1 = AnalogIn(mcp, MCP.P1)
-chan2 = AnalogIn(mcp, MCP.P2)
-chan_list = [chan0, chan1, chan2]
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(waterPin, GPIO.OUT)
-GPIO.setup(lightPin, GPIO.OUT)
 see_data()
 theSun = Sun(latitude, longitude)
 theCamera = Picamera2()
@@ -309,6 +312,7 @@ camera_cfg = picam2.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
