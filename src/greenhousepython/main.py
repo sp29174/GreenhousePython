@@ -308,10 +308,11 @@ attrs = getDataAttributes()
 see_data()
 theSun = Sun(latitude, longitude)
 theCamera = Picamera2()
-camera_cfg = picam2.create_still_configuration()
+camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
