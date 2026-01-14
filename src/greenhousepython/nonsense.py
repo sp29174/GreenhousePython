@@ -13,3 +13,5 @@ class Picamera2:
     pass
   def start(self):
     pass
+  def create_still_configuration(self):
+    pass
