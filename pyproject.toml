@@ -1,0 +1,28 @@
+#TODO: add classifiers and readme, fix stupid packages
+
+[project]
+name = "GreenhousePython"
+version = "0.0.0"
+description = "It's a python thing that automates a greenhouse."
+license = "MIT"
+requires-python = ">=3.9,<4.0"
+authors = [ { name = "We need to actually go and get the names of the people who should go here." } ]
+maintainers = [ { name = "We need to actually go and get the names of the people who should go here." } ]
+keywords = [ "greenhouse", "automation", "the music of the spheres" ]
+dependencies = [ "RPi.GPIO", "wheel", "suntime", "Adafruit-Blinka", "adafruit-circuitpython-mcp3xxx", "poetry" ]
+
+[project.optional-dependencies]
+camera-nonsense = ["rpi-libcamera", "rpi-kms", "picamera2", "opencv-python", "pillow"]
+
+[build-system]
+requires = ["poetry-core>2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project.urls]
+homepage = "https://mcpasd.k12.wi.us/"
+repository = "https://github.com/sp29174/GreenhousePython"
+documentation = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+
+[tool.poetry]
+package-mode = true
+include = [ { path = "images" }, { path = "docs" } ]
