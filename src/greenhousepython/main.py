@@ -102,13 +102,7 @@ def water(control_parameter):
 	else:
 		GPIO.output(waterPin, GPIO.LOW)
 		print("low")
-		
-def image_update(attrs,camera,gui):
-    cameraCapture(attrs,camera)
-    img = ImageTk.PhotoImage(Image.open(lastFileName()))
-    gui.image_label.configure(image=img) 
-    gui.image_label.image = img
-	
+
 # TODO: Fix
 def repeater(dt,latitude,longitude,mode,output):
 	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
@@ -296,7 +290,7 @@ class GUI:
 		# captures picture, command= cameraCapture
 		# ISSUE: taking picture on boot
 		#I disagree, that's a feature!
-		self.manual_pic_button = ttk.Button(master = self.layer2_frame, text = "Take Manual\nPicture", command = lambda : image_update(attrs,theCamera,self))
+		self.manual_pic_button = ttk.Button(master = self.layer2_frame, text = "Take Manual\nPicture", command = lambda : self.image_update(attrs,theCamera))
 		
 		# should start recording function
 		self.start_record = ttk.Button(master = self.layer2_frame, text = recording_status)
@@ -313,6 +307,11 @@ class GUI:
 		self.layer2_frame.pack(padx = 5, pady = 5)
 		self.window.after(dt, lambda : repeater(dt,latitude,longitude,"GUI",this))
 		self.window.mainloop()
+	def image_update(self,attrs,camera):
+		cameraCapture(attrs,camera)
+		img = ImageTk.PhotoImage(Image.open(lastFileName()))
+		self.image_label.configure(image=img) 
+		self.image_label.image = img
 
 class CLI:
 	pass
@@ -331,5 +330,6 @@ if type == "GUI":
 	gui = GUI(resolution,header_font,norm_font,recording_status)
 else:
 	assert True==False#Not implemented
+
 
 
