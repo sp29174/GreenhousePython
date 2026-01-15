@@ -1,26 +1,6 @@
 # 11/11/2025
 # 
 # The main file.
-camera_nonsense = False
-file_debug = True
-
-if camera_nonsense:
-	from picamera2 import Picamera2
-else:
-	from nonsense import Picamera2
-import cv2
-from PIL import Image, ImageTk
-import RPi.GPIO as GPIO
-import tkinter as tk
-from tkinter import ttk
-import datetime
-from datetime import timedelta, timezone
-from suntime import Sun
-import busio
-import digitalio
-import board
-import adafruit_mcp3xxx.mcp3008 as MCP
-from adafruit_mcp3xxx.analog_in import AnalogIn
 
 # CFG ****************************************************************************************
 norm_font = 'Calibri 18'
@@ -34,6 +14,30 @@ dt = 200
 lightPin = 21
 waterPin = 16
 MAX_VALUE = 1024
+use_camera = False
+file_debug = True
+use_gpio = False
+
+if use_camera:
+	from picamera2 import Picamera2
+else:
+	from nonsense import Picamera2
+if use_gpio:
+	import RPi.GPIO as GPIO
+else:
+	from nonsense import GPIO
+import cv2
+from PIL import Image, ImageTk
+import tkinter as tk
+from tkinter import ttk
+import datetime
+from datetime import timedelta, timezone
+from suntime import Sun
+import busio
+import digitalio
+import board
+import adafruit_mcp3xxx.mcp3008 as MCP
+from adafruit_mcp3xxx.analog_in import AnalogIn
 
 # init part 1
 
@@ -147,7 +151,7 @@ def setAttributes(attributes):
 
 #input camera attributes and capture image, updates attributes and returns new attributes
 def cameraCapture(attributes,camera):
-	if not camera_nonsense:
+	if not use_camera:
 		return attributes
 	name = "../../images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
 	camera.capture_file(name)
@@ -310,6 +314,7 @@ camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
