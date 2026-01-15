@@ -66,7 +66,7 @@ def testing():
 # Clear the input
 # Set light_length to the stored input value
 
-def new_light_control(isGui,output):
+def new_light_control(mode,output):
 	global light_length
 	global light_cycle
 	new_light_length = light_cycle.get()
@@ -78,7 +78,7 @@ def new_light_control(isGui,output):
 			else:
 				light_length = 24
 			print(light_length)
-			if isGui:
+			if mode == "GUI":
 				output.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.")
 			else:
 				assert True==False#Not Implemented
@@ -296,7 +296,7 @@ class GUI:
 		self.start_record = ttk.Button(master = self.layer2_frame, text = recording_status)#Where is the text coming from?
 		self.light_label = ttk.Label(master = self.layer2_frame, text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.", font = self.norm_font)
 		self.light_cycle = ttk.Entry(master = self.layer2_frame)
-		self.enter_button = ttk.Button(master = self.layer2_frame, text = "Enter Hours", command = new_light_control)
+		self.enter_button = ttk.Button(master = self.layer2_frame, text = "Enter Hours", command = lambda : new_light_control("GUI", this))
 		
 		#packing lower layer
 		self.manual_pic_button.pack(side = 'left', padx = 25, pady = 5)
@@ -321,6 +321,7 @@ camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
 if type == "GUI":
 	gui = GUI(resolution,header_font,norm_font)
+
 
 
 
