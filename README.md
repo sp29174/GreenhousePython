@@ -75,7 +75,7 @@ GreenhousePython/
 	└── nonsense.py       # An extremely strange hack
 ├── .gitignore            # File for git that you can ignore
 ├── README.md             # This exact file
-├── SECURITY.md           # Infomation on security updates and reporting
+├── SECURITY.md           # Information on security updates and reporting
 ├── comments.txt          # Frank J. Barth's sarcastic comments
 └── pyproject.toml        # Internal dependency list
 ```
