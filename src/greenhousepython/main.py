@@ -217,7 +217,7 @@ def compare(num):
 # GUI ****************************************************************************************	
 
 class GUI:
-	def __init__(self,resolution,header_font,norm_font):
+	def __init__(self,resolution,header_font,norm_font,recording_status):
 		# window
 		self.window = tk.Tk()
 		self.window.title =('Greenhouse')
@@ -299,7 +299,7 @@ class GUI:
 		self.manual_pic_button = ttk.Button(master = self.layer2_frame, text = "Take Manual\nPicture", command = lambda : image_update(attrs,theCamera,self))
 		
 		# should start recording function
-		self.start_record = ttk.Button(master = self.layer2_frame, text = recording_status)#Where is the text coming from?
+		self.start_record = ttk.Button(master = self.layer2_frame, text = recording_status)
 		self.light_label = ttk.Label(master = self.layer2_frame, text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.", font = self.norm_font)
 		self.light_cycle = ttk.Entry(master = self.layer2_frame)
 		self.enter_button = ttk.Button(master = self.layer2_frame, text = "Enter Hours", command = lambda : new_light_control("GUI", this))
@@ -328,6 +328,7 @@ theCamera = Picamera2()
 camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
 if type == "GUI":
-	gui = GUI(resolution,header_font,norm_font)
+	gui = GUI(resolution,header_font,norm_font,recording_status)
 else:
 	assert True==False#Not implemented
+
