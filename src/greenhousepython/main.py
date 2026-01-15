@@ -24,8 +24,13 @@ else:
 	from nonsense import Picamera2
 if use_gpio:
 	import RPi.GPIO as GPIO
+	import busio
+	import digitalio
+	import board
+	import adafruit_mcp3xxx.mcp3008 as MCP
+	from adafruit_mcp3xxx.analog_in import AnalogIn
 else:
-	from nonsense import GPIO
+	from nonsense import GPIO, busio, digitalio, board, MCP, AnalogIn
 import cv2
 from PIL import Image, ImageTk
 import tkinter as tk
@@ -33,11 +38,6 @@ from tkinter import ttk
 import datetime
 from datetime import timedelta, timezone
 from suntime import Sun
-import busio
-import digitalio
-import board
-import adafruit_mcp3xxx.mcp3008 as MCP
-from adafruit_mcp3xxx.analog_in import AnalogIn
 
 # init part 1
 
@@ -314,6 +314,7 @@ camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
 
 
