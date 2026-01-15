@@ -33,7 +33,7 @@ longitude = -89.5043
 dt = 200
 lightPin = 21
 waterPin = 16
-MAX_VALUE = 65535
+MAX_VALUE = 1024
 
 # init part 1
 
@@ -198,7 +198,7 @@ def get_data(num):
 
 def compare(num):
 	for x in chan_list:
-		if(num > 1.2 * x or num < 0.8 * x):
+		if(num > 1.2 * x.value or num < 0.8 * x.value):
 			return False
 	return True
 	
@@ -220,7 +220,7 @@ layer1_frame = ttk.Frame(master = window)
 image_frame = ttk.Frame(master = layer1_frame)
 image = Image.open(lastFileName())
 image2 = image.resize((640, 480))
-last_plant_image = ImageTk.PhotoImage(image2)
+last_plant_image = ImageTk.PhotoImage(image2)#BUG: initial image is too big
 image_label = ttk.Label(master = image_frame, image = last_plant_image)
 
 image_label_frame = ttk.Frame(master = image_frame)
@@ -310,4 +310,5 @@ camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
+
 
