@@ -58,13 +58,13 @@ This project integrates sensors, relays, a GUI, and camera control to create a f
 📁 File Structure:
 
 ```
-primaryPython/
+GreenhousePython/
 ├── .github
 	├── /workflows        # Development workflows
 		└── codeq.yml     # Code quality workflow
 	└── dependabot.yml    # It's dependabot.
 ├── dist/                 # Wheel folder
-	└── [many wheels].whl # Ezekiel's wheels
+	└── [many wheels].whl # Ezekiel's Many-Eyed Nested Spoked Wheels Of Fire
 ├── docs/                 # Documentation that no one reads
 	└── basic_usage.md    # Basic usage instructions
 ├── images/               # The Photographs, initially empty because you haven't taken any
@@ -75,9 +75,10 @@ primaryPython/
 	└── nonsense.py       # An extremely strange hack
 ├── .gitignore            # File for git that you can ignore
 ├── README.md             # This exact file
-├── SECURITY.md           # Infomation on security updates and reporting
+├── SECURITY.md           # Information on security updates and reporting
 ├── comments.txt          # Frank J. Barth's sarcastic comments
-└── pyproject.toml        # Internal dependency list
+├── poetry.lock           # The lockfile
+└── pyproject.toml        # Internal dependency & configuration file
 ```
 
 🔧 Troubleshooting & Notes
@@ -87,7 +88,7 @@ primaryPython/
 📞 Need Help?
 Contact:
 
-	💡arosas@mcpasd.k12.wi.us
+	💡bshrago@mcpasd.k12.wi.us
 	
 	💡sp29174@students.mcpasd.k12.wi.us
 

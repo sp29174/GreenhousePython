@@ -6,9 +6,9 @@ file_debug = True
 
 if camera_nonsense:
 	from picamera2 import Picamera2
-	import cv2
 else:
-	from nonsense import Picamera2, cv2
+	from nonsense import Picamera2
+import cv2
 from PIL import Image, ImageTk
 import RPi.GPIO as GPIO
 import tkinter as tk
@@ -162,8 +162,6 @@ def lastFileName():
     return "../../images/" + attributes[2] + str(attributes[0]) + ".jpg"
 
 def create_video(image_paths, output_video_path, fps=24, size=None):
-	if not camera_nonsense:
-		return None
 	if not image_paths:
 		raise ValueError("The list of image paths is empty")
 	print(":IORHGUIGHUBHSULIGH")
@@ -181,8 +179,8 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
 		if frame is None:
 			print(f"Warning: Could not read {path}, skipping.")
 			continue
-	frame_resized = cv2.resize(frame, size)
-	out.write(frame_resized)
+		frame_resized = cv2.resize(frame, size)
+		out.write(frame_resized)
 	out.release()
 	print(f"Vido saved to {output_video_path}")
 
@@ -312,37 +310,3 @@ camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
 window.after(dt, lambda : repeater(dt,latitude,longitude))
 window.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
