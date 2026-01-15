@@ -56,9 +56,6 @@ GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 
 # methods   ***********************************************************************************
-
-def testing():
-	print(light_length)
 	
 # new_light_control
 # 
@@ -330,6 +327,7 @@ if type == "GUI":
 	gui = GUI(resolution,header_font,norm_font,recording_status)
 else:
 	assert True==False#Not implemented
+
 
 
 
