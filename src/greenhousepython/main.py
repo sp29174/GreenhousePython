@@ -23,19 +23,20 @@ def getDataAttributes():
 #rewrite the list with updated values
 def setAttributes():
 	global attrs
-    cfg = open("cfg.txt", "w")
+    cfg = open("cfg.txt", "w")#open file to write
 	accumulator = []
-	keys = attrs.keys()
+	keys = attrs.keys()#get all the keys
 	for key in keys:
-		accumulator.append(key + ":" + attrs[key])
-		accumulator.append("\n")
-    cfg.writelines(accumulator)
+		accumulator.append(key + ":" + attrs[key])#assemble key and values into new format
+		accumulator.append("\n")#seperate with newlines
+    cfg.writelines(accumulator)#append to file
     cfg.close()
 
 
 
 # Initialization ****************************************************************************************
 
+getDataAttributes()
 if bool(attrs["use_camera"]):
 	from picamera2 import Picamera2
 else:
@@ -57,7 +58,7 @@ import datetime
 from datetime import timedelta, timezone
 from suntime import Sun
 
-# init part 1
+# Postinitialization
 
 # create the spi bus
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
@@ -215,7 +216,7 @@ def create_video(image_paths, output_video_path : str, fps : int = 24, size : st
 	print(f"Vido saved to {output_video_path}")
 
 @app.command()
-def see_data():
+def see_data():#Expand on me
 	print('Chan 0 Raw ADC Value: ', chan0.value)
 	print('Chan 0 ADC Voltage: ' + str(chan0.voltage) + 'V')
 	print('Chan 1 Raw ADC Value: ', chan1.value)
@@ -338,7 +339,7 @@ class GUI:
 		self.image_label.configure(image=img) 
 		self.image_label.image = img
 
-#this must be improved
+#A quick little command that just starts the GUI.
 @app.command()
 def start_gui():
 	global attrs
@@ -347,18 +348,5 @@ def start_gui():
 	gui = GUI(attrs)
 	
 
-# startup ****************************************************************************************
+# Finalization and execution ****************************************************************************************
 app()
-
-
-
-
-
-
-
-
-
-
-
-
-
