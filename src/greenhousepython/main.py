@@ -59,6 +59,11 @@ chan_list = [chan0, chan1, chan2]
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
+theSun = Sun(latitude, longitude)
+attrs = getDataAttributes()
+theCamera = Picamera2()
+camera_cfg = theCamera.create_still_configuration()
+theCamera.start()
 app = Typer()
 
 # methods   ***********************************************************************************
@@ -70,7 +75,7 @@ app = Typer()
 # Set light_length to the stored input value
 
 @app.command()
-def new_light_control(mode,output):
+def new_light_control(mode = "Cli",output = None):
 	global light_lengthx
 	if mode == "GUI":
 		light_cycle = output.light_cycle
@@ -95,7 +100,7 @@ def new_light_control(mode,output):
 
 #break things into 20% intervals from 0 to 50k based on the values returned from the MCP
 @app.command()
-def water(control_parameter):
+def water(control_parameter : float):
 	global MAX_VALUE
 	moisture = 0
 	for x in range(3):#this logic must be fixed, it does not comply w/ the design reqs
@@ -110,7 +115,7 @@ def water(control_parameter):
 
 # TODO: Fix
 @app.command()
-def repeater(dt,latitude,longitude,mode,output):
+def repeater(dt : float,latitude : float,longitude : float,mode = "CLI",output = None):
 	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
 	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
 	#print(current_time.time())
@@ -124,7 +129,7 @@ def repeater(dt,latitude,longitude,mode,output):
 		assert True==False#Not Implemented
 
 @app.command()
-def light(light_length,latitude,longitude,sun):
+def light(light_length : float,latitude : float,longitude : float,sun = theSun):
   mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
   # Get today's sunrise and sunset in CST
   today_sr = sun.get_sunrise_time() + timedelta(hours=7)
@@ -160,7 +165,7 @@ def setAttributes(attributes):
 
 #input camera attributes and capture image, updates attributes and returns new attributes
 @app.command()
-def cameraCapture(attributes,camera):
+def cameraCapture(attributes = attrs,camera = theCamera):
 	if not use_camera:
 		return attributes
 	name = "../../images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
@@ -176,7 +181,7 @@ def lastFileName():
     return "../../images/" + attributes[2] + str(attributes[0]) + ".jpg"
 
 @app.command()
-def create_video(image_paths, output_video_path, fps=24, size=None):
+def create_video(image_paths, output_video_path : str, fps=24, size=None):
 	if not image_paths:
 		raise ValueError("The list of image paths is empty")
 	print(":IORHGUIGHUBHSULIGH")
@@ -199,6 +204,7 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
 	out.release()
 	print(f"Vido saved to {output_video_path}")
 
+@app.command()
 def see_data():
 	print('Chan 0 Raw ADC Value: ', chan0.value)
 	print('Chan 0 ADC Voltage: ' + str(chan0.voltage) + 'V')
@@ -325,18 +331,14 @@ class GUI:
 # startup ****************************************************************************************
 
 #get attrs
-attrs = getDataAttributes()
 see_data()
-theSun = Sun(latitude, longitude)
-theCamera = Picamera2()
-camera_cfg = theCamera.create_still_configuration()
-theCamera.start()
 if mode == "GUI":
 	gui = GUI(resolution,header_font,norm_font,recording_status)
 elif mode == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
