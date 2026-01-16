@@ -9,12 +9,11 @@ requires-python = ">=3.9,<4.0"
 authors = [ { name = "We need to actually go and get the names of the people who should go here." } ]
 maintainers = [ { name = "We need to actually go and get the names of the people who should go here." } ]
 keywords = [ "greenhouse", "automation", "the music of the spheres" ]
-dependencies = [ "wheel", "suntime", "poetry", "opencv-python", "pillow"]
+dependencies = [ "wheel", "suntime", "poetry", "opencv-python", "pillow", "typer"]
 
 [project.optional-dependencies]
 camera-nonsense = ["rpi-libcamera", "rpi-kms", "picamera2"]
 rpi = [ "Adafruit-Blinka", "adafruit-circuitpython-mcp3xxx", "RPi.GPIO" ]
-cli = [ "typer" ]
 
 [build-system]
 requires = ["poetry-core>2.0.0,<3.0.0"]
