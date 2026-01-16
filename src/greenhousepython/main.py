@@ -125,7 +125,7 @@ def repeater(dt : float,latitude : float,longitude : float,mode = "CLI",output =
 	#print(four_pm.time())
 	#print(current_time.time() > four_pm.time())
 	if current_time.time() > four_pm.time():
-		light(light_length,latitude,longitude,theSun)
+		light(light_length,latitude,longitude)
 		water()
 	if mode == "GUI":
 		output.bzone1.config(text = "Left Bed: " + str(get_data(0)))
@@ -136,23 +136,24 @@ def repeater(dt : float,latitude : float,longitude : float,mode = "CLI",output =
 		assert True==False#Not Implemented
 
 @app.command()
-def light(light_length : float,latitude : float,longitude : float,sun = theSun):
-  mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
-  # Get today's sunrise and sunset in CST
-  today_sr = sun.get_sunrise_time() + timedelta(hours=7)
-  today_ss = sun.get_sunset_time() + timedelta(hours=7)
-  if today_sr > mcpasd:
-    today_sr = today_sr - timedelta(days=1)
-  if today_sr > today_ss:
-    today_ss = today_ss + timedelta(days=1)
-  today_suntime = today_ss - today_sr
-  light_on_time = today_suntime - today_suntime + timedelta(hours = light_length)
-  today_suntime = mcpasd - today_sr
-  if(mcpasd.time() > today_ss.time() and today_suntime < light_on_time):
-    light_on = True
-  else:
-    light_on = False
-  GPIO.output(lightPin, light_on)
+def light(light_length : float,latitude : float,longitude : float):
+	global theSun
+	mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
+	# Get today's sunrise and sunset in CST
+	today_sr = theSun.get_sunrise_time() + timedelta(hours=7)
+	today_ss = theSun.get_sunset_time() + timedelta(hours=7)
+	if today_sr > mcpasd:
+		today_sr = today_sr - timedelta(days=1)
+	if today_sr > today_ss:
+		today_ss = today_ss + timedelta(days=1)
+	today_suntime = today_ss - today_sr
+	light_on_time = today_suntime - today_suntime + timedelta(hours = light_length)
+	today_suntime = mcpasd - today_sr
+	if(mcpasd.time() > today_ss.time() and today_suntime < light_on_time):
+		light_on = True
+	else:
+		light_on = False
+	GPIO.output(lightPin, light_on)
 
 def getDataAttributes():
     dataIndex = open("dataIndex.txt", "r")#this must be fixed
@@ -188,7 +189,7 @@ def lastFileName():
     return "../../images/" + attributes[2] + str(attributes[0]) + ".jpg"
 
 @app.command()
-def create_video(image_paths, output_video_path : str, fps=24, size=None):
+def create_video(image_paths, output_video_path : str, fps : int = 24, size : str = None):
 	if not image_paths:
 		raise ValueError("The list of image paths is empty")
 	print(":IORHGUIGHUBHSULIGH")
@@ -338,7 +339,6 @@ class GUI:
 # startup ****************************************************************************************
 
 #get attrs
-see_data()
 attrs = getDataAttributes()
 if mode == "GUI":
 	gui = GUI(resolution,header_font,norm_font,recording_status)
@@ -346,6 +346,7 @@ elif mode == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
