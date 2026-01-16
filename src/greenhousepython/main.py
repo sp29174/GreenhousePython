@@ -16,7 +16,9 @@ def getDataAttributes():
 		accumulator[kvp[0]] = kvp[1]#add key-value pair to dictionary
     return accumulator
 
-def setAttributes(attributes):
+attrs = getDataAttributes()
+
+def setAttributes():
     cfg = open("cfg.txt", "w")
     cfg.writelines(["last_file_number: " + str(attributes[0]), '\n', "interval_in_seconds: " + str(attributes[1]), '\n', "file_name_prefix: " + attributes[2]])
     .close()
@@ -350,13 +352,12 @@ def start_gui():
 
 # startup ****************************************************************************************
 
-#get attrs
-attrs = getDataAttributes()
 if mode == "GUI":
 	gui = GUI(resolution,header_font,norm_font,recording_status)
 elif mode == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
