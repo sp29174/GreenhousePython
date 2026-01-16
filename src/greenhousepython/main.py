@@ -303,7 +303,7 @@ class GUI:
 		
 		# should start recording function
 		self.start_record = ttk.Button(master = self.layer2_frame, text = recording_status)
-		self.light_label = ttk.Label(master = self.layer2_frame, text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.", font = self.norm_font)
+		self.light_label = ttk.Label(master = self.layer2_frame, text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.", font = norm_font)
 		self.light_cycle = ttk.Entry(master = self.layer2_frame)
 		self.enter_button = ttk.Button(master = self.layer2_frame, text = "Enter Hours", command = lambda : new_light_control("GUI", self))
 		
@@ -337,6 +337,7 @@ elif mode == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
