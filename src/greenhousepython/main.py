@@ -7,6 +7,7 @@
 from typer import Typer, Option
 app = Typer()
 
+attrs = {}
 #read configuration information from cfg.txt and use it
 def getDataAttributes():
 	global attrs
@@ -17,8 +18,6 @@ def getDataAttributes():
 		accumulator[kvp[0]] = kvp[1]#add key-value pair to dictionary
 	cfg.close()
     attrs = accumulator
-
-attrs = {}
 
 #rewrite the list with updated values
 def setAttributes():
@@ -72,7 +71,7 @@ chan_list = [chan0, chan1, chan2]
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(int(attrs["waterPin"]), GPIO.OUT)
 GPIO.setup(int(attrs["lightPin"]), GPIO.OUT)
-theSun = Sun(attrs["latitude"], attrs["longitude"])
+theSun = Sun(float(attrs["latitude"]), float(attrs["longitude"]))
 theCamera = Picamera2()
 camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
@@ -137,7 +136,7 @@ def repeater(output = None):
 	#print(four_pm.time())
 	#print(current_time.time() > four_pm.time())
 	if current_time.time() > four_pm.time():
-		light(attrs)
+		light()
 		water()
 	if attrs["mode"] == "GUI":
 		output.bzone1.config(text = "Left Bed: " + str(get_data(0)))
@@ -160,7 +159,7 @@ def light():
 	if today_sr > today_ss:
 		today_ss = today_ss + timedelta(days=1)
 	today_suntime = today_ss - today_sr
-	light_on_time = today_suntime - today_suntime + timedelta(hours = attrs["light_length"])
+	light_on_time = today_suntime - today_suntime + timedelta(hours = int(attrs["light_length"]))
 	today_suntime = mcpasd - today_sr
 	if(mcpasd.time() > today_ss.time() and today_suntime < light_on_time):
 		light_on = True
@@ -170,7 +169,7 @@ def light():
 
 #input camera attributes and capture image, updates attributes and returns new attributes
 @app.command()
-def cameraCapture(camera = theCamera):#update to support new attr system
+def cameraCapture(camera = theCamera):#update to support new attr system, and to not badly reimplement last_file_name
 	global attrs
 	if not bool(attrs["use_camera"]):
 		return attrs
@@ -232,7 +231,7 @@ def compare(num):
 # GUI ****************************************************************************************	
 
 class GUI:
-	def __init__(self,attrs):
+	def __init__(self,attrs):#fix attribute handling in here
 		# window
 		self.window = tk.Tk()
 		self.window.title =('Greenhouse')
@@ -329,7 +328,7 @@ class GUI:
 		self.window.after(attrs["interval_in_milliseconds"], lambda : repeater(self))
 		self.window.mainloop()
 	def image_update(self,attrs,camera):
-		cameraCapture(attrs,camera)
+		cameraCapture(camera)
 		img = ImageTk.PhotoImage(Image.open(lastFileName()))
 		self.image_label.configure(image=img) 
 		self.image_label.image = img
@@ -350,6 +349,7 @@ elif attrs["mode"] == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
