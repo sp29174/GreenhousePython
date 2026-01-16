@@ -22,7 +22,7 @@ build-backend = "poetry.core.masonry.api"
 [project.urls]
 homepage = "https://mcpasd.k12.wi.us/"
 repository = "https://github.com/sp29174/GreenhousePython"
-documentation = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+documentation = "https://github.com/sp29174/GreenhousePython/wiki"
 
 [tool.poetry]
 package-mode = true
