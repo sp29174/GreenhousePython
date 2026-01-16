@@ -41,5 +41,5 @@ class MCP:
 
 class AnalogIn:
   def __init__(self,mcp,pin):
-    self.value = None
-    self.voltage = None    
+    self.value = 0
+    self.voltage = 0    
