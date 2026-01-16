@@ -60,7 +60,6 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 theSun = Sun(latitude, longitude)
-attrs = getDataAttributes()
 theCamera = Picamera2()
 camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
@@ -165,7 +164,7 @@ def setAttributes(attributes):
 
 #input camera attributes and capture image, updates attributes and returns new attributes
 @app.command()
-def cameraCapture(attributes = attrs,camera = theCamera):
+def cameraCapture(attributes = getDataAttributes(),camera = theCamera):
 	if not use_camera:
 		return attributes
 	name = "../../images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
@@ -332,12 +331,14 @@ class GUI:
 
 #get attrs
 see_data()
+attrs = getDataAttributes()
 if mode == "GUI":
 	gui = GUI(resolution,header_font,norm_font,recording_status)
 elif mode == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
