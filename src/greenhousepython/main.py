@@ -2,6 +2,27 @@
 # 
 # The main file.
 
+#pre-initialization
+
+from typer import Typer, Option
+app = Typer()
+
+#read configuration information from cfg.txt and use it
+def getDataAttributes():
+    cfg = open("cfg.txt", "r")
+    accumulator = {}
+	for thing in cfg.readlines():#find all things seperated by newlines
+		kvp = thing.split(":")#get key-value pairs
+		accumulator[kvp[0]] = kvp[1]#add key-value pair to dictionary
+    return accumulator
+
+def setAttributes(attributes):
+    cfg = open("cfg.txt", "w")
+    cfg.writelines(["last_file_number: " + str(attributes[0]), '\n', "interval_in_seconds: " + str(attributes[1]), '\n', "file_name_prefix: " + attributes[2]])
+    .close()
+
+
+
 # CFG ****************************************************************************************
 norm_font = 'Calibri 18'
 recording_status = "Start Recording"
@@ -39,7 +60,6 @@ from PIL import Image, ImageTk
 import datetime
 from datetime import timedelta, timezone
 from suntime import Sun
-from typer import Typer, Option
 
 # init part 1
 
@@ -60,7 +80,7 @@ theSun = Sun(latitude, longitude)
 theCamera = Picamera2()
 camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
-app = Typer()
+
 
 # methods   ***********************************************************************************
 	
@@ -150,20 +170,6 @@ def light(light_length : float,latitude : float,longitude : float):
 	else:
 		light_on = False
 	GPIO.output(lightPin, light_on)
-
-def getDataAttributes():
-    cfg = open("cfg.txt", "r")
-    accumulator = {}
-	for thing in cfg.readlines():#find all things seperated by newlines
-		kvp = thing.split(":")#get key-value pairs
-		accumulator[kvp[0]] = kvp[1]#add key-value pair to dictionary
-    return accumulator
-
-# sets attributes in cfg.txt file
-def setAttributes(attributes):
-    cfg = open("cfg.txt", "w")
-    cfg.writelines(["last_file_number: " + str(attributes[0]), '\n', "interval_in_seconds: " + str(attributes[1]), '\n', "file_name_prefix: " + attributes[2]])
-    .close()
 
 #input camera attributes and capture image, updates attributes and returns new attributes
 @app.command()
@@ -352,4 +358,5 @@ elif mode == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
