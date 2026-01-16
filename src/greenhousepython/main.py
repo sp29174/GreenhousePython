@@ -15,7 +15,7 @@ lightPin = 21
 waterPin = 16
 MAX_VALUE = 1024
 use_camera = False
-file_debug = True
+mode = "GUI"
 use_gpio = False
 
 if use_camera:
@@ -31,10 +31,14 @@ if use_gpio:
 	from adafruit_mcp3xxx.analog_in import AnalogIn
 else:
 	from nonsense import GPIO, busio, digitalio, board, MCP, AnalogIn
+if mode == "GUI":
+	from PIL import ImageTk
+	import tkinter as tk
+	from tkinter import ttk
+else:
+	assert True == False#Not implemeted
 import cv2
-from PIL import Image, ImageTk
-import tkinter as tk
-from tkinter import ttk
+from PIL import Image
 import datetime
 from datetime import timedelta, timezone
 from suntime import Sun
@@ -56,9 +60,6 @@ GPIO.setup(waterPin, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.OUT)
 
 # methods   ***********************************************************************************
-
-def testing():
-	print(light_length)
 	
 # new_light_control
 # 
@@ -66,11 +67,14 @@ def testing():
 # Clear the input
 # Set light_length to the stored input value
 
-def new_light_control():
-	global light_length
-	global light_cycle
-	new_light_length = light_cycle.get()
-	light_cycle.delete(0, len(new_light_length))
+def new_light_control(mode,output):
+	global light_lengthx
+	if mode == "GUI":
+		light_cycle = output.light_cycle
+		new_light_length = light_cycle.get()
+		light_cycle.delete(0, len(new_light_length))
+	else:
+		assert True==False#Not Implemented
 	if(new_light_length != ""):
 		try:
 			if(int(new_light_length) <= 24):
@@ -78,7 +82,10 @@ def new_light_control():
 			else:
 				light_length = 24
 			print(light_length)
-			light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.")
+			if mode == "GUI":
+				output.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.")
+			else:
+				assert True==False#Not Implemented
 		except ValueError as e:
 			print("Invalid value entered. Please enter a valid value.")
 			print("length is still " + str(light_length))
@@ -96,16 +103,9 @@ def water(control_parameter):
 	else:
 		GPIO.output(waterPin, GPIO.LOW)
 		print("low")
-		
-def image_update(attrs,camera):
-    global image_label
-    cameraCapture(attrs,camera)
-    img = ImageTk.PhotoImage(Image.open(lastFileName()))
-    image_label.configure(image=img) 
-    image_label.image = img
-	
+
 # TODO: Fix
-def repeater(dt,latitude,longitude):
+def repeater(dt,latitude,longitude,mode,output):
 	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
 	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
 	#print(current_time.time())
@@ -113,7 +113,10 @@ def repeater(dt,latitude,longitude):
 	#print(current_time.time() > four_pm.time())
 	if current_time.time() > four_pm.time():
 		light(light_length,latitude,longitude,theSun)
-	window.after(dt, lambda : repeater(dt,latitude,longitude))
+	if mode == "GUI":
+		output.window.after(dt, lambda : repeater(dt,latitude,longitude,mode,output))
+	else:
+		assert True==False#Not Implemented
 
 def light(light_length,latitude,longitude,sun):
   mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
@@ -208,99 +211,113 @@ def compare(num):
 	
 # GUI ****************************************************************************************	
 
-# window
-window = tk.Tk()
-window.title =('Greenhouse')
-window.geometry(resolution)#This needs to be changed
+class GUI:
+	def __init__(self,resolution,header_font,norm_font,recording_status):
+		# window
+		self.window = tk.Tk()
+		self.window.title =('Greenhouse')
+		self.window.geometry(resolution)#This needs to be changed
+		
+		# title
+		self.title_label = ttk.Label(master = self.window, text = 'Greenhouse', font = header_font)
+		self.title_label.pack()
+		
+		#first layer
+		self.layer1_frame = ttk.Frame(master = self.window)
+		
+		# image information
+		self.image_frame = ttk.Frame(master = self.layer1_frame)
+		self.image = Image.open(lastFileName())
+		self.image2 = self.image.resize((640, 480))
+		self.last_plant_image = ImageTk.PhotoImage(self.image2)#BUG: initial image is too big
+		self.image_label = ttk.Label(master = self.image_frame, image = self.last_plant_image)
+		
+		self.image_label_frame = ttk.Frame(master = self.image_frame)
+		self.interval_label = ttk.Label(master = self.image_label_frame, text = 'Interval is set to ', font = norm_font)
+		self.capture_label = ttk.Label(master = self.image_label_frame, text = 'There have been __ captures\nsince last time-lapse.', font = norm_font)
+		
+		# packing image stuff
+		self.image_label.pack(side = 'left', padx = 10, pady = 10)
+		self.interval_label.pack(padx = 5, pady = 30)
+		self.capture_label.pack(padx = 5, pady = 5)
+		self.image_label_frame.pack(side = 'left', padx = 10, pady = 10)
+		self.image_frame.pack(side = 'left')
+		
+		# far right info
+		self.top_right_frame = ttk.Frame(master = self.layer1_frame)
+		self.last_capture = ttk.Label(master = self.top_right_frame, text = 'Last capture was taken ___ minutes ago.', font = norm_font)
+		self.zone_frame = ttk.Frame(master = self.top_right_frame)
+		self.zone_label = ttk.Label(master = self.zone_frame, text = "Zone Moistures", font = norm_font)
+		self.bzone1 = ttk.Button(master = self.zone_frame, text = "Left Bed: " + str(get_data(0)))#These only update once
+		self.bzone2 = ttk.Button(master = self.zone_frame, text = "Middle Bed: " + str(get_data(1)))
+		self.bzone3 = ttk.Button(master = self.zone_frame, text = "Right Bed: " + str(get_data(2)))
 
-# title
-title_label = ttk.Label(master = window, text = 'Greenhouse', font = header_font)
-title_label.pack()
+		self.moisture_frame = ttk.Frame(master = self.top_right_frame)
+		self.moisture_label = ttk.Label(master = self.moisture_frame, text = "Select Moisture Level", font = norm_font)
+		self.top_buttons = ttk.Frame(master = self.moisture_frame)
+		self.bottom_buttons = ttk.Frame(master = self.moisture_frame)
+		self.bmoisture0 = ttk.Button(master = self.top_buttons, text = "0%", command = lambda : water(0))#these should not be hardcoded
+		self.bmoisture1 = ttk.Button(master = self.top_buttons, text = "20%", command = lambda : water(0.2))
+		self.bmoisture2 = ttk.Button(master = self.top_buttons, text = "40%", command = lambda : water(0.4))
+		self.bmoisture3 = ttk.Button(master = self.bottom_buttons, text = "60%", command = lambda : water(0.6))
+		self.bmoisture4 = ttk.Button(master = self.bottom_buttons, text = "80%", command = lambda : water(0.8))
+		self.bmoisture5 = ttk.Button(master = self.bottom_buttons, text = "100%", command = lambda : water(1))
+		
+		# far right packing
+		self.last_capture.pack(padx = 10, pady = 20)
+		self.zone_label.pack(padx = 10, pady = 20)
+		self.bzone1.pack(side = 'left', padx = 5, pady = 5)
+		self.bzone2.pack(side = 'left', padx = 5, pady = 5)
+		self.bzone3.pack(side = 'left', padx = 5, pady = 5)
+		self.zone_frame.pack(padx = 10, pady = 10)
+		
+		self.moisture_label.pack(padx = 5, pady = 20)
+		self.bmoisture0.pack(side = 'left', padx = 5, pady = 5)
+		self.bmoisture1.pack(side = 'left', padx = 5, pady = 5)
+		self.bmoisture2.pack(padx = 5, pady = 5)
+		self.top_buttons.pack(padx = 5, pady = 5)
+		self.bmoisture3.pack(side = 'left', padx = 5, pady = 5)
+		self.bmoisture4.pack(side = 'left', padx = 5, pady = 5)
+		self.bmoisture5.pack(padx = 5, pady = 5)
+		self.bottom_buttons.pack(padx = 5, pady = 5)
+		self.moisture_frame.pack(padx = 10, pady = 10)
+		
+		self.top_right_frame.pack(padx=10, pady=10)
+		self.layer1_frame.pack(padx = 20, pady = 20)
+		
+		# lower layer
+		self.layer2_frame = ttk.Frame(master = self.window)
+		
+		# captures picture, command= cameraCapture
+		# ISSUE: taking picture on boot
+		#I disagree, that's a feature!
+		self.manual_pic_button = ttk.Button(master = self.layer2_frame, text = "Take Manual\nPicture", command = lambda : self.image_update(attrs,theCamera))
+		
+		# should start recording function
+		self.start_record = ttk.Button(master = self.layer2_frame, text = recording_status)
+		self.light_label = ttk.Label(master = self.layer2_frame, text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.", font = self.norm_font)
+		self.light_cycle = ttk.Entry(master = self.layer2_frame)
+		self.enter_button = ttk.Button(master = self.layer2_frame, text = "Enter Hours", command = lambda : new_light_control("GUI", this))
+		
+		#packing lower layer
+		self.manual_pic_button.pack(side = 'left', padx = 25, pady = 5)
+		self.start_record.pack(side = 'left', padx = 25, pady = 5)
+		self.light_label.pack(padx = 25, pady = 5)
+		self.light_cycle.pack(padx = 25, pady = 5)
+		self.enter_button.pack(padx = 25, pady = 5)
+		self.layer2_frame.pack(padx = 5, pady = 5)
+		self.window.after(dt, lambda : repeater(dt,latitude,longitude,"GUI",this))
+		self.window.mainloop()
+	def image_update(self,attrs,camera):
+		cameraCapture(attrs,camera)
+		img = ImageTk.PhotoImage(Image.open(lastFileName()))
+		self.image_label.configure(image=img) 
+		self.image_label.image = img
 
-#first layer
-layer1_frame = ttk.Frame(master = window)
+# CLI ****************************************************************************************	
 
-# image information
-image_frame = ttk.Frame(master = layer1_frame)
-image = Image.open(lastFileName())
-image2 = image.resize((640, 480))
-last_plant_image = ImageTk.PhotoImage(image2)#BUG: initial image is too big
-image_label = ttk.Label(master = image_frame, image = last_plant_image)
-
-image_label_frame = ttk.Frame(master = image_frame)
-interval_label = ttk.Label(master = image_label_frame, text = 'Interval is set to ', font = norm_font)
-capture_label = ttk.Label(master = image_label_frame, text = 'There have been __ captures\nsince last time-lapse.', font = norm_font)
-
-# packing image stuff
-image_label.pack(side = 'left', padx = 10, pady = 10)
-interval_label.pack(padx = 5, pady = 30)
-capture_label.pack(padx = 5, pady = 5)
-image_label_frame.pack(side = 'left', padx = 10, pady = 10)
-image_frame.pack(side = 'left')
-
-# far right info
-top_right_frame = ttk.Frame(master = layer1_frame)
-last_capture = ttk.Label(master = top_right_frame, text = 'Last capture was taken ___ minutes ago.', font = norm_font)
-zone_frame = ttk.Frame(master = top_right_frame)
-zone_label = ttk.Label(master = zone_frame, text = "Zone Moistures", font = norm_font)
-bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: " + str(get_data(0)))#These only update once
-bzone2 = ttk.Button(master = zone_frame, text = "Middle Bed: " + str(get_data(1)))
-bzone3 = ttk.Button(master = zone_frame, text = "Right Bed: " + str(get_data(2)))
-
-moisture_frame = ttk.Frame(master = top_right_frame)
-moisture_label = ttk.Label(master = moisture_frame, text = "Select Moisture Level", font = norm_font)
-top_buttons = ttk.Frame(master = moisture_frame)
-bottom_buttons = ttk.Frame(master = moisture_frame)
-bmoisture0 = ttk.Button(master = top_buttons, text = "0%", command = lambda : water(0))#these should not be hardcoded
-bmoisture1 = ttk.Button(master = top_buttons, text = "20%", command = lambda : water(0.2))
-bmoisture2 = ttk.Button(master = top_buttons, text = "40%", command = lambda : water(0.4))
-bmoisture3 = ttk.Button(master = bottom_buttons, text = "60%", command = lambda : water(0.6))
-bmoisture4 = ttk.Button(master = bottom_buttons, text = "80%", command = lambda : water(0.8))
-bmoisture5 = ttk.Button(master = bottom_buttons, text = "100%", command = lambda : water(1))
-
-# far right packing
-last_capture.pack(padx = 10, pady = 20)
-zone_label.pack(padx = 10, pady = 20)
-bzone1.pack(side = 'left', padx = 5, pady = 5)
-bzone2.pack(side = 'left', padx = 5, pady = 5)
-bzone3.pack(side = 'left', padx = 5, pady = 5)
-zone_frame.pack(padx = 10, pady = 10)
-
-moisture_label.pack(padx = 5, pady = 20)
-bmoisture0.pack(side = 'left', padx = 5, pady = 5)
-bmoisture1.pack(side = 'left', padx = 5, pady = 5)
-bmoisture2.pack(padx = 5, pady = 5)
-top_buttons.pack(padx = 5, pady = 5)
-bmoisture3.pack(side = 'left', padx = 5, pady = 5)
-bmoisture4.pack(side = 'left', padx = 5, pady = 5)
-bmoisture5.pack(padx = 5, pady = 5)
-bottom_buttons.pack(padx = 5, pady = 5)
-moisture_frame.pack(padx = 10, pady = 10)
-
-top_right_frame.pack(padx=10, pady=10)
-layer1_frame.pack(padx = 20, pady = 20)
-
-# lower layer
-layer2_frame = ttk.Frame(master = window)
-
-# captures picture, command= cameraCapture
-# ISSUE: taking picture on boot
-#I disagree, that's a feature!
-manual_pic_button = ttk.Button(master = layer2_frame, text = "Take Manual\nPicture", command = lambda : image_update(attrs,theCamera))
-
-# should start recording function
-start_record = ttk.Button(master = layer2_frame, text = recording_status)
-light_label = ttk.Label(master = layer2_frame, text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.", font = norm_font)
-light_cycle = ttk.Entry(master = layer2_frame)
-enter_button = ttk.Button(master = layer2_frame, text = "Enter Hours", command = new_light_control)
-
-#packing lower layer
-manual_pic_button.pack(side = 'left', padx = 25, pady = 5)
-start_record.pack(side = 'left', padx = 25, pady = 5)
-light_label.pack(padx = 25, pady = 5)
-light_cycle.pack(padx = 25, pady = 5)
-enter_button.pack(padx = 25, pady = 5)
-layer2_frame.pack(padx = 5, pady = 5)
+class CLI:
+	pass
 
 
 # startup ****************************************************************************************
@@ -312,8 +329,13 @@ theSun = Sun(latitude, longitude)
 theCamera = Picamera2()
 camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
-window.after(dt, lambda : repeater(dt,latitude,longitude))
-window.mainloop()
+if type == "GUI":
+	gui = GUI(resolution,header_font,norm_font,recording_status)
+elif type == "CLI":
+	cli = CLI()
+else:
+	assert True==False#Not implemented
+
 
 
 
