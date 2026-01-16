@@ -305,7 +305,7 @@ class GUI:
 		self.start_record = ttk.Button(master = self.layer2_frame, text = recording_status)
 		self.light_label = ttk.Label(master = self.layer2_frame, text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.", font = self.norm_font)
 		self.light_cycle = ttk.Entry(master = self.layer2_frame)
-		self.enter_button = ttk.Button(master = self.layer2_frame, text = "Enter Hours", command = lambda : new_light_control("GUI", this))
+		self.enter_button = ttk.Button(master = self.layer2_frame, text = "Enter Hours", command = lambda : new_light_control("GUI", self))
 		
 		#packing lower layer
 		self.manual_pic_button.pack(side = 'left', padx = 25, pady = 5)
@@ -314,7 +314,7 @@ class GUI:
 		self.light_cycle.pack(padx = 25, pady = 5)
 		self.enter_button.pack(padx = 25, pady = 5)
 		self.layer2_frame.pack(padx = 5, pady = 5)
-		self.window.after(dt, lambda : repeater(dt,latitude,longitude,"GUI",this))
+		self.window.after(dt, lambda : repeater(dt,latitude,longitude,"GUI",self))
 		self.window.mainloop()
 	def image_update(self,attrs,camera):
 		cameraCapture(attrs,camera)
@@ -337,6 +337,7 @@ elif type == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
