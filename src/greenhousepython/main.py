@@ -34,24 +34,13 @@ def setAttributes():
 
 
 
-# CFG ****************************************************************************************
-resolution = '1920x1080'
-latitude = 43.0972
-longitude = -89.5043
-dt = 200
-lightPin = 21
-waterPin = 16
-MAX_VALUE = 1024
-control_parameter = 0.0
-use_camera = False
-mode = "CLI"
-use_gpio = False
+# Initialization ****************************************************************************************
 
-if use_camera:
+if bool(attrs["use_camera"]):
 	from picamera2 import Picamera2
 else:
 	from nonsense import Picamera2
-if use_gpio:
+if bool(attrs["use_gpio"]):
 	import RPi.GPIO as GPIO
 	import busio
 	import digitalio
@@ -81,9 +70,9 @@ chan1 = AnalogIn(mcp, MCP.P1)
 chan2 = AnalogIn(mcp, MCP.P2)
 chan_list = [chan0, chan1, chan2]
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(waterPin, GPIO.OUT)
-GPIO.setup(lightPin, GPIO.OUT)
-theSun = Sun(latitude, longitude)
+GPIO.setup(int(attrs["waterPin"]), GPIO.OUT)
+GPIO.setup(int(attrs["lightPin"]), GPIO.OUT)
+theSun = Sun(attrs["latitude"], attrs["longitude"])
 theCamera = Picamera2()
 camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
@@ -98,9 +87,9 @@ theCamera.start()
 # Set light_length to the stored input value
 
 @app.command()
-def new_light_control(mode = "Cli",output = None):
+def new_light_control(output = None):
 	global attrs
-	if mode == "GUI":
+	if attrs["mode"] == "GUI":
 		light_cycle = output.light_cycle
 		new_light_length = light_cycle.get()
 		light_cycle.delete(0, len(new_light_length))
@@ -113,7 +102,7 @@ def new_light_control(mode = "Cli",output = None):
 			else:
 				attrs["light_length"] = "24"
 			print(attrs["light_length"])
-			if mode == "GUI":
+			if attrs["mode"] == "GUI":
 				output.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length"] + " hours per day.")
 			else:
 				assert True==False#Not Implemented
@@ -124,24 +113,24 @@ def new_light_control(mode = "Cli",output = None):
 #break things into 20% intervals from 0 to 50k based on the values returned from the MCP
 @app.command()
 def water(input : float = None):
-	global MAX_VALUE
-	global control_parameter
+	global attrs
 	if input != None:
-		control_parameter = input
+		attrs["control_parameter"] = str(input)
 	moisture = 0
 	for x in range(3):#this logic must be fixed, it does not comply w/ the design reqs
 		moisture += get_data(x)
 	moisture = moisture / 3
-	if(MAX_VALUE * control_parameter > moisture):
-		GPIO.output(waterPin, GPIO.HIGH)
+	if(int(attrs["MAX_VALUE"]) * float(attrs["control_parameter"]) > moisture):
+		GPIO.output(int(attrs["waterPin"]), GPIO.HIGH)
 		print("high")
 	else:
-		GPIO.output(waterPin, GPIO.LOW)
+		GPIO.output(int(attrs["waterPin"]), GPIO.LOW)
 		print("low")
 
 # TODO: Fix
 @app.command()
-def repeater(dt : float,latitude : float,longitude : float,mode = "CLI",output = None):
+def repeater(output = None):
+	global attrs
 	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
 	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
 	#print(current_time.time())
@@ -150,11 +139,11 @@ def repeater(dt : float,latitude : float,longitude : float,mode = "CLI",output =
 	if current_time.time() > four_pm.time():
 		light(attrs)
 		water()
-	if mode == "GUI":
+	if attrs["mode"] == "GUI":
 		output.bzone1.config(text = "Left Bed: " + str(get_data(0)))
 		output.bzone2.config(text = "Middle Bed: " + str(get_data(1)))
 		output.bzone3.config(text = "Right Bed: " + str(get_data(2)))
-		output.window.after(dt, lambda : repeater(dt,latitude,longitude,mode,output))
+		output.window.after(attrs["interval_in_milliseconds"], lambda : repeater())
 	else:
 		assert True==False#Not Implemented
 
@@ -177,13 +166,13 @@ def light():
 		light_on = True
 	else:
 		light_on = False
-	GPIO.output(lightPin, light_on)
+	GPIO.output(int(attrs["lightPin"]), light_on)
 
 #input camera attributes and capture image, updates attributes and returns new attributes
 @app.command()
 def cameraCapture(camera = theCamera):#update to support new attr system
 	global attrs
-	if not use_camera:
+	if not bool(attrs["use_camera"]):
 		return attrs
 	name = "../../images/" + attrs["file_name_prefix"] + (str(int(attrs["last_file_number"]) + 1)) + ".jpg"
 	camera.capture_file(name)
@@ -247,7 +236,7 @@ class GUI:
 		# window
 		self.window = tk.Tk()
 		self.window.title =('Greenhouse')
-		self.window.geometry(resolution)#This needs to be changed
+		self.window.geometry(attrs["resolution"])#This needs to be changed
 		
 		# title
 		self.title_label = ttk.Label(master = self.window, text = 'Greenhouse', font = attrs["header_font"])
@@ -337,7 +326,7 @@ class GUI:
 		self.light_cycle.pack(padx = 25, pady = 5)
 		self.enter_button.pack(padx = 25, pady = 5)
 		self.layer2_frame.pack(padx = 5, pady = 5)
-		self.window.after(dt, lambda : repeater(dt,latitude,longitude,"GUI",self))
+		self.window.after(attrs["interval_in_milliseconds"], lambda : repeater(self))
 		self.window.mainloop()
 	def image_update(self,attrs,camera):
 		cameraCapture(attrs,camera)
@@ -349,18 +338,19 @@ class GUI:
 @app.command()
 def start_gui():
 	global attrs
-	mode = "GUI"
+	attrs["mode"] = "GUI"
 	gui = GUI(attrs)
 	
 
 # startup ****************************************************************************************
 
-if mode == "GUI":
+if attrs["mode"] == "GUI":
 	gui = GUI(attrs)
-elif mode == "CLI":
+elif attrs["mode"] == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
