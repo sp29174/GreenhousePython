@@ -122,6 +122,8 @@ def water(input : float = None):
 	global attrs
 	if input != None:
 		attrs["control_parameter"] = str(input)
+	elif bool(attrs["is_debug"]):
+		print("The system says your input is None, BTW")
 	moisture = 0
 	for x in range(3):#this logic must be fixed, it does not comply w/ the design reqs
 		moisture += get_data(x)
@@ -133,7 +135,7 @@ def water(input : float = None):
 		GPIO.output(int(attrs["waterPin"]), GPIO.LOW)
 		print("low")
 
-# TODO: Fix
+# TODO: Fix the Nonsense
 @app.command()
 def repeater(output = None):
 	global attrs
@@ -154,7 +156,7 @@ def repeater(output = None):
 		assert True==False#Not Implemented
 
 @app.command()
-def light():
+def light(): #Todo: Fix Logic
 	global attrs
 	global theSun
 	mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
@@ -356,6 +358,7 @@ elif attrs["mode"] == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
