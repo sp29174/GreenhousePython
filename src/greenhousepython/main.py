@@ -6,8 +6,9 @@
 
 from typer import Typer, Option
 app = Typer()
-
 attrs = {}
+mode = "CLI"
+
 #read configuration information from cfg.txt and use it
 def getDataAttributes():
 	global attrs
@@ -95,12 +96,9 @@ def change_setting(key : str, value : str):
 
 def new_light_control(output = None):
 	global attrs
-	if attrs["mode"] == "GUI":
-		light_cycle = output.light_cycle
-		new_light_length = light_cycle.get()
-		light_cycle.delete(0, len(new_light_length))
-	else:
-		assert True==False#Not Implemented
+	light_cycle = output.light_cycle
+	new_light_length = light_cycle.get()
+	light_cycle.delete(0, len(new_light_length))
 	if(new_light_length != ""):
 		try:
 			if(new_light_length <= 24):
@@ -108,10 +106,7 @@ def new_light_control(output = None):
 			else:
 				attrs["light_length"] = "24"
 			print(attrs["light_length"])
-			if attrs["mode"] == "GUI":
-				output.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length"] + " hours per day.")
-			else:
-				assert True==False#Not Implemented
+			output.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length"] + " hours per day.")
 		except ValueError as e:
 			print("Invalid value entered. Please enter a valid value.")
 			print("length is still " + attrs["light_length"])
@@ -139,6 +134,7 @@ def water(input : float = None):
 @app.command()
 def repeater(output = None):
 	global attrs
+	global mode
 	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
 	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
 	#print(current_time.time())
@@ -147,7 +143,7 @@ def repeater(output = None):
 	if current_time.time() > four_pm.time():
 		light()
 		water()
-	if attrs["mode"] == "GUI":
+	if mode == "GUI":
 		output.bzone1.config(text = "Left Bed: " + str(get_data(0)))
 		output.bzone2.config(text = "Middle Bed: " + str(get_data(1)))
 		output.bzone3.config(text = "Right Bed: " + str(get_data(2)))
@@ -346,18 +342,13 @@ class GUI:
 @app.command()
 def start_gui():
 	global attrs
-	attrs["mode"] = "GUI"
+	global mode
+	mode = "GUI"
 	gui = GUI(attrs)
 	
 
 # startup ****************************************************************************************
-
-if attrs["mode"] == "GUI":
-	gui = GUI(attrs)
-elif attrs["mode"] == "CLI":
-	app()
-else:
-	assert True==False#Not implemented
+app()
 
 
 
