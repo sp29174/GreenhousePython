@@ -331,12 +331,13 @@ theSun = Sun(latitude, longitude)
 theCamera = Picamera2()
 camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
-if type == "GUI":
+if mode == "GUI":
 	gui = GUI(resolution,header_font,norm_font,recording_status)
-elif type == "CLI":
+elif mode == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
