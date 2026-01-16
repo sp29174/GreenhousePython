@@ -42,7 +42,7 @@ from PIL import Image
 import datetime
 from datetime import timedelta, timezone
 from suntime import Sun
-from typer import Typer
+from typer import Typer, Optional
 
 # init part 1
 
@@ -338,6 +338,7 @@ elif mode == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
