@@ -32,14 +32,10 @@ if use_gpio:
 	from adafruit_mcp3xxx.analog_in import AnalogIn
 else:
 	from nonsense import GPIO, busio, digitalio, board, MCP, AnalogIn
-if mode == "GUI":
-	from PIL import ImageTk
-	import tkinter as tk
-	from tkinter import ttk
-elif mode != "CLI":
-	assert True == False#Not implemeted
+import tkinter as tk
+from tkinter import ttk
 import cv2
-from PIL import Image
+from PIL import Image, ImageTk
 import datetime
 from datetime import timedelta, timezone
 from suntime import Sun
@@ -358,6 +354,7 @@ elif mode == "CLI":
 	app()
 else:
 	assert True==False#Not implemented
+
 
 
 
