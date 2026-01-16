@@ -12,6 +12,5 @@ waterPin:16
 MAX_VALUE:1024
 control_parameter:0.0
 use_camera:False
-mode:CLI
 use_gpio:False
 is_debug:True
