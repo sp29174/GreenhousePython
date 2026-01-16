@@ -14,6 +14,7 @@ dependencies = [ "wheel", "suntime", "poetry", "opencv-python", "pillow"]
 [project.optional-dependencies]
 camera-nonsense = ["rpi-libcamera", "rpi-kms", "picamera2"]
 rpi = [ "Adafruit-Blinka", "adafruit-circuitpython-mcp3xxx", "RPi.GPIO" ]
+cli = [ "typer" ]
 
 [build-system]
 requires = ["poetry-core>2.0.0,<3.0.0"]
