@@ -14,3 +14,4 @@ control_parameter:0.0
 use_camera:False
 use_gpio:False
 is_debug:True
+recording_status:not dead
