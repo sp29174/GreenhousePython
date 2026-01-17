@@ -29,7 +29,7 @@ def setAttributes():
 	for key in keys:
 		accumulator.append(key + ":" + attrs[key])#assemble key and values into new format
 		accumulator.append("\n")#seperate with newlines
-		cfg.writelines(accumulator)#append to file
+	cfg.writelines(accumulator)#append to file
 	cfg.close()
 
 
@@ -350,5 +350,6 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
