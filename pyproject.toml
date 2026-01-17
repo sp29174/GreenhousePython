@@ -1,15 +1,16 @@
-#TODO: add classifiers and readme, fix stupid packages
+#TODO: add classifiers
 
 [project]
 name = "GreenhousePython"
-version = "0.0.0"
+version = "0.1.0"
 description = "It's a python thing that automates a greenhouse."
 license = "MIT"
 requires-python = ">=3.9,<4.0"
-authors = [ { name = "We need to actually go and get the names of the people who should go here." } ]
-maintainers = [ { name = "We need to actually go and get the names of the people who should go here." } ]
+authors = [ { name = "Frank J. Barth" }, { name = "Phillip Spalitta" } ]
+maintainers = [ { name = "Benjamin Shraego" } ]
 keywords = [ "greenhouse", "automation", "the music of the spheres" ]
 dependencies = [ "wheel", "suntime", "poetry", "opencv-python", "pillow", "typer", "rich" ]
+readme = "README.md"
 
 [project.optional-dependencies]
 camera-nonsense = ["rpi-libcamera", "rpi-kms", "picamera2"]
