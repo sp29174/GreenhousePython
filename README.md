@@ -39,7 +39,7 @@ This project integrates sensors, relays, a GUI, and camera control to create a f
 	With that out of the way:
 
 	💡Release upgrade: We only support Ubuntu Server 25.10 officially*. Therefore, BEING VERY CLEAR THAT THIS IS PLAYING WITH FIRE, you can run this to get there:
-		sudo apt full-upgrade && sudo do-release-upgrade -d && reboot
+		sudo apt update && sudo apt full-upgrade && sudo do-release-upgrade -d && reboot
 	
 	💡In order to build this software, you will need some dependencies. In order to get them, you can run this command. THIS WILL RESTART YOUR COMPUTER.
 		cd ~/ && sudo apt install --install-recommends fortune g++ libkms++-dev pkgconf ffmpeg libopenjp2-7 libcamera-dev libfmt-dev libdrm-dev git pipx gcc gcc-aarch64-linux-gnu libcap-dev python3-dev python3-tk libsm6 libxest6 libgl1 && git clone https://github.com/sp29174/GreenhousePython.git && pipx ensurepath && reboot
