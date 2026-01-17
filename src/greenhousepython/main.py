@@ -103,10 +103,11 @@ def new_light_control(output = None):
 	if(new_light_length != ""):
 		try:
 			if(int(new_light_length) <= 24):
-				attrs["light_length"] = str(new_light_length)
+				attrs["light_length"] = new_light_length
 			else:
 				attrs["light_length"] = "24"
 			print(attrs["light_length"])
+			setAttributes()
 			output.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length"] + " hours per day.")
 		except ValueError as e:
 			print("Invalid value entered. Please enter a valid value.")
@@ -118,6 +119,7 @@ def water(input : float = None):
 	global attrs
 	if input != None:
 		attrs["control_parameter"] = str(input)
+		setAttributes()
 	elif attrs["is_debug"] == "True":
 		print("The system says your input is None, BTW")
 	moisture = 0
@@ -148,7 +150,7 @@ def repeater(output = None):
 		output.bzone1.config(text = "Left Bed: " + str(get_data(0)))
 		output.bzone2.config(text = "Middle Bed: " + str(get_data(1)))
 		output.bzone3.config(text = "Right Bed: " + str(get_data(2)))
-		output.window.after(attrs["interval_in_milliseconds"], lambda : repeater())
+		output.window.after(int(attrs["interval_in_milliseconds"]), lambda : repeater(output))
 	else:
 		assert True==False#Not Implemented
 
@@ -187,7 +189,7 @@ def cameraCapture(camera = theCamera):#update to support new attr system, and to
 
 def lastFileName():
     global attrs
-    if (attrs["last_file_number"] == 0):
+    if (int(attrs["last_file_number"]) == 0):
         return "../../images/placeholder.jpg"
     return "../../images/" + attrs["file_name_prefix"] + str(attrs["last_file_number"]) + ".jpg"
 
@@ -331,7 +333,7 @@ class GUI:
 		self.light_cycle.pack(padx = 25, pady = 5)
 		self.enter_button.pack(padx = 25, pady = 5)
 		self.layer2_frame.pack(padx = 5, pady = 5)
-		self.window.after(attrs["interval_in_milliseconds"], lambda : repeater(self))
+		self.window.after(int(attrs["interval_in_milliseconds"]), lambda : repeater(self))
 		self.window.mainloop()
 	def image_update(self,attrs,camera):
 		cameraCapture(camera)
@@ -350,6 +352,7 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
