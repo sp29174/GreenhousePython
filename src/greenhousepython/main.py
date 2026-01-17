@@ -16,7 +16,7 @@ def getDataAttributes():
 	accumulator = {}
 	for thing in cfg.readlines():#find all things seperated by newlines
 		kvp = thing.split(":")#get key-value pairs
-		accumulator[kvp[0]] = kvp[1]#add key-value pair to dictionary
+		accumulator[kvp[0]] = kvp[1].rstrip("\n")#add key-value pair to dictionary, no random trailing newline for you
 	cfg.close()
 	attrs = accumulator
 
@@ -29,7 +29,7 @@ def setAttributes():
 	for key in keys:
 		accumulator.append(key + ":" + attrs[key])#assemble key and values into new format
 		accumulator.append("\n")#seperate with newlines
-		cfg.writelines(accumulator)#append to file
+	cfg.writelines(accumulator)#append to file
 	cfg.close()
 
 
@@ -102,11 +102,12 @@ def new_light_control(output = None):
 	light_cycle.delete(0, len(new_light_length))
 	if(new_light_length != ""):
 		try:
-			if(new_light_length <= 24):
-				attrs["light_length"] = str(new_light_length)
+			if(int(new_light_length) <= 24):
+				attrs["light_length"] = new_light_length
 			else:
 				attrs["light_length"] = "24"
 			print(attrs["light_length"])
+			setAttributes()
 			output.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length"] + " hours per day.")
 		except ValueError as e:
 			print("Invalid value entered. Please enter a valid value.")
@@ -118,6 +119,7 @@ def water(input : float = None):
 	global attrs
 	if input != None:
 		attrs["control_parameter"] = str(input)
+		setAttributes()
 	elif attrs["is_debug"] == "True":
 		print("The system says your input is None, BTW")
 	moisture = 0
@@ -144,11 +146,12 @@ def repeater(output = None):
 	if current_time.time() > four_pm.time():
 		light()
 		water()
+		cameraCapture()
 	if mode == "GUI":
 		output.bzone1.config(text = "Left Bed: " + str(get_data(0)))
 		output.bzone2.config(text = "Middle Bed: " + str(get_data(1)))
 		output.bzone3.config(text = "Right Bed: " + str(get_data(2)))
-		output.window.after(attrs["interval_in_milliseconds"], lambda : repeater())
+		output.window.after(int(attrs["interval_in_milliseconds"]), lambda : repeater(output))
 	else:
 		assert True==False#Not Implemented
 
@@ -175,19 +178,20 @@ def light(): #Todo: Fix Logic
 
 #input camera attributes and capture image, updates attributes and returns new attributes
 @app.command()
-def cameraCapture(camera = theCamera):#update to support new attr system, and to not badly reimplement last_file_name
+def cameraCapture():#update to support new attr system, and to not badly reimplement last_file_name
+	global theCamera
 	global attrs
 	if attrs["use_camera"] == "False":
 		return attrs
 	name = "../../images/" + attrs["file_name_prefix"] + (str(int(attrs["last_file_number"]) + 1)) + ".jpg"
-	camera.capture_file(name)
+	theCamera.capture_file(name)
 	attrs["last_file_number"] = str(int(attrs["last_file_number"]) + 1)
 	setAttributes()
 	return attrs
 
 def lastFileName():
     global attrs
-    if (attrs["last_file_number"] == 0):
+    if (int(attrs["last_file_number"]) == 0):
         return "../../images/placeholder.jpg"
     return "../../images/" + attrs["file_name_prefix"] + str(attrs["last_file_number"]) + ".jpg"
 
@@ -331,7 +335,7 @@ class GUI:
 		self.light_cycle.pack(padx = 25, pady = 5)
 		self.enter_button.pack(padx = 25, pady = 5)
 		self.layer2_frame.pack(padx = 5, pady = 5)
-		self.window.after(attrs["interval_in_milliseconds"], lambda : repeater(self))
+		self.window.after(int(attrs["interval_in_milliseconds"]), lambda : repeater(self))
 		self.window.mainloop()
 	def image_update(self,attrs,camera):
 		cameraCapture(camera)
@@ -350,5 +354,10 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
+
+
+
+
 
 
