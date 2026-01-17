@@ -40,7 +40,6 @@ This project integrates sensors, relays, a GUI, and camera control to create a f
 
 	💡Release upgrade: We only support Ubuntu Server 25.10 officially*. Therefore, BEING VERY CLEAR THAT THIS IS PLAYING WITH FIRE, you can run these two commands to get there:
 		sudo apt update && sudo apt full-upgrade && reboot
-		
 		sudo do-release-upgrade -d && reboot
 	
 	💡In order to build this software, you will need some dependencies. In order to get them, you can run this command. THIS WILL RESTART YOUR COMPUTER.
