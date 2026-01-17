@@ -134,8 +134,7 @@ def water(input : float = None):
 		print("low")
 
 # TODO: Fix the Nonsense
-@app.command()
-def repeater(output = None):
+def repeater(output):
 	global attrs
 	global mode
 	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
@@ -143,17 +142,14 @@ def repeater(output = None):
 	#print(current_time.time())
 	#print(four_pm.time())
 	#print(current_time.time() > four_pm.time())
-	if current_time.time() > four_pm.time():
+	if (current_time.time() > four_pm.time()) or True:#hacks for days
 		light()
 		water()
 		cameraCapture()
-	if mode == "GUI":
-		output.bzone1.config(text = "Left Bed: " + str(get_data(0)))
-		output.bzone2.config(text = "Middle Bed: " + str(get_data(1)))
-		output.bzone3.config(text = "Right Bed: " + str(get_data(2)))
-		output.window.after(int(attrs["interval_in_milliseconds"]), lambda : repeater(output))
-	else:
-		assert True==False#Not Implemented
+	output.bzone1.config(text = "Left Bed: " + str(get_data(0)))
+	output.bzone2.config(text = "Middle Bed: " + str(get_data(1)))
+	output.bzone3.config(text = "Right Bed: " + str(get_data(2)))
+	output.window.after(int(attrs["interval_in_milliseconds"]), lambda : repeater(output))
 
 @app.command()
 def light(): #Todo: Fix Logic
@@ -354,6 +350,7 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
