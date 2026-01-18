@@ -123,7 +123,7 @@ def water(input : float = None):
 	elif attrs["is_debug"] == "True":
 		print("The system says your input is None, BTW")
 	moisture = 0
-	for x in range(3):#this logic must be fixed, it does not comply w/ the design reqs
+	for x in range(int(attrs["beds"])):#this logic must be fixed, it does not comply w/ the design reqs
 		moisture += get_data(x)
 	moisture = moisture / 3
 	if(int(attrs["MAX_VALUE"]) * float(attrs["control_parameter"]) > moisture):
@@ -350,6 +350,7 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
