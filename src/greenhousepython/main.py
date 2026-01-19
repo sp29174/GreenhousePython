@@ -255,7 +255,6 @@ class GUI:
 		self.moisture_frame = ttk.Frame(master = self.top_right_frame)
 		self.moisture_label = ttk.Label(master = self.moisture_frame, text = "Select Moisture Level", font = attrs["norm_font"])
 		self.top_buttons = ttk.Frame(master = self.moisture_frame)
-		self.bottom_buttons = ttk.Frame(master = self.moisture_frame)
 		self.bar_state = 0.0
 		self.slider = ttk.Scale(self.top_buttons, from_=0, to=1, orient="horizontal", variable=self.bar_state, command = lambda event: water(self.bar_state))
 
@@ -314,6 +313,7 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
