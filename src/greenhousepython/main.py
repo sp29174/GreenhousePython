@@ -53,8 +53,7 @@ import tkinter as tk
 from tkinter import ttk
 import cv2
 from PIL import Image, ImageTk
-import datetime
-from datetime import timedelta, timezone
+from datetime import datetime, timedelta, timezone
 from astral import sun, Observer
 
 # Postinitialization
@@ -331,6 +330,7 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
