@@ -133,7 +133,6 @@ def water(input : float = None):
 			attrs["bed" + str(x)] = "False"
 			setAttributes()
 
-# TODO: Fix the Nonsense
 def repeater(output):
 	global attrs
 	global mode
@@ -153,7 +152,7 @@ def light():
 	srss = sun.daylight(observer)
 	light_on = False
 	if (datetime.now(timezone.utc) > ssrs[1]):
-		timeOff = ssrs[0] + timedelta(hours=float(attrs["light_length"]))
+		timeoff = ssrs[0] + timedelta(hours=float(attrs["light_length"]))
 	if (datetime.now(timezone.utc) < timeoff):
 		light_on = True
 	GPIO.output(int(attrs["lightPin"]), light_on)
@@ -336,6 +335,7 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
