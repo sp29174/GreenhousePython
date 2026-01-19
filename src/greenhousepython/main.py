@@ -256,12 +256,15 @@ class oldGUI:
 		self.moisture_label = ttk.Label(master = self.moisture_frame, text = "Select Moisture Level", font = attrs["norm_font"])
 		self.top_buttons = ttk.Frame(master = self.moisture_frame)
 		self.bottom_buttons = ttk.Frame(master = self.moisture_frame)
-		self.bmoisture0 = ttk.Button(master = self.top_buttons, text = "0%", command = lambda : water(0))#these should not be hardcoded
-		self.bmoisture1 = ttk.Button(master = self.top_buttons, text = "20%", command = lambda : water(0.2))
-		self.bmoisture2 = ttk.Button(master = self.top_buttons, text = "40%", command = lambda : water(0.4))
-		self.bmoisture3 = ttk.Button(master = self.bottom_buttons, text = "60%", command = lambda : water(0.6))
-		self.bmoisture4 = ttk.Button(master = self.bottom_buttons, text = "80%", command = lambda : water(0.8))
-		self.bmoisture5 = ttk.Button(master = self.bottom_buttons, text = "100%", command = lambda : water(1))
+		#self.bmoisture0 = ttk.Button(master = self.top_buttons, text = "0%", command = lambda : water(0))#these should not be hardcoded
+		#self.bmoisture1 = ttk.Button(master = self.top_buttons, text = "20%", command = lambda : water(0.2))
+		#self.bmoisture2 = ttk.Button(master = self.top_buttons, text = "40%", command = lambda : water(0.4))
+		#self.bmoisture3 = ttk.Button(master = self.bottom_buttons, text = "60%", command = lambda : water(0.6))
+		#self.bmoisture4 = ttk.Button(master = self.bottom_buttons, text = "80%", command = lambda : water(0.8))
+		#self.bmoisture5 = ttk.Button(master = self.bottom_buttons, text = "100%", command = lambda : water(1))
+		self.bar_state = 0.0
+		self.slider = ttk.Scale(self.top_buttons, from_=0, to=1, orient="horizontal", variable=self.bar_state, command = lambda : water(self.bar_state))
+
 		
 		# far right packing
 		self.last_capture.pack(padx = 10, pady = 20)
@@ -323,6 +326,7 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
