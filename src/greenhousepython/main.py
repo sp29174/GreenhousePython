@@ -98,7 +98,7 @@ def new_light_control(output = None):
 	light_cycle.delete(0, len(new_light_length))
 	if (new_light_length != ""):
 		try:
-			if(int(new_light_length) <= 24):
+			if(float(new_light_length) <= 24):
 				attrs["light_length"] = new_light_length
 			else:
 				attrs["light_length"] = "24"
@@ -327,4 +327,5 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
