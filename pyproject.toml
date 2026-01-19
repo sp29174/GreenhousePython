@@ -7,7 +7,7 @@ description = "It's a python thing that automates a greenhouse."
 license = "MIT"
 requires-python = ">=3.9,<4.0"
 authors = [ { name = "Frank J. Barth" }, { name = "Phillip Spalitta" } ]
-maintainers = [ { name = "Benjamin Shraego" } ]
+maintainers = [ { name = "Benjamin Shrægo" } ]
 keywords = [ "greenhouse", "automation", "the music of the spheres" ]
 dependencies = [ "wheel", "astral", "poetry", "opencv-python", "pillow", "typer", "rich" ]
 readme = "README.md"
