@@ -9,7 +9,7 @@ requires-python = ">=3.9,<4.0"
 authors = [ { name = "Frank J. Barth", email = "frank.barth@outlook.com" }, { name = "Phillip Spalitta", email = "sp29174@students.mcpasd.k12.wi.us" } ]
 maintainers = [ { name = "Benjamin Shrago", email = "bshrago@mcpasd.k12.wi.us" } ]
 keywords = [ "greenhouse", "automation", "the music of the spheres" ]
-dependencies = [ "wheel", "astral", "poetry", "opencv-python", "pillow", "typer", "rich" ]
+dependencies = [ "wheel", "astral", "poetry", "opencv-python", "pillow", "typer", "rich", "wxPython" ]
 readme = "README.md"
 
 [project.optional-dependencies]
