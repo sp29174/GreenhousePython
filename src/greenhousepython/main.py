@@ -146,10 +146,14 @@ def light():
 	global attrs
 	global timeoff
 	observer = Observer(float(attrs["latitude"]),float(attrs["longitude"]),float(attrs["elevation"]))
-	theSun = sun(observer)
+	theSun = sun.daylight(observer)
 	light_on = False
-	if (datetime.now(timezone.utc) > theSun["sunset"]):
-		timeoff = theSun["sunrise"] + timedelta(hours=float(attrs["light_length"]))
+	if (datetime.now(timezone.utc) > theSun[1]):
+		if attrs["is_debug"] == "True":
+			print("We think that it's after sunset.")
+		timeoff = theSun[0] + timedelta(hours=float(attrs["light_length"]))
+	elif attrs["is_debug"] == "True":
+		print("We think that it's before sunset.")
 	if (datetime.now(timezone.utc) < timeoff):
 		light_on = True
 	GPIO.output(int(attrs["lightPin"]), light_on)
@@ -330,6 +334,7 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
