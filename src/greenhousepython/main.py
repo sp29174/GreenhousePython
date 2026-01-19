@@ -211,8 +211,8 @@ def get_data(num):
 	
 # GUI ****************************************************************************************	
 
-class oldGUI:
-	def GUI(self,attrs):#fix attribute handling in here
+class GUI:
+	def __init__(self,attrs):#fix attribute handling in here
 		# window
 		self.window = tk.Tk()
 		self.window.title =('Greenhouse')
@@ -326,6 +326,7 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
