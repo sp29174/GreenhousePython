@@ -7,7 +7,6 @@
 from typer import Typer, Option
 app = Typer()
 attrs = {}
-mode = "CLI"
 
 #read configuration information from cfg.txt and use it
 def getDataAttributes():
@@ -54,12 +53,11 @@ import tkinter as tk
 from tkinter import ttk
 import cv2
 from PIL import Image, ImageTk
-import datetime
-from datetime import timedelta, timezone
-from suntime import Sun
+from datetime import datetime, timedelta, timezone
+from astral import sun, Observer
 
 # Postinitialization
-
+timeoff = datetime.now(timezone.utc)
 # create the spi bus
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
 # create the cs (chip select)
@@ -73,7 +71,6 @@ chan_list = [chan0, chan1, chan2]
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(int(attrs["waterPin"]), GPIO.OUT)
 GPIO.setup(int(attrs["lightPin"]), GPIO.OUT)
-theSun = Sun(float(attrs["latitude"]), float(attrs["longitude"]))
 theCamera = Picamera2()
 camera_cfg = theCamera.create_still_configuration()
 theCamera.start()
@@ -123,53 +120,38 @@ def water(input : float = None):
 	elif attrs["is_debug"] == "True":
 		print("The system says your input is None, BTW")
 	moisture = 0
-	for x in range(3):#this logic must be fixed, it does not comply w/ the design reqs
-		moisture += get_data(x)
-	moisture = moisture / 3
-	if(int(attrs["MAX_VALUE"]) * float(attrs["control_parameter"]) > moisture):
-		GPIO.output(int(attrs["waterPin"]), GPIO.HIGH)
-		print("high")
-	else:
-		GPIO.output(int(attrs["waterPin"]), GPIO.LOW)
-		print("low")
+	for x in range(int(attrs["beds"])):
+		moisture = get_data(x)
+		if (attrs["bed" + str(x)] == "False") and (int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter"]) - float(attrs["deadband"])) < moisture):
+			GPIO.output(int(attrs["waterPin"]), GPIO.HIGH)#replace with whatever turns on bed x
+			attrs["bed" + str(x)] = "True"
+			setAttributes()
+		elif (attrs["bed" + str(x)] == "True") and (int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter"]) + float(attrs["deadband"])) > moisture):
+			GPIO.output(int(attrs["waterPin"]), GPIO.LOW)#replace with whatever turns off bed x
+			attrs["bed" + str(x)] = "False"
+			setAttributes()
 
-# TODO: Fix the Nonsense
 def repeater(output):
 	global attrs
-	global mode
-	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
-	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
-	#print(current_time.time())
-	#print(four_pm.time())
-	#print(current_time.time() > four_pm.time())
-	if (current_time.time() > four_pm.time()) or True:#hacks for days
-		light()
-		water()
-		cameraCapture()
+	light()
+	water()
+	cameraCapture()
 	output.bzone1.config(text = "Left Bed: " + str(get_data(0)))
 	output.bzone2.config(text = "Middle Bed: " + str(get_data(1)))
 	output.bzone3.config(text = "Right Bed: " + str(get_data(2)))
 	output.window.after(int(attrs["interval_in_milliseconds"]), lambda : repeater(output))
 
 @app.command()
-def light(): #Todo: Fix Logic
+def light(): 
 	global attrs
-	global theSun
-	mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
-	# Get today's sunrise and sunset in CST
-	today_sr = theSun.get_sunrise_time() + timedelta(hours=7)
-	today_ss = theSun.get_sunset_time() + timedelta(hours=7)
-	if today_sr > mcpasd:
-		today_sr = today_sr - timedelta(days=1)
-	if today_sr > today_ss:
-		today_ss = today_ss + timedelta(days=1)
-	today_suntime = today_ss - today_sr
-	light_on_time = today_suntime - today_suntime + timedelta(hours = int(attrs["light_length"]))
-	today_suntime = mcpasd - today_sr
-	if(mcpasd.time() > today_ss.time() and today_suntime < light_on_time):
+	global timeoff
+	observer = Observer(float(attrs["latitude"]),float(attrs["longitude"]),float(attrs["elevation"]))
+	theSun = sun.daylight(observer)
+	light_on = False
+	if (datetime.now(timezone.utc) > theSun["sunset"]):
+		timeoff = theSun["sunrise"] + timedelta(hours=float(attrs["light_length"]))
+	if (datetime.now(timezone.utc) < timeoff):
 		light_on = True
-	else:
-		light_on = False
 	GPIO.output(int(attrs["lightPin"]), light_on)
 
 #input camera attributes and capture image, updates attributes and returns new attributes
@@ -316,13 +298,13 @@ class GUI:
 		# captures picture, command= cameraCapture
 		# ISSUE: taking picture on boot
 		#I disagree, that's a feature!
-		self.manual_pic_button = ttk.Button(master = self.layer2_frame, text = "Take Manual\nPicture", command = lambda : self.image_update(attrs,theCamera))
+		self.manual_pic_button = ttk.Button(master = self.layer2_frame, text = "Take Manual\nPicture", command = lambda : self.image_update(attrs))
 		
 		# should start recording function
 		self.start_record = ttk.Button(master = self.layer2_frame, text = attrs["recording_status"])
 		self.light_label = ttk.Label(master = self.layer2_frame, text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length"] + " hours per day.", font = attrs["norm_font"])
 		self.light_cycle = ttk.Entry(master = self.layer2_frame)
-		self.enter_button = ttk.Button(master = self.layer2_frame, text = "Enter Hours", command = lambda : new_light_control("GUI", self))
+		self.enter_button = ttk.Button(master = self.layer2_frame, text = "Enter Hours", command = lambda : new_light_control(self))
 		
 		#packing lower layer
 		self.manual_pic_button.pack(side = 'left', padx = 25, pady = 5)
@@ -333,8 +315,8 @@ class GUI:
 		self.layer2_frame.pack(padx = 5, pady = 5)
 		self.window.after(int(attrs["interval_in_milliseconds"]), lambda : repeater(self))
 		self.window.mainloop()
-	def image_update(self,attrs,camera):
-		cameraCapture(camera)
+	def image_update(self,attrs):
+		cameraCapture()
 		img = ImageTk.PhotoImage(Image.open(lastFileName()))
 		self.image_label.configure(image=img) 
 		self.image_label.image = img
@@ -343,13 +325,23 @@ class GUI:
 @app.command()
 def start_gui():
 	global attrs
-	global mode
-	mode = "GUI"
 	gui = GUI(attrs)
 	
 
 # Finalization and execution ****************************************************************************************
 app()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
