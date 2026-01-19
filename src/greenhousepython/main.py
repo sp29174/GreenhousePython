@@ -7,7 +7,6 @@
 from typer import Typer, Option
 app = Typer()
 attrs = {}
-mode = "CLI"
 
 #read configuration information from cfg.txt and use it
 def getDataAttributes():
@@ -135,7 +134,6 @@ def water(input : float = None):
 
 def repeater(output):
 	global attrs
-	global mode
 	light()
 	water()
 	cameraCapture()
@@ -328,13 +326,12 @@ class GUI:
 @app.command()
 def start_gui():
 	global attrs
-	global mode
-	mode = "GUI"
 	gui = GUI(attrs)
 	
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
