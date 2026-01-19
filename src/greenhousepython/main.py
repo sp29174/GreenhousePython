@@ -48,7 +48,6 @@ else:
 	from nonsense import GPIO, busio, digitalio, board, MCP, AnalogIn
 import tkinter as tk
 from tkinter import ttk
-import wx
 import cv2
 from PIL import Image, ImageTk
 from datetime import datetime, timedelta, timezone
@@ -211,16 +210,9 @@ def get_data(num):
 	return chan_list[num].value
 	
 # GUI ****************************************************************************************	
-class GUI():
-	def __init__(self):
-		global attrs
-		self.app = wx.App(True)
-		self.frame = wx.Frame(None,wx.ID_ANY, "Hello World")
-		self.frame.Show(True)
-		self.app.MainLoop()
 
 class oldGUI:
-	def __init__(self,attrs):#fix attribute handling in here
+	def GUI(self,attrs):#fix attribute handling in here
 		# window
 		self.window = tk.Tk()
 		self.window.title =('Greenhouse')
@@ -326,16 +318,12 @@ class oldGUI:
 @app.command()
 def start_gui():
 	global attrs
-	gui = GUI()
-	
-@app.command()
-def start_old_gui():
-	global attrs
-	gui = oldGUI(attrs)
+	gui = GUI(attrs)
 	
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
