@@ -26,8 +26,7 @@ def setAttributes():
 	accumulator = []
 	keys = attrs.keys()#get all the keys
 	for key in keys:
-		accumulator.append(key + ":" + attrs[key])#assemble key and values into new format
-		accumulator.append("\n")#seperate with newlines
+		accumulator.append(key + ":" + attrs[key] + "\n")#assemble key and values into new format
 	cfg.writelines(accumulator)#append to file
 	cfg.close()
 
@@ -328,3 +327,4 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
