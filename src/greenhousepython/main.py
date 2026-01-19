@@ -211,7 +211,13 @@ def get_data(num):
 	return chan_list[num].value
 	
 # GUI ****************************************************************************************	
-
+class GUI():
+	def __init__(self):
+		global attrs
+		self.app = wx.App(True)
+		self.frame = wx.Frame(None,wx.ID_ANY, "Hello World")
+		self.frame.Show(True)
+		self.app.MainLoop()
 
 class oldGUI:
 	def __init__(self,attrs):#fix attribute handling in here
@@ -320,11 +326,7 @@ class oldGUI:
 @app.command()
 def start_gui():
 	global attrs
-	global attrs
-	self.app = wx.App(True)
-	self.frame = wx.Frame(None,wx.ID_ANY, "Hello World")
-	self.frame.Show(True)
-	self.MainLoop()
+	gui = GUI()
 	
 @app.command()
 def start_old_gui():
@@ -334,6 +336,7 @@ def start_old_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
