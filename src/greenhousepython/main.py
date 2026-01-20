@@ -105,8 +105,6 @@ def water(input : float = None):
 	run_pump = False
 	for x in range(int(attrs["beds"])):
 		moisture = chan_list[x].value
-		if (attrs["bed" + str(x)] == "True"):
-			run_pump = True#If any bed is on, then run the pump.
 		if (attrs["bed" + str(x)] == "False") and (moisture < int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter"]) - (float(attrs["deadband"])/2))):
 			GPIO.output(int(attrs["waterPin" + str(x)]), GPIO.HIGH)
 			attrs["bed" + str(x)] = "True"
@@ -115,6 +113,8 @@ def water(input : float = None):
 			GPIO.output(int(attrs["waterPin" + str(x)]), GPIO.LOW)
 			attrs["bed" + str(x)] = "False"
 			setAttributes()
+		if (attrs["bed" + str(x)] == "True"):
+			run_pump = True#If any bed is on, then run the pump.
 	if run_pump:
 		GPIO.output(int(attrs["pumpPin"]), GPIO.HIGH)
 	else:
@@ -330,6 +330,7 @@ class GUI:
 	
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
