@@ -314,11 +314,12 @@ class GUI:
 		self.bzone2.config(text = "Middle Bed: " + str(chan_list[1].value))
 		self.bzone3.config(text = "Right Bed: " + str(chan_list[2].value))
 		self.interval_label.config(text = 'Interval is set to ' + attrs["interval_in_milliseconds"] + "milliseconds.")
-		self.capture_label.config(text = text = "There have been" + attrs["last_file_number"] + "captures\nsince last time-lapse.")
+		self.capture_label.config(text = "There have been" + attrs["last_file_number"] + "captures\nsince last time-lapse.")
 		self.window.after(int(attrs["interval_in_milliseconds"]), lambda : self.repeater())
 
 	
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
