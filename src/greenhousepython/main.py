@@ -127,24 +127,23 @@ def light():
 
 #input camera attributes and capture image, updates attributes and returns new attributes
 @app.command()
-def cameraCapture():#update to not badly reimplement last_file_name
+def cameraCapture():#updated to not badly reimplement last_file_name
 	global theCamera
 	global attrs
 	if attrs["use_camera"] == "False":
 		if attrs["is_debug"] == "True":
 			print("We won't genertate an image, actually")
 		return attrs
-	name = "../../images/" + attrs["file_name_prefix"] + (str(int(attrs["last_file_number"]) + 1)) + ".jpg"
-	theCamera.capture_file(name)
+	theCamera.capture_file(FileName(int(attrs["last_file_number"]) + 1))
 	attrs["last_file_number"] = str(int(attrs["last_file_number"]) + 1)
 	setAttributes()
 	return attrs
 
-def lastFileName():
+def FileName(fileNumber):
     global attrs
-    if (int(attrs["last_file_number"]) == 0):
+    if (fileNumber == 0):
         return "../../images/placeholder.jpg"
-    return "../../images/" + attrs["file_name_prefix"] + str(attrs["last_file_number"]) + ".jpg"
+    return "../../images/" + attrs["file_name_prefix"] + str(fileNumber) + ".jpg"
 
 @app.command()
 def create_video(image_paths, output_video_path : str, fps : int = 24, size : str = None):
@@ -202,7 +201,7 @@ class GUI:
 		
 		# image information
 		self.image_frame = ttk.Frame(master = self.layer1_frame)
-		self.image = Image.open(lastFileName())
+		self.image = Image.open(FileName(int(attrs["last_file_number"])))
 		self.image2 = self.image.resize((640, 480))
 		self.last_plant_image = ImageTk.PhotoImage(self.image2)#BUG: initial image is too big
 		self.image_label = ttk.Label(master = self.image_frame, image = self.last_plant_image)
@@ -276,7 +275,7 @@ class GUI:
 	#update the image
 	def image_update(self,attrs):
 		cameraCapture()
-		img = ImageTk.PhotoImage(Image.open(lastFileName()))
+		img = ImageTk.PhotoImage(Image.open(FileName(int(attrs["last_file_number"]))))
 		self.image_label.configure(image=img) 
 		self.image_label.image = img
 	# Set light_length to the stored input value
@@ -319,6 +318,7 @@ def start_gui():
 	
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
