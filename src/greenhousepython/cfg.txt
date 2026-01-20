@@ -9,7 +9,10 @@ latitude:43.0972
 longitude:-89.5043
 elevation:0.0
 lightPin:21
-waterPin:16
+pumpPin:15
+waterPin0:16
+waterPin1:17
+waterPin2:18
 MAX_VALUE:1024
 control_parameter:0.0
 use_camera:False
