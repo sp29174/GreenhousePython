@@ -72,6 +72,7 @@ chan1 = AnalogIn(mcp, MCP.P1)
 chan2 = AnalogIn(mcp, MCP.P2)
 chan_list = [chan0, chan1, chan2]
 GPIO.setmode(GPIO.BCM)
+GPIO.setup(int(attrs["pumpPin"]), GPIO.OUT)
 for x in range(int(attrs["beds"])):
 	GPIO.setup(int(attrs["waterPin"+str(x)]), GPIO.OUT)
 GPIO.setup(int(attrs["lightPin"]), GPIO.OUT)
@@ -101,8 +102,11 @@ def water(input : float = None):
 	elif attrs["is_debug"] == "True":
 		print("The system says your input is None, BTW")
 	moisture = 0
+	run_pump = False
 	for x in range(int(attrs["beds"])):
 		moisture = chan_list[x].value
+		if (attrs["bed" + str(x)] == "True"):
+			run_pump = True#If any bed is on, then run the pump.
 		if (attrs["bed" + str(x)] == "False") and (moisture < int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter"]) - (float(attrs["deadband"])/2))):
 			GPIO.output(int(attrs["waterPin" + str(x)]), GPIO.HIGH)
 			attrs["bed" + str(x)] = "True"
@@ -111,6 +115,10 @@ def water(input : float = None):
 			GPIO.output(int(attrs["waterPin" + str(x)]), GPIO.LOW)
 			attrs["bed" + str(x)] = "False"
 			setAttributes()
+	if run_pump:
+		GPIO.output(int(attrs["pumpPin"]), GPIO.HIGH)
+	else:
+		GPIO.output(int(attrs["pumpPin"]), GPIO.LOW)
 
 @app.command()
 def light(): 
@@ -322,6 +330,7 @@ class GUI:
 	
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
