@@ -147,7 +147,7 @@ def cameraCapture():#updated to not badly reimplement last_file_name
 	return attrs
 
 @app.command()
-def create_video(image_paths, output_video_path : str, fps : int = 24, size : str = None):
+def create_video(image_paths, output_video_path : str, fps : int = 24, size : str = None):#update to automatically build image_paths
 	if not image_paths:
 		raise ValueError("The list of image paths is empty")
 	first_frame = cv2.imread(image_paths[0])
@@ -213,8 +213,8 @@ class GUI:
 		self.image_label = ttk.Label(master = self.image_frame, image = self.last_plant_image)
 		
 		self.image_label_frame = ttk.Frame(master = self.image_frame)
-		self.interval_label = ttk.Label(master = self.image_label_frame, text = 'Interval is set to ' + attrs["interval_in_milliseconds"] + "milliseconds.", font = attrs["norm_font"])
-		self.capture_label = ttk.Label(master = self.image_label_frame, text = "There have been" + attrs["last_file_number"] + "captures\nsince last time-lapse.", font = attrs["norm_font"])
+		self.interval_label = ttk.Label(master = self.image_label_frame, text = 'Interval is set to ' + attrs["interval_in_milliseconds"] + " milliseconds.", font = attrs["norm_font"])
+		self.capture_label = ttk.Label(master = self.image_label_frame, text = "There have been " + attrs["last_file_number"] + " captures\nsince last time-lapse.", font = attrs["norm_font"])
 		
 		# packing image stuff
 		self.image_label.pack(side = 'left', padx = 10, pady = 10)
@@ -313,13 +313,14 @@ class GUI:
 		self.bzone1.config(text = "Left Bed: " + str(chan_list[0].value))
 		self.bzone2.config(text = "Middle Bed: " + str(chan_list[1].value))
 		self.bzone3.config(text = "Right Bed: " + str(chan_list[2].value))
-		self.interval_label.config(text = 'Interval is set to ' + attrs["interval_in_milliseconds"] + "milliseconds.")
-		self.capture_label.config(text = "There have been" + attrs["last_file_number"] + "captures\nsince last time-lapse.")
+		self.interval_label.config(text = 'Interval is set to ' + attrs["interval_in_milliseconds"] + " milliseconds.")
+		self.capture_label.config(text = "There have been " + attrs["last_file_number"] + " captures\nsince last time-lapse.")
 		self.window.after(int(attrs["interval_in_milliseconds"]), lambda : self.repeater())
 
 	
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
