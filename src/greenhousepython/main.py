@@ -106,10 +106,9 @@ def new_light_control(output = None):
 			setAttributes()
 			output.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length"] + " hours per day.")
 		except ValueError as e:
-			print("Invalid value entered. Please enter a valid value.")
-			print("length is still " + attrs["light_length"])
+			output.light_label.config(text = "Nope. That's not a number of hours the selected\ngrowlight can remain on.\nStill " + attrs["light_length"] + " hours per day.")
 
-#break things into 20% intervals from 0 to 50k based on the values returned from the MCP
+#control pumps using hysteresis based on the values returned from the MCP
 @app.command()
 def water(input : float = None):
 	global attrs
@@ -121,11 +120,11 @@ def water(input : float = None):
 	moisture = 0
 	for x in range(int(attrs["beds"])):
 		moisture = get_data(x)
-		if (attrs["bed" + str(x)] == "False") and (moisture < int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter"]) - float(attrs["deadband"]))):
+		if (attrs["bed" + str(x)] == "False") and (moisture < int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter"]) - (float(attrs["deadband"])/2))):
 			GPIO.output(int(attrs["waterPin"]), GPIO.HIGH)#replace with whatever turns on bed x
 			attrs["bed" + str(x)] = "True"
 			setAttributes()
-		elif (attrs["bed" + str(x)] == "True") and (moisture > int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter"]) + float(attrs["deadband"]))):
+		elif (attrs["bed" + str(x)] == "True") and (moisture > int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter"]) + (float(attrs["deadband"])/2))):
 			GPIO.output(int(attrs["waterPin"]), GPIO.LOW)#replace with whatever turns off bed x
 			attrs["bed" + str(x)] = "False"
 			setAttributes()
@@ -167,6 +166,8 @@ def cameraCapture():#update to not badly reimplement last_file_name
 	global theCamera
 	global attrs
 	if attrs["use_camera"] == "False":
+		if attrs["is_debug"] == "True":
+			print("We won't genertate an image, actually")
 		return attrs
 	name = "../../images/" + attrs["file_name_prefix"] + (str(int(attrs["last_file_number"]) + 1)) + ".jpg"
 	theCamera.capture_file(name)
@@ -319,6 +320,7 @@ def start_gui():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
