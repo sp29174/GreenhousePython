@@ -46,7 +46,7 @@ This project integrates sensors, relays, a GUI, and camera control to create a f
 		cd ~/ && sudo apt install --install-recommends xvfb fortunes fortune g++ libkms++-dev pkgconf ffmpeg libopenjp2-7 libcamera-dev libfmt-dev libdrm-dev git pipx gcc gcc-aarch64-linux-gnu libcap-dev python3-dev python3-tk libsm6 libgl1 && git clone https://github.com/sp29174/GreenhousePython.git && pipx ensurepath && reboot
 
 	💡In order to run this software, you will need other, different dependencies. In order to get them, you can run this command. It will start the script, and you should be able to control the greenhouse. We do not yet have the camera nonsense working, hence the camera-nonsense extra is broken. Do not use it, unless you can fix it, in which case, DM me.
-		cd ~/ && pipx install -vvv poetry && cd ./GreenhousePython && poetry install -vvv --all-groups --extras rpi --compile && cd ./src/greenhousepython && xvfb-run poetry run -vvv python -vvi ./main.py start-gui
+		cd ~/ && pipx install -vvv poetry && cd ./GreenhousePython && poetry install -vvv --all-groups --extras dev rpi --compile && cd ./src/greenhousepython && xvfb-run poetry run -vvv python -vvi ./main.py start-gui
 
 	😵‍💫Need a wheel? Conveniently, I made that real simple:
 		cd ~/GreenhousePython && poetry build -f wheel
