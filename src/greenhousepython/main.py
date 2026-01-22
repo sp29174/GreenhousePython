@@ -93,14 +93,9 @@ def change_setting(key : str, value : str):
 
 #control pumps using hysteresis based on the values returned from the MCP
 @app.command()
-def water(input : float = None):
+def water():
 	global attrs
 	global chan_list
-	if input != None:
-		attrs["control_parameter"] = str(input)
-		setAttributes()
-	elif attrs["is_debug"] == "True":
-		print("The system says your input is None, BTW")
 	moisture = 0
 	run_pump = False
 	for x in range(int(attrs["beds"])):
@@ -245,7 +240,7 @@ class GUI:
 		self.moisture_label = ttk.Label(master = self.moisture_frame, text = "Select Moisture Level", font = attrs["norm_font"])
 		self.top_buttons = ttk.Frame(master = self.moisture_frame)
 		self.bar_state = 0.0
-		self.slider = ttk.Scale(self.top_buttons, from_=0, to=1, orient="horizontal", variable=self.bar_state, command = lambda event: water(self.bar_state))
+		self.slider = ttk.Scale(self.top_buttons, from_=0, to=1, orient="horizontal", variable=self.bar_state, command = lambda event: self.new_water_control())
 
 		
 		# far right packing
@@ -326,8 +321,12 @@ class GUI:
 		self.interval_label.config(text = 'Interval is set to ' + attrs["interval_in_milliseconds"] + " milliseconds.")
 		self.capture_label.config(text = "There have been " + attrs["last_file_number"] + " captures\nsince last time-lapse.")
 		self.window.after(int(attrs["interval_in_milliseconds"]), lambda : self.repeater())
+	def new_water_control(self)
+		attrs["control_parameter"] = str(self.bar_state)
+		setAttributes()
+		water()
 
-	
+
 # Finalization and execution ****************************************************************************************
 app()
 
