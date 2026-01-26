@@ -4,7 +4,7 @@
 
 #Preinitialization ****************************************************************************************
 
-from typer import Typer, Option
+from typer import Typer
 import pkgutil
 app = Typer()
 attrs = {}
@@ -334,6 +334,7 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
