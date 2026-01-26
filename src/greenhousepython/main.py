@@ -326,7 +326,7 @@ class GUI:
 		self.interval_label.config(text = 'Interval is set to ' + attrs["interval_in_milliseconds"] + " milliseconds.")
 		self.capture_label.config(text = "There have been " + attrs["last_file_number"] + " captures\nsince last time-lapse.")
 		self.window.after(int(attrs["interval_in_milliseconds"]), lambda : self.repeater())
-	def new_water_control(self)
+	def new_water_control(self):
 		attrs["control_parameter"] = str(self.bar_state)
 		setAttributes()
 		water()
@@ -334,6 +334,7 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
