@@ -153,7 +153,10 @@ def cameraCapture():#updated to not badly reimplement last_file_name
 	return attrs
 
 @app.command()
-def create_video(image_paths, output_video_path : str, fps : int = 24, size : str = None):#update to automatically build image_paths
+def create_video(output_video_path : str, fps : int = 24, size : str = None):#update to automatically build image_paths
+	image_paths = []
+	for num in range(1,int(attrs["last_file_number"])):
+		image_paths.append(FileName(num))
 	if not image_paths:
 		raise ValueError("The list of image paths is empty")
 	first_frame = cv2.imread(image_paths[0])
@@ -331,6 +334,7 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
