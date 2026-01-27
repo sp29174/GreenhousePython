@@ -55,6 +55,7 @@ except ImportError:
 import tkinter as tk
 from tkinter import ttk
 import gi
+gi.require_version("Gtk", "4.0")
 from gi.repository import GLib, Gtk
 import cv2
 from PIL import Image, ImageTk
@@ -336,9 +337,13 @@ class GUI:
 
 #GTK GUI def goes here
 
+class gtkGUI(Gtk.Application):
+	def __init__(self):
+		super().__init__()#fixme
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
