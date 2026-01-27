@@ -351,9 +351,13 @@ class Application(Gtk.Application):
 class GTKWindow(Gtk.ApplicationWindow):
 	def __init__(self,thing):
 		super().__init__(application=thing)
+		self.notebook = Gtk.Notebook()
+		self.set_child(self.notebook)
+		#stuff goes here
 		
 
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
