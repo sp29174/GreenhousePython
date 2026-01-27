@@ -43,7 +43,7 @@ This project integrates sensors, relays, a GUI, and camera control to create a f
 		sudo do-release-upgrade -d && reboot
 	
 	💡In order to build this software, you will need some dependencies. In order to get them, you can run these commands.
-		cd ~/ && sudo apt install --install-recommends fortunes fortune g++ libkms++-dev pkgconf ffmpeg libopenjp2-7 libcamera-dev libfmt-dev libdrm-dev git pipx gcc gcc-aarch64-linux-gnu libcap-dev python3-dev python3-tk libgl1 && git clone https://github.com/sp29174/GreenhousePython.git && pipx ensurepath && exec $SHELL 
+		cd ~/ && sudo apt install --install-recommends fortunes fortune g++ libkms++-dev pkgconf ffmpeg libopenjp2-7 libcamera-dev libfmt-dev libdrm-dev git pipx gcc gcc-aarch64-linux-gnu libcap-dev python3-dev python3-tk libgl1 libgtk-4-1 && git clone https://github.com/sp29174/GreenhousePython.git && pipx ensurepath && exec $SHELL 
 		cd ~/ && pipx install -vvv poetry && cd ./GreenhousePython && poetry install -vvv --all-groups --extras dev --extras rpi --compile && cd ./src/greenhousepython && poetry run -vvv python -vvi ./main.py start-gui
 
 	😵‍💫Need a wheel? Conveniently, I made that real simple:
