@@ -341,7 +341,7 @@ class GUI:
 
 class Application(Gtk.Application):
 	def __init__(self):
-		super().__init__()
+		super().__init__(application_id="com.github.sp29174.GreenhousePython")
 		self.connect("activate",do_activate)
 		self.run(None)
 	def do_activate(self):
@@ -356,3 +356,4 @@ class GTKWindow(Gtk.ApplicationWindow):
 
 # Finalization and execution ****************************************************************************************
 app()
+
