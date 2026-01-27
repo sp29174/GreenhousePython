@@ -199,7 +199,7 @@ def start_gui():
 
 @app.command()
 def start_gtk_gui():
-	sys.exit(Application().run(sys.argv))
+	gui = GTKGUI()
 
 # GUI ****************************************************************************************	
 
@@ -339,25 +339,35 @@ class GUI:
 
 #GTK GUI def goes here
 
-class Application(Gtk.Application):
+class GTKGUI(Gtk.ApplicationWindow):
 	def __init__(self):
-		super().__init__(application_id="com.github.sp29174.GreenhousePython")
-		self.connect("activate",do_activate)
-		self.run(None)
-	def do_activate(self):
-		self.window = GTKWindow(self)
-		self.window.present()
-
-class GTKWindow(Gtk.ApplicationWindow):
-	def __init__(self,thing):
-		super().__init__(application=thing)
+		self.app = Gtk.Application(application_id="com.github.sp29174.GreenhousePython")
+		self.app.connect("activate",do_activate)
+		sys.exit(self.app.run(sys.argv))
+		super().__init__(application=self.app)
 		self.notebook = Gtk.Notebook()
 		self.set_child(self.notebook)
 		#stuff goes here
+		self.CameraPage = Gtk.Box()
+		self.CameraPage.append(Gtk.Label(label="This is a test of whether the camera page will work."))
+		self.notebook.append_page(self.CameraPage,Gtk.Label(label="Camera Control"))
+		self.WaterPage = Gtk.Box()
+		self.WaterPage.append(Gtk.Label(label="This is a test of whether the water page works."))
+		self.notebook.append_page(self.WaterPage,Gtk.Label(label="Water Control"))
+		self.LightPage = Gtk.Box()
+		self.LightPage.append(Gtk.Label(label="This is a test of whether the light page works."))
+		self.notebook.append_page(self.WaterPage,Gtk.Label(label="Light Control"))
+		self.MiscPage = Gtk.Box()
+		self.MiscPage.append(Gtk.Label(label="This is a test of whether the miscellaneous page works."))
+		self.notebook.append_page(self.WaterPage,Gtk.Label(label="Miscellaneous"))
+	def do_activate(self):
+		self.present()
 		
+
 
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
