@@ -369,7 +369,7 @@ class GTKGUI():
 		self.LightPage = Gtk.Box()
 		self.LightPage.append(Gtk.Label(label="This is a test of whether sliders word."))
 		self.LightSliderAdjustment = Gtk.Adjustment(0,0,1,sys.float_info.epsilon,0,0)
-		self.LightPage.append(Gtk.Scale(Gtk.Orientation.HORIZONTAL)
+		self.LightPage.append(Gtk.Scale(Gtk.Orientation.HORIZONTAL,self.LightSliderAdjustment))
 		self.notebook.append_page(self.LightPage,Gtk.Label(label="Light Control"))
 		self.MiscPage = Gtk.Box()
 		self.MiscPage.append(Gtk.Label(label="This is a test of whether the miscellaneous page works."))
@@ -380,6 +380,7 @@ class GTKGUI():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
