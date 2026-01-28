@@ -350,9 +350,7 @@ class GTKGUI():
 		print("we get to a weird place")
 	def do_activate(self,useless):
 		global attrs
-		print("we get here")
 		self.window = Gtk.ApplicationWindow(application=self.App)
-		print("we can window")
 		self.notebook = Gtk.Notebook()
 		self.window.set_child(self.notebook)
 		#stuff goes here
@@ -374,12 +372,11 @@ class GTKGUI():
 		self.MiscPage = Gtk.Box()
 		self.MiscPage.append(Gtk.Label(label="This is a test of whether the miscellaneous page works."))
 		self.notebook.append_page(self.MiscPage,Gtk.Label(label="Miscellaneous"))
-		print("we can gui")
 		self.window.present()
-		print("we can run")
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
