@@ -340,13 +340,20 @@ class GUI:
 
 #GTK GUI def goes here
 
-class GTKGUI(Gtk.ApplicationWindow):
+class GTKGUI():
 	def __init__(self):
-		self.app = Gtk.Application(application_id="com.github.sp29174.GreenhousePython")
-		self.app.connect("activate",self.do_activate)
-		super().__init__(application=self.app)
+		self.App = Gtk.Application(application_id="com.github.sp29174.GreenhousePython")
+		print("we have super")
+		self.App.connect("activate",self.do_activate)
+		print("we can bind")
+		self.App.run(None)
+		print("we get to a weird place")
+	def do_activate(self,useless):
+		print("we get here")
+		self.window = Gtk.ApplicationWindow(application=self.App)
+		print("we can window")
 		self.notebook = Gtk.Notebook()
-		self.set_child(self.notebook)
+		self.window.set_child(self.notebook)
 		#stuff goes here
 		self.CameraPage = Gtk.Box()
 		self.CameraPage.append(Gtk.Label(label="This is a test of whether the camera page will work."))
@@ -360,11 +367,12 @@ class GTKGUI(Gtk.ApplicationWindow):
 		self.MiscPage = Gtk.Box()
 		self.MiscPage.append(Gtk.Label(label="This is a test of whether the miscellaneous page works."))
 		self.notebook.append_page(self.MiscPage,Gtk.Label(label="Miscellaneous"))
-		sys.exit(self.app.run(sys.argv))
-	def do_activate(self):
-		self.present()
+		print("we can gui")
+		self.window.present()
+		print("we can run")
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
