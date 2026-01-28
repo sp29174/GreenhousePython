@@ -342,8 +342,7 @@ class GUI:
 class GTKGUI(Gtk.ApplicationWindow):
 	def __init__(self):
 		self.app = Gtk.Application(application_id="com.github.sp29174.GreenhousePython")
-		self.app.connect("activate",do_activate)
-		sys.exit(self.app.run(sys.argv))
+		self.app.connect("activate",self.do_activate)
 		super().__init__(application=self.app)
 		self.notebook = Gtk.Notebook()
 		self.set_child(self.notebook)
@@ -360,14 +359,9 @@ class GTKGUI(Gtk.ApplicationWindow):
 		self.MiscPage = Gtk.Box()
 		self.MiscPage.append(Gtk.Label(label="This is a test of whether the miscellaneous page works."))
 		self.notebook.append_page(self.WaterPage,Gtk.Label(label="Miscellaneous"))
+		sys.exit(self.app.run(sys.argv))
 	def do_activate(self):
 		self.present()
-		
-
-
 
 # Finalization and execution ****************************************************************************************
 app()
-
-
-
