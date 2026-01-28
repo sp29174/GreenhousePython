@@ -365,17 +365,19 @@ class GTKGUI():
 			self.WaterPage.append_page(self.waterpages[n],Gtk.Label(label="Bed" + str(n)))
 		self.notebook.append_page(self.WaterPage,Gtk.Label(label="Water Control"))
 		self.LightPage = Gtk.Box()
-		self.LightPage.append(Gtk.Label(label="This is a test of whether sliders word."))
+		self.LightPage.append(Gtk.Label(label="This is a test of whether sliders work."))
 		self.LightAdjustment = Gtk.Adjustment.new(0,0,1,0.01,0.1,10)
 		self.LightPage.append(Gtk.Scale.new(Gtk.Orientation.HORIZONTAL,self.LightAdjustment))
 		self.notebook.append_page(self.LightPage,Gtk.Label(label="Light Control"))
 		self.MiscPage = Gtk.Box()
-		self.MiscPage.append(Gtk.Label(label="This is a test of whether the miscellaneous page works."))
+		self.MiscPage.append(Gtk.Label(label="This is a test of whether buttons work."))
+		self.MiscPage.append(Gtk.Button.new_with_label("this is a button."))
 		self.notebook.append_page(self.MiscPage,Gtk.Label(label="Miscellaneous"))
 		self.window.present()
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
