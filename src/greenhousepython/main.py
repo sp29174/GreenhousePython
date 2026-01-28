@@ -52,6 +52,7 @@ try:
 	from adafruit_mcp3xxx.analog_in import AnalogIn
 except ImportError:
 	from nonsense import GPIO, busio, digitalio, board, MCP, AnalogIn
+import sys
 import tkinter as tk
 from tkinter import ttk
 import gi
@@ -365,3 +366,4 @@ class GTKGUI(Gtk.ApplicationWindow):
 
 # Finalization and execution ****************************************************************************************
 app()
+
