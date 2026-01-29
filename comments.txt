@@ -5,3 +5,4 @@ Comments:
 17 DEC 2025: libkms++-dev is currently not on the default package index of any LTS distribution of ubuntu. There goes an hour of my life!
 13 JAN 2025: I'm sick and tired of having the wrong version of libcamera-dev. With this kludgy patch, no more!
 16 JAN 2025: To get repeater to work without hanging up the shell, this is probably going to be coroutines all the way down.
+29 JAN 2025: I've torn out all mention of Tk. Victory!
