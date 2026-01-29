@@ -372,10 +372,12 @@ class GTKGUI():
 			self.waterscales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
 			self.waterscales[n].set_hexpand(True)
 			self.waterscales[n].set_vexpand(True)
+			self.waterscales[n].connect("value-changed" , lambda scroll , value : self.doUpdateWaterControl(n,value))
 			self.waterpages[n].set_center_widget(self.waterscales[n])
 			self.deadbandscales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
 			self.deadbandscales[n].set_hexpand(True)
 			self.deadbandscales[n].set_vexpand(True)
+			self.waterscales[n].connect("value-changed" , lambda scroll , value : self.doUpdateDeadband(n,value))
 			self.waterpages[n].set_end_widget(self.deadbandscales[n])
 			self.WaterPage.append_page(self.waterpages[n],Gtk.Label(label="Bed " + str(n)))
 		self.notebook.append_page(self.WaterPage,Gtk.Label(label="Water Control"))
@@ -400,9 +402,16 @@ class GTKGUI():
 		self.SettingsPage.append(Gtk.Label(label="This is a test of whether buttons work."))
 		self.SettingsPage.append_page(self.HelpPage,Gtk.Label(label="Settigs"))
 		self.window.present()
+	def doUpdateWaterControl(self,n,value):
+		global attrs
+		attrs["control_parameter" + str(n)] = str(value)
+	def doUpdateDeadband(self,n,value):
+		global attrs
+		attrs["deadband" + str(n)] = str(value)
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
