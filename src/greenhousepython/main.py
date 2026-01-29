@@ -64,7 +64,9 @@ from datetime import datetime, timedelta, timezone
 from astral import sun, Observer
 
 # Postinitialization ****************************************************************************************
-timeoff = datetime.now(timezone.utc)
+timesoff = []
+for n in range(int(attrs["lights"])):
+	timesoff.append(datetime.now(timezone.utc))
 # create the spi bus
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
 # create the cs (chip select)
@@ -122,23 +124,25 @@ def water():
 @app.command()
 def light(): 
 	global attrs
-	global timeoff
+	global timesoff
 	observer = Observer(float(attrs["latitude"]),float(attrs["longitude"]),float(attrs["elevation"]))
 	theSun = sun.daylight(observer)
-	light_on = False
 	if (datetime.now(timezone.utc) > theSun[1]):
 		if attrs["is_debug"] == "True":
 			print("We think that it's after sunset.")
-		timeoff = theSun[0] + timedelta(hours=float(attrs["light_length"]))
+		for n in range(int(attrs["lights"])):
+			timesoff[n] = theSun[0] + timedelta(hours=float(attrs["light_length" + str(n)]))
 	elif attrs["is_debug"] == "True":
 		print("We think that it's before sunset.")
-	if (datetime.now(timezone.utc) < timeoff):
-		light_on = True
-		if attrs["is_debug"] == "True":
-			print("The light should be on.")
-	elif attrs["is_debug"] == "True":
-		print("The light should be off.")
-	GPIO.output(int(attrs["lightPin"]), light_on)
+	for n in range(int(attrs["lights"])):
+		light_on = False
+		if (datetime.now(timezone.utc) < timesoff[n]):
+			light_on = True
+			if attrs["is_debug"] == "True":
+				print("The light should be on.")
+		elif attrs["is_debug"] == "True":
+			print("The light should be off.")
+		GPIO.output(int(attrs["lightPin" + str(n)]), light_on)
 
 #input camera attributes and capture image, updates attributes and returns new attributes
 @app.command()
@@ -309,17 +313,17 @@ class GUI:
 		if (new_light_length != ""):#I don't fully understand why this if statement is here
 			try:#Catch-all
 				if(float(new_light_length) > 24):#No superlights for you
-					attrs["light_length"] = "24"
+					attrs["light_length0"] = "24"
 				elif (float(new_light_length) < 0):#No antilights for you
-					attrs["light_length"]  = "0"
+					attrs["light_length0"]  = "0"
 				else:
-					attrs["light_length"] = new_light_length#set lights
+					attrs["light_length0"] = new_light_length#set lights
 				if attrs["is_debug"] == "True":
-					print(attrs["light_length"])
+					print(attrs["light_length0"])
 				setAttributes()
-				self.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length"] + " hours per day.")
+				self.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length0"] + " hours per day.")
 			except ValueError as e:
-				self.light_label.config(text = "Nope. That's not a number of hours the selected\ngrowlight can remain on.\nStill " + attrs["light_length"] + " hours per day.")
+				self.light_label.config(text = "Nope. That's not a number of hours the selected\ngrowlight can remain on.\nStill " + attrs["light_length0"] + " hours per day.")
 	def repeater(self):
 		global attrs
 		global chan_list
@@ -385,6 +389,7 @@ class GTKGUI():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
