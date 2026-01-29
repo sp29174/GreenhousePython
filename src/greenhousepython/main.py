@@ -53,8 +53,6 @@ try:
 except ImportError:
 	from nonsense import GPIO, busio, digitalio, board, MCP, AnalogIn
 import sys
-import tkinter as tk
-from tkinter import ttk
 import gi
 gi.require_version("Gtk", "4.0")
 from gi.repository import GLib, Gtk
@@ -205,150 +203,9 @@ def start_gui():
 	global attrs
 	gui = GUI()
 
-@app.command()
-def start_gtk_gui():
-	gui = GTKGUI()
-
 # GUI ****************************************************************************************	
 
-#this class' days are numbered 
 class GUI:
-	def __init__(self):#fix attribute handling in here
-		global attrs
-		global chan_list
-		
-		# window
-		self.window = tk.Tk()
-		self.window.title =('Greenhouse')
-		self.window.geometry(attrs["resolution"])
-		
-		# title
-		self.title_label = ttk.Label(master = self.window, text = 'Greenhouse', font = attrs["header_font"])
-		self.title_label.pack()
-		
-		#first layer
-		self.layer1_frame = ttk.Frame(master = self.window)
-		
-		# image information
-		self.image_frame = ttk.Frame(master = self.layer1_frame)
-		self.image = Image.open(FileName(int(attrs["last_file_number"])))
-		self.image2 = self.image.resize((640, 480))
-		self.last_plant_image = ImageTk.PhotoImage(self.image2)#BUG: initial image is too big
-		self.image_label = ttk.Label(master = self.image_frame, image = self.last_plant_image)
-		
-		self.image_label_frame = ttk.Frame(master = self.image_frame)
-		self.interval_label = ttk.Label(master = self.image_label_frame, text = 'Interval is set to ' + attrs["interval_in_milliseconds"] + " milliseconds.", font = attrs["norm_font"])
-		self.capture_label = ttk.Label(master = self.image_label_frame, text = "There have been " + attrs["last_file_number"] + " captures\nsince last time-lapse.", font = attrs["norm_font"])
-		
-		# packing image stuff
-		self.image_label.pack(side = 'left', padx = 10, pady = 10)
-		self.interval_label.pack(padx = 5, pady = 30)
-		self.capture_label.pack(padx = 5, pady = 5)
-		self.image_label_frame.pack(side = 'left', padx = 10, pady = 10)
-		self.image_frame.pack(side = 'left')
-		
-		# far right info
-		self.top_right_frame = ttk.Frame(master = self.layer1_frame)
-		self.last_capture = ttk.Label(master = self.top_right_frame, text = 'Last capture was taken ___ minutes ago.', font = attrs["norm_font"])
-		self.zone_frame = ttk.Frame(master = self.top_right_frame)
-		self.zone_label = ttk.Label(master = self.zone_frame, text = "Zone Moistures", font = attrs["norm_font"])
-		self.bzone1 = ttk.Button(master = self.zone_frame, text = "Left Bed: " + str(chan_list[0].value))
-		self.bzone2 = ttk.Button(master = self.zone_frame, text = "Middle Bed: " + str(chan_list[1].value))
-		self.bzone3 = ttk.Button(master = self.zone_frame, text = "Right Bed: " + str(chan_list[2].value))
-
-		self.moisture_frame = ttk.Frame(master = self.top_right_frame)
-		self.moisture_label = ttk.Label(master = self.moisture_frame, text = "Select Moisture Level", font = attrs["norm_font"])
-		self.top_buttons = ttk.Frame(master = self.moisture_frame)
-		self.bar_state = 0.0
-		self.slider = ttk.Scale(self.top_buttons, from_=0, to=1, orient="horizontal", variable=self.bar_state, command = lambda event: self.new_water_control())
-
-		
-		# far right packing
-		self.last_capture.pack(padx = 10, pady = 20)
-		self.zone_label.pack(padx = 10, pady = 20)
-		self.bzone1.pack(side = 'left', padx = 5, pady = 5)
-		self.bzone2.pack(side = 'left', padx = 5, pady = 5)
-		self.bzone3.pack(side = 'left', padx = 5, pady = 5)
-		self.zone_frame.pack(padx = 10, pady = 10)
-		
-		self.moisture_label.pack(padx = 5, pady = 20)
-		self.slider.pack(padx = 5, pady = 5)
-		self.top_buttons.pack(padx = 5, pady = 5)
-		self.moisture_frame.pack(padx = 10, pady = 10)
-		
-		self.top_right_frame.pack(padx=10, pady=10)
-		self.layer1_frame.pack(padx = 20, pady = 20)
-		
-		# lower layer
-		self.layer2_frame = ttk.Frame(master = self.window)
-		
-		# captures picture, command= cameraCapture
-		# ISSUE: taking picture on boot
-		#I disagree, that's a feature!
-		self.manual_pic_button = ttk.Button(master = self.layer2_frame, text = "Take Manual\nPicture", command = lambda : self.image_update())
-		
-		# should start recording function
-		self.start_record = ttk.Button(master = self.layer2_frame, text = attrs["recording_status"])
-		self.light_label = ttk.Label(master = self.layer2_frame, text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length"] + " hours per day.", font = attrs["norm_font"])
-		self.light_cycle = ttk.Entry(master = self.layer2_frame)
-		self.enter_button = ttk.Button(master = self.layer2_frame, text = "Enter Hours", command = lambda : self.new_light_control())
-		
-		#packing lower layer
-		self.manual_pic_button.pack(side = 'left', padx = 25, pady = 5)
-		self.start_record.pack(side = 'left', padx = 25, pady = 5)
-		self.light_label.pack(padx = 25, pady = 5)
-		self.light_cycle.pack(padx = 25, pady = 5)
-		self.enter_button.pack(padx = 25, pady = 5)
-		self.layer2_frame.pack(padx = 5, pady = 5)
-		self.window.after(int(attrs["interval_in_milliseconds"]), lambda : self.repeater())
-		self.window.mainloop()
-	#update the image
-	def image_update(self):
-		global attrs
-		cameraCapture()
-		img = ImageTk.PhotoImage(Image.open(FileName(int(attrs["last_file_number"]))))
-		self.image_label.configure(image=img) 
-		self.image_label.image = img
-	# Set light_length to the stored input value
-	def new_light_control(self):
-		global attrs
-		new_light_length = self.light_cycle.get()#get user input
-		self.light_cycle.delete(0, len(new_light_length))#clear input field
-		if (new_light_length != ""):#I don't fully understand why this if statement is here
-			try:#Catch-all
-				if(float(new_light_length) > 24):#No superlights for you
-					attrs["light_length0"] = "24"
-				elif (float(new_light_length) < 0):#No antilights for you
-					attrs["light_length0"]  = "0"
-				else:
-					attrs["light_length0"] = new_light_length#set lights
-				if attrs["is_debug"] == "True":
-					print(attrs["light_length0"])
-				setAttributes()
-				self.light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + attrs["light_length0"] + " hours per day.")
-			except ValueError as e:
-				self.light_label.config(text = "Nope. That's not a number of hours the selected\ngrowlight can remain on.\nStill " + attrs["light_length0"] + " hours per day.")
-	def repeater(self):
-		global attrs
-		global chan_list
-		light()#check lights
-		water()#update beds
-		cameraCapture()#capture image
-		#update GUI
-		self.bzone1.config(text = "Left Bed: " + str(chan_list[0].value))
-		self.bzone2.config(text = "Middle Bed: " + str(chan_list[1].value))
-		self.bzone3.config(text = "Right Bed: " + str(chan_list[2].value))
-		self.interval_label.config(text = 'Interval is set to ' + attrs["interval_in_milliseconds"] + " milliseconds.")
-		self.capture_label.config(text = "There have been " + attrs["last_file_number"] + " captures\nsince last time-lapse.")
-		self.window.after(int(attrs["interval_in_milliseconds"]), lambda : self.repeater())
-	def new_water_control(self):
-		attrs["control_parameter"] = str(self.bar_state)
-		setAttributes()
-		water()
-
-#GTK GUI def goes here
-
-class GTKGUI():
 	def __init__(self):
 		self.is_safe = False
 		self.Policy = GLibEventLoopPolicy()
@@ -442,37 +299,7 @@ class GTKGUI():
 		for thing in *args:
 			print(str(thing))
 		print("\n")
+
+
 # Finalization and execution ****************************************************************************************
 app()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
