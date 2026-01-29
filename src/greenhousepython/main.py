@@ -349,6 +349,7 @@ class GUI:
 
 class GTKGUI():
 	def __init__(self):
+		self.in_use = False
 		self.Policy = GLibEventLoopPolicy()
 		asyncio.set_event_loop_policy(self.Policy)
 		self.loop = self.Policy.get_event_loop()
@@ -418,11 +419,19 @@ class GTKGUI():
 		attrs["deadband" + str(n)] = str(value)
 		setAttributes()
 	async def autocontrol(self):
-		pass
-		
-
+		await self.loop.create_task(self.watercontrol())
+		await self.loop.create_task(self.lightcontrol())
+		await self.loop.create_task(self.cameracontrol())
+		await self.loop.create_task(self.autocontrol())
+	async def watercontrol(self):
+		water()
+	async def lightcontrol(self):
+		light()
+	async def cameracontrol(self):
+		cameraCapture()
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
