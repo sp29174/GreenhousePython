@@ -208,6 +208,7 @@ def start_gtk_gui():
 
 # GUI ****************************************************************************************	
 
+#this class' days are numbered 
 class GUI:
 	def __init__(self):#fix attribute handling in here
 		global attrs
@@ -399,6 +400,7 @@ class GTKGUI():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
