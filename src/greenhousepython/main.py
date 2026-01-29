@@ -290,10 +290,11 @@ class GUI:
 			await asyncio.sleep(int(attrs["interval"]))
 			self.is_safe = False
 	def test(self,*args):
-		for thing in *args:
+		for thing in args:
 			print(str(thing))
 		print("\n")
 
 
 # Finalization and execution ****************************************************************************************
 app()
+
