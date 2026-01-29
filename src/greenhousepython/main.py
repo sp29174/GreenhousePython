@@ -349,7 +349,7 @@ class GUI:
 
 class GTKGUI():
 	def __init__(self):
-		self.in_use = False
+		self.is_safe = False
 		self.Policy = GLibEventLoopPolicy()
 		asyncio.set_event_loop_policy(self.Policy)
 		self.loop = self.Policy.get_event_loop()
@@ -412,16 +412,24 @@ class GTKGUI():
 		self.tasks.append(self.loop.create_task(self.autocontrol()))
 	def doUpdateWaterControl(self,n,value):
 		global attrs
+		while not self.is_safe:
+			print("I needed something here and i'm a troll lol")
 		attrs["control_parameter" + str(n)] = str(value)
 		setAttributes()
 	def doUpdateDeadband(self,n,value):
 		global attrs
+		while not self.is_safe:
+			print("I needed something here and i'm a troll lol")
 		attrs["deadband" + str(n)] = str(value)
 		setAttributes()
 	async def autocontrol(self):
+		global attrs
 		await self.loop.create_task(self.watercontrol())
 		await self.loop.create_task(self.lightcontrol())
 		await self.loop.create_task(self.cameracontrol())
+		self.is_safe = True
+		await asyncio.sleep()
+		self.is_safe = False
 		await self.loop.create_task(self.autocontrol())
 	async def watercontrol(self):
 		water()
@@ -431,6 +439,7 @@ class GTKGUI():
 		cameraCapture()
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
