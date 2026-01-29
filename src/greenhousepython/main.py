@@ -408,7 +408,7 @@ class GTKGUI():
 		self.notebook.append_page(self.HelpPage,Gtk.Label(label="Help"))
 		self.SettingsPage = Gtk.Box()
 		self.SettingsPage.append(Gtk.Label(label="This is a test of whether buttons work."))
-		self.SettingsPage.append_page(self.HelpPage,Gtk.Label(label="Settigs"))
+		self.notebook.append_page(self.SettingsPage,Gtk.Label(label="Settigs"))
 		self.window.present()
 		self.tasks.append(self.loop.create_task(self.autocontrol()))
 	def doUpdateWaterControl(self,n,value):
@@ -440,6 +440,7 @@ class GTKGUI():
 		cameraCapture()
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
