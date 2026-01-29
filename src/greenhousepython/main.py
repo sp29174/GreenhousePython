@@ -363,10 +363,20 @@ class GTKGUI():
 		self.notebook.append_page(self.CameraPage,Gtk.Label(label="Camera Control"))
 		self.WaterPage = Gtk.Notebook()
 		self.waterpages = []
+		self.waterscales = []
+		self.deadbandscales = []
 		for n in range(int(attrs["beds"])):
-			self.waterpages.append(Gtk.Box())
-			self.waterpages[n].append(Gtk.Label(label="This is a test of whether we can do automatic allocation"))
-			self.WaterPage.append_page(self.waterpages[n],Gtk.Label(label="Bed" + str(n)))
+			self.waterpages.append(Gtk.CenterBox())
+			self.waterpages[n].set_start_widget(Gtk.Label(label="This is a test of whether we can do automatic allocation"))
+			self.waterscales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
+			self.waterscales[n].set_hexpand(True)
+			self.waterscales[n].set_vexpand(True)
+			self.waterpages[n].set_center_widget(self.waterscales[n])
+			self.deadbandscales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
+			self.deadbandscales[n].set_hexpand(True)
+			self.deadbandscales[n].set_vexpand(True)
+			self.waterpages[n].set_end_widget(self.deadbandscales[n])
+			self.WaterPage.append_page(self.waterpages[n],Gtk.Label(label="Bed " + str(n)))
 		self.notebook.append_page(self.WaterPage,Gtk.Label(label="Water Control"))
 		self.LightPage = Gtk.Notebook()
 		self.lightpages = []
@@ -389,6 +399,7 @@ class GTKGUI():
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
