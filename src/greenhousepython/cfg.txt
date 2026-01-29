@@ -1,5 +1,5 @@
 last_file_number:0
-interval_in_milliseconds:1000
+interval:1
 file_name_prefix:gi
 norm_font:Calibri 18
 lights:1
