@@ -107,11 +107,11 @@ def water():
 	run_pump = False
 	for x in range(int(attrs["beds"])):
 		moisture = chan_list[x].value
-		if (attrs["bed" + str(x)] == "False") and (moisture < int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter"]) - (float(attrs["deadband"])/2))):
+		if (attrs["bed" + str(x)] == "False") and (moisture < int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter" + str(x)]) - (float(attrs["deadband" + str(x)])/2))):
 			GPIO.output(int(attrs["waterPin" + str(x)]), GPIO.HIGH)
 			attrs["bed" + str(x)] = "True"
 			setAttributes()
-		elif (attrs["bed" + str(x)] == "True") and (moisture > int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter"]) + (float(attrs["deadband"])/2))):
+		elif (attrs["bed" + str(x)] == "True") and (moisture > int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter" + str(x)]) + (float(attrs["deadband" + str(x)])/2))):
 			GPIO.output(int(attrs["waterPin" + str(x)]), GPIO.LOW)
 			attrs["bed" + str(x)] = "False"
 			setAttributes()
@@ -237,12 +237,12 @@ class GUI:
 			self.waterscales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
 			self.waterscales[n].set_hexpand(True)
 			self.waterscales[n].set_vexpand(True)
-			self.waterscales[n].connect("value-changed" , lambda scale : self.doUpdateWaterControl(g=n,scale.get_value()))
+			self.waterscales[n].connect("value-changed" , lambda scale : self.doUpdateWaterControl(n,scale.get_value()))
 			self.waterpages[n].set_center_widget(self.waterscales[n])
 			self.deadbandscales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
 			self.deadbandscales[n].set_hexpand(True)
 			self.deadbandscales[n].set_vexpand(True)
-			self.deadbandscales[n].connect("value-changed" , lambda scale : self.doUpdateDeadband(g=n,scale.get_value()))
+			self.deadbandscales[n].connect("value-changed" , lambda scale : self.doUpdateDeadband(n,scale.get_value()))
 			self.waterpages[n].set_end_widget(self.deadbandscales[n])
 			self.WaterPage.append_page(self.waterpages[n],Gtk.Label(label="Bed " + str(n)))
 		self.notebook.append_page(self.WaterPage,Gtk.Label(label="Water Control"))
@@ -257,7 +257,7 @@ class GUI:
 			self.lightscales[n].set_hexpand(True)
 			self.lightscales[n].set_vexpand(True)
 			self.lightpages[n].append(self.lightscales[n])
-			self.LightPage.append_page(self.lightpages[n],Gtk.Label(label="Bed" + str(n)))
+			self.LightPage.append_page(self.lightpages[n],Gtk.Label(label="Light" + str(n)))
 		self.notebook.append_page(self.LightPage,Gtk.Label(label="Light Control"))
 		self.HelpPage = Gtk.Box()
 		self.HelpPage.append(Gtk.Label(label="This is a test of whether buttons work."))
@@ -270,16 +270,18 @@ class GUI:
 		self.tasks.append(self.loop.create_task(self.autocontrol()))
 	def doUpdateWaterControl(self,n,value):
 		global attrs
-		while not self.is_safe:
-			print("I needed something here and i'm a troll lol")
+		await self.become_safe()
+		self.is_safe = False
 		attrs["control_parameter" + str(n)] = str(value)
 		setAttributes()
+		self.is_safe = True
 	def doUpdateDeadband(self,n,value):
 		global attrs
-		while not self.is_safe:
-			print("I needed something here and i'm a troll lol")
+		await self.become_safe()
+		self.is_safe = False
 		attrs["deadband" + str(n)] = str(value)
 		setAttributes()
+		self.is_safe = True
 	async def autocontrol(self):
 		global attrs
 		while True:
@@ -289,9 +291,13 @@ class GUI:
 			self.is_safe = True
 			await asyncio.sleep(float(attrs["interval"]))
 			self.is_safe = False
-
+	async def become_safe(self):
+		while not self.is_safe:
+			print("In 1968, 8% of the entire U.S. GNP was spent by the federal governmnent on intragovernment transactions.")
+		return None
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
