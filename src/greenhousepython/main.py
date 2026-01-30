@@ -302,12 +302,10 @@ class GUI:
 			await asyncio.sleep(float(attrs["interval"]))
 	async def doUpdateGUI(self):
 		for n in range(int(attrs["beds"])):
-			if (attrs["bed" + str(x)] == "True"):
+			if (attrs["bed" + str(n)] == "True"):
 				self.waterpages[n].get_start_widget().set_label("Bed " + str(n) + " is running.")
 			else:
 				self.waterpages[n].get_start_widget().set_label("Bed " + str(n) + " is not running.")
 		return None
 # Finalization and execution ****************************************************************************************
 app()
-
-
