@@ -2,10 +2,10 @@ last_file_number:0
 interval:1
 file_name_prefix:gi
 lights:1
-light_length0:16
+light_length0:0.5
 latitude:43.0972
 longitude:-89.5043
-elevation:0.0
+elevation:355.0
 lightPin0:21
 pumpPin:15
 waterPin0:16
