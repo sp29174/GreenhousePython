@@ -233,7 +233,7 @@ class GUI:
 		self.deadbandscales = []
 		for n in range(int(attrs["beds"])):
 			self.waterpages.append(Gtk.CenterBox())
-			self.waterpages[n].set_start_widget(Gtk.Label(label="This is a test of whether we can do automatic allocation"))
+			self.waterpages[n].set_start_widget(Gtk.Label(label="This text should vanish before you can read it."))
 			self.waterscales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
 			self.waterscales[n].set_value(float(attrs["control_parameter" + str(n)]))
 			self.waterscales[n].set_hexpand(True)
@@ -308,3 +308,4 @@ class GUI:
 				self.waterpages[n].get_start_widget().set_label("Bed " + str(n) + " is not running.")
 # Finalization and execution ****************************************************************************************
 app()
+
