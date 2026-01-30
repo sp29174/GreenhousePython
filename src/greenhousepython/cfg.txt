@@ -15,11 +15,15 @@ waterPin0:16
 waterPin1:17
 waterPin2:18
 MAX_VALUE:1024
-control_parameter:0.0
 is_debug:True
 recording_status:not dead
 beds:3
 bed0:False
 bed1:False
 bed2:False
-deadband:0.1
+control_parameter0:0.0
+deadband0:0.1
+control_parameter1:0.0
+deadband1:0.1
+control_parameter2:0.0
+deadband2:0.1
