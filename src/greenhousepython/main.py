@@ -295,6 +295,9 @@ class GUI:
 			light()
 			cameraCapture()
 			self.lock.release()
+			await self.doUpdateGUI()
 			await asyncio.sleep(float(attrs["interval"]))
+	async def doUpdateGUI(self):
+		pass
 # Finalization and execution ****************************************************************************************
 app()
