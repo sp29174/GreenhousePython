@@ -287,7 +287,7 @@ class GUI:
 			light()
 			cameraCapture()
 			self.is_safe = True
-			await asyncio.sleep(int(attrs["interval"]))
+			await asyncio.sleep(float(attrs["interval"]))
 			self.is_safe = False
 	def test(self,*args):
 		for thing in args:
@@ -297,6 +297,7 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
