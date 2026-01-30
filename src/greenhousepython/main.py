@@ -306,6 +306,8 @@ class GUI:
 				self.waterpages[n].get_start_widget().set_label("Bed " + str(n) + " is running.")
 			else:
 				self.waterpages[n].get_start_widget().set_label("Bed " + str(n) + " is not running.")
+		return None
 # Finalization and execution ****************************************************************************************
 app()
+
 
