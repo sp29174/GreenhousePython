@@ -45,12 +45,9 @@ except ImportError:
 	from nonsense import Picamera2
 try:
 	import RPi.GPIO as GPIO
-	import busio
-	import digitalio
-	import board
 	import mcp3008 as MCP
 except ImportError:
-	from nonsense import GPIO, busio, digitalio, board, MCP
+	from nonsense import GPIO, MCP
 import sys
 import gi
 gi.require_version("Gtk", "4.0")
@@ -313,3 +310,4 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
