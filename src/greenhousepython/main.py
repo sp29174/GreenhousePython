@@ -85,8 +85,8 @@ def do_shutdown(*args,**kwargs):
 	mcp.close()
 	
 	#deinitialize the camera
-	#clean up the GPIO
-	
+
+	GPIO.cleanup()
 	sys.exit(0)
 
 # Postpostinitialization ***********************************************************************************
@@ -310,4 +310,5 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
