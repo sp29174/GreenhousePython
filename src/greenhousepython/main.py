@@ -66,16 +66,9 @@ from astral import sun, Observer
 timesoff = []
 for n in range(int(attrs["lights"])):
 	timesoff.append(datetime.now(timezone.utc))
-# create the spi bus
-spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
-# create the cs (chip select)
-cs = digitalio.DigitalInOut(board.CE0)
 # create the mcp object
-mcp = MCP.MCP3008(spi, cs)
-chan0 = AnalogIn(mcp, MCP.P0)#these pins should not be hard-coded!
-chan1 = AnalogIn(mcp, MCP.P1)
-chan2 = AnalogIn(mcp, MCP.P2)
-chan_list = [chan0, chan1, chan2]
+mcp = MCP.MCP3008()
+# setup other GPIO
 GPIO.setmode(GPIO.BCM)
 for x in range(int(attrs["lights"])):
 	GPIO.setup(int(attrs["lightPin" + str(x)]), GPIO.OUT)
@@ -105,7 +98,7 @@ def water():
 	moisture = 0
 	run_pump = False
 	for x in range(int(attrs["beds"])):
-		moisture = chan_list[x].value
+		moisture = mcp.read_all()[x]
 		if (attrs["bed" + str(x)] == "False") and (moisture < int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter" + str(x)]) - (float(attrs["deadband" + str(x)])/2))):
 			GPIO.output(int(attrs["waterPin" + str(x)]), GPIO.HIGH)
 			attrs["bed" + str(x)] = "True"
@@ -186,12 +179,8 @@ def create_video(output_video_path : str, fps : int = 24, size : str = None):#up
 
 @app.command()
 def see_data():#Expand on me
-	print('Chan 0 Raw ADC Value: ', chan0.value)
-	print('Chan 0 ADC Voltage: ' + str(chan0.voltage) + 'V')
-	print('Chan 1 Raw ADC Value: ', chan1.value)
-	print('Chan 1 ADC Voltage: ' + str(chan1.voltage) + 'V')
-	print('Chan 2 Raw ADC Value: ', chan2.value)
-	print('Chan 2 ADC Voltage: ' + str(chan2.voltage) + 'V')
+	print(mcp.read_all(norm = False))
+	print(mcp.read_all(norm = True))
 	keys = attrs.keys()#get all the settings
 	for key in keys:
 		print(key + ":" + attrs[key])#assemble key and values into new format
@@ -308,5 +297,6 @@ class GUI:
 		return None
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
