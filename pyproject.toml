@@ -14,7 +14,7 @@ readme = "README.md"
 
 [project.optional-dependencies]
 camera-nonsense = ["rpi-libcamera", "rpi-kms", "picamera2"]
-rpi = [ "Adafruit-Blinka", "adafruit-circuitpython-mcp3xxx", "RPi.GPIO" ]
+rpi = [ "Adafruit-Blinka", "mcp3008", "RPi.GPIO" ]
 dev = [ "wheel", "poetry" ]
 
 [build-system]
