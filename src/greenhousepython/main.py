@@ -61,8 +61,10 @@ import cv2
 from PIL import Image
 from datetime import datetime, timedelta, timezone
 from astral import sun, Observer
+import signal
 
 # Postinitialization ****************************************************************************************
+
 timesoff = []
 for n in range(int(attrs["lights"])):
 	timesoff.append(datetime.now(timezone.utc))
@@ -76,9 +78,23 @@ for x in range(int(attrs["beds"])):
 	GPIO.setup(int(attrs["waterPin" + str(x)]), GPIO.OUT)
 GPIO.setup(int(attrs["pumpPin"]), GPIO.OUT)
 theCamera = Picamera2()
-camera_cfg = theCamera.create_still_configuration()
+theCamera.configure(theCamera.create_still_configuration())
 theCamera.start()
 
+# More helpers ***********************************************************************************
+def do_shutdown(*args,**kwargs):
+	global mcp
+	global theCamera
+	mcp.close()
+	
+	#deinitialize the camera
+	#clean up the GPIO
+	
+	sys.exit(0)
+
+# Postpostinitialization ***********************************************************************************
+
+signal.signal(signal.SIGTERM,do_shutdown)
 
 # CLI commands   ***********************************************************************************
 
@@ -294,9 +310,6 @@ class GUI:
 			else:
 				self.waterpages[n].get_start_widget().set_label("Bed " + str(n) + " is not running.")
 		return None
+
 # Finalization and execution ****************************************************************************************
 app()
-
-
-
-
