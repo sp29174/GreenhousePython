@@ -94,7 +94,7 @@ Contact:
 	💡frank.barth@outlook.com
 
 🤝 Contributing
-Fork the repo, create a branch, and submit a PR! Start with "good first issues" like timelapse scripting. Let's grow this project together 🌱
+Fork the repo, create a branch, and submit a PR! Start with "good first issues" and/or "help wanted". Let's grow this project together 🌱
 
 License: MIT
 
