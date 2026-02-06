@@ -25,7 +25,7 @@ def setAttributes():
 	cfg = open("cfg.txt", "w")#open file to write
 	accumulator = []
 	keys = attrs.keys()#get all the keys
-	for key in keys:
+	for key in keys:#Conveniently, we only refer to these using their names, which means it doesn't  matter if this reorganizes our cfg constantly. It was never even well-ordered to begin with!
 		accumulator.append(key + ":" + attrs[key] + "\n")#assemble key and values into new format
 	cfg.writelines(accumulator)#append to file
 	cfg.close()
@@ -274,7 +274,23 @@ class GUI:
 		self.HelpPage.append(Gtk.Button.new_with_label("this is a button."))
 		self.notebook.append_page(self.HelpPage,Gtk.Label(label="Help"))
 		self.SettingsPage = Gtk.Box()
-		self.SettingsPage.append(Gtk.Label(label="This is a test of whether buttons work."))
+		self.SettingsPage.append(Gtk.Label(label="This window should allow you to adjust settings."))
+		self.SettingsListBox = Gtk.ListBox()
+		for key in attrs.keys():
+			tmp = Gtk.ListBoxRow()
+			tmp.set_child(Gtk.Label(label=key))
+			self.SettingsListBox.append(tmp)
+		tmp = Gtk.ListBoxRow()
+		tmp.set_child(Gtk.Label(label="Create New..."))
+		self.SettingsListBox.append(tmp)
+		self.SettingsPage.append(self.SetingsListBox)
+		self.SettingsConfigBox = Gtk.CenterBox()
+		self.SettingsConfigLabel = Gtk.Label(label="This text should disappear in a hurry.")
+		self.SettingsConfigBox.set_start_widget(self.SettingsConfigLabel)
+		self.SettingsTextBox = None#Placeholder
+		self.SettingsConfigBox.set_center_widget(self.SettingsTextBox)
+		self.SettingsEntryButton = Gtk.Button.new_with_label("Change the setting")
+		self.SettingsEntryButton.connect("clicked", lambda button, self.tasks.append(self.loop.create_task(self.doUpdateSettings())))
 		self.notebook.append_page(self.SettingsPage,Gtk.Label(label="Settigs"))
 		self.window.present()
 		self.tasks.append(self.loop.create_task(self.autocontrol()))
@@ -296,6 +312,10 @@ class GUI:
 		attrs["light_length" + str(n)] = str(value)
 		setAttributes()
 		self.lock.release()
+	async def doUpdateSettings(self):
+		global attrs
+		await self.lock.acquire()
+		
 	async def autocontrol(self):
 		global attrs
 		while True:
@@ -316,6 +336,7 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
