@@ -43,8 +43,8 @@ This project integrates sensors, relays, a GUI, and camera control to create a f
 		sudo do-release-upgrade -d || reboot
 	
 	💡In order to build this software, you will need some dependencies. In order to get them, you can run these commands.
-		cd ~/ && sudo apt install --install-recommends fortunes fortune g++ libkms++-dev pkgconf ffmpeg libopenjp2-7 libcamera-dev libfmt-dev libdrm-dev git pipx gcc gcc-aarch64-linux-gnu libcap-dev python3-dev libgl1 libgirepository-2.0-dev libcairo2-dev pkg-config gir1.2-gtk-4.0 python3-pip python3-jinja2 libboost-dev libgnutls28-dev openssl libtiff-dev pybind11-dev qtbase5-dev libqt5core5a libqt5widgets meson cmake python3-yaml python3-ply libglib2.0-dev libgstreamer-plugins-base1.0-dev && git clone https://github.com/raspberrypi/libcamera.git && cd libcamera && meson setup build --buildtype=release -Dgstreamer=enabled -Dpycamera=enabled && ninja -C build install -j 1 && cd ~/ && git clone https://github.com/sp29174/GreenhousePython.git && pipx ensurepath && reboot
-		cd ~/ && pipx install -vvv poetry && cd ./GreenhousePython && poetry install -vvv --all-groups --extras dev --extras rpi --extras GUI --compile && cd ./src/greenhousepython && poetry run -vvv python -vvi ./main.py start-gui
+		cd ~/ && sudo apt install --install-recommends fortunes fortune g++ libkms++-dev pkgconf ffmpeg libopenjp2-7 libcamera-dev libfmt-dev libdrm-dev git pipx gcc gcc-aarch64-linux-gnu libcap-dev python3-dev libgl1 libgirepository-2.0-dev libcairo2-dev pkg-config gir1.2-gtk-4.0 python3-pip && git clone https://github.com/sp29174/GreenhousePython.git && pipx ensurepath && reboot
+		cd ~/ && pipx install -vvv poetry && cd ./GreenhousePython && poetry install -vvv --all-groups --all-extras --compile && cd ./src/greenhousepython && poetry run -vvv python -vvi ./main.py start-gui
 
 	😵‍💫Need a wheel? Conveniently, I made that real simple:
 		cd ~/GreenhousePython && poetry build -f wheel
