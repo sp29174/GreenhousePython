@@ -5,6 +5,8 @@ class Picamera2:
     pass
   def create_still_configuration(self):
     pass
+  def configure(self,*args):
+    pass
 
 class GPIO:
   BCM = None
