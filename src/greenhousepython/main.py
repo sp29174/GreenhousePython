@@ -107,7 +107,6 @@ def change_setting(key : str, value : str):
 @app.command()
 def water():
 	global attrs
-	global chan_list
 	moisture = 0
 	run_pump = False
 	for x in range(int(attrs["beds"])):
@@ -274,7 +273,7 @@ class GUI:
 			tmp = Gtk.ListBoxRow()
 			tmp.set_child(Gtk.Label(label=key))
 			self.SettingsListBox.append(tmp)
-		self.SettingsPage.append(self.SetingsListBox)
+		self.SettingsPage.append(self.SettingsListBox)
 		self.SettingsConfigBox = Gtk.CenterBox()
 		self.SettingsConfigLabel = Gtk.Label(label="In order for you to change a setting, you must choose the setting to change.")
 		self.SettingsConfigBox.set_start_widget(self.SettingsConfigLabel)
@@ -363,14 +362,3 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
-
-
-
-
-
-
-
-
-
-
-
