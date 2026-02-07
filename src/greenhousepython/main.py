@@ -92,6 +92,7 @@ def do_shutdown(*args,**kwargs):
 # Postpostinitialization ***********************************************************************************
 
 signal.signal(signal.SIGTERM,do_shutdown)
+signal.signal(signal.SIGINT,do_shutdown)
 
 # CLI commands   ***********************************************************************************
 
@@ -362,3 +363,4 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
