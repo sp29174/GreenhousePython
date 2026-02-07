@@ -21,9 +21,14 @@ class GPIO:
     pass
 
 class MCP:
-  P0 = None
-  P1 = None
-  P2 = None
+  CH0 = None
+  CH1 = None
+  CH2 = None
+  CH3 = None
+  CH4 = None
+  CH5 = None
+  CH6 = None
+  CH7 = None
 
 class MCP3008:
   def fixed(*args,**kwargs):
