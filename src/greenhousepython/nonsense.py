@@ -31,12 +31,18 @@ class MCP:
   CH7 = None
 
 class MCP3008:
+  def __init__(self):
+    pass
   def fixed(*args,**kwargs):
+    return MCP3008()
+  def close(self):
     pass
 
 class cv2:
-  def VideoCapture(*args,**kwargs):
+  def __init__(self):
     pass
+  def VideoCapture(*args,**kwargs):
+    return cv2()
   def imwrite(*args,**kwargs):
     pass
   def imread(*args,**kwargs):
@@ -44,4 +50,6 @@ class cv2:
   def VideoWriter_fourcc(*args,**kwargs):
     pass
   def resize(*args,**kwargs):
+    pass
+  def release(self):
     pass
