@@ -53,3 +53,5 @@ class cv2:
     pass
   def release(self):
     pass
+  def read(self):
+    pass
