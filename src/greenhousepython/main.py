@@ -84,16 +84,18 @@ theCamera = cv2.VideoCapture(0)
 def do_shutdown(*args,**kwargs):
 	global mcp
 	global theCamera
-	mcp.close()
-	
-	theCamera.release()
-	GPIO.cleanup()
-	sys.exit(0)
+	try:#we shouldn't let crashes prevent the program from closing, so these must all be wrapped with try.
+		mcp.close()#close down water control coms
+	try:
+		theCamera.release()#turn off the damn camera
+	try:
+		GPIO.cleanup()#knock the GPIO back to high-zed
+	sys.exit(0)#ensure the proghramme actually ends
 
 # Postpostinitialization ***********************************************************************************
 
 signal.signal(signal.SIGTERM,do_shutdown)
-signal.signal(signal.SIGINT,do_shutdown)
+signal.signal(signal.SIGINT,do_shutdown)#I have no idea why these aren't the same signal. The program kicks the bucket either way.
 
 # CLI commands   ***********************************************************************************
 
@@ -111,10 +113,10 @@ def water():
 	global attrs
 	moisture = 0
 	run_pump = False
-	try:
+	try:#my crummy mock of mcp3008.MCP3008 can't make sense of line 118, so this eyesore is trapped in a try-catch.
 		for x in range(int(attrs["beds"])):
 			moisture = mcp()[x]
-			if (attrs["bed" + str(x)] == "False") and (moisture < int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter" + str(x)]) - (float(attrs["deadband" + str(x)])/2))):
+			if (attrs["bed" + str(x)] == "False") and (moisture < int(attrs["MAX_VALUE"]) * (float(attrs["control_parameter" + str(x)]) - (float(attrs["deadband" + str(x)])/2))):#this if-else is basically an inelegant hysteresis controller. On the other hand, we're being rewarded for not destroying the pump, not for elegantly destroying the pump.
 				GPIO.output(int(attrs["waterPin" + str(x)]), GPIO.HIGH)
 				attrs["bed" + str(x)] = "True"
 				setAttributes()
@@ -129,14 +131,14 @@ def water():
 		else:
 			GPIO.output(int(attrs["pumpPin"]), GPIO.LOW)
 	except Exception:
-		print("We failed at water control. This is probably because we aren't connected to an MCP3008, which is reasonable.")
+		print("We failed at water control. This is probably because we aren't connected to an MCP3008, which is reasonable. If it isn't reasonable, check the dependencies.")
 
 @app.command()
-def light(): 
+def light():#This code is a disaster area.
 	global attrs
 	global timesoff
 	observer = Observer(float(attrs["latitude"]),float(attrs["longitude"]),float(attrs["elevation"]))
-	theSun = sun.daylight(observer)
+	theSun = sun.daylight(observer)#The sun is a deadly laser
 	if (datetime.now(timezone.utc) > theSun[1]):
 		if attrs["is_debug"] == "True":
 			print("We think that it's after sunset.")
@@ -161,7 +163,7 @@ def camera_capture():#updated to not badly reimplement last_file_name
 	global theCamera
 	ret, frame = theCamera.read()
 	if not ret:
-		assert False
+		assert False#this should maybe be changed later.
 	else:
 		cv2.imwrite(FileName(int(attrs["last_file_number"]) + 1),frame)
 		attrs["last_file_number"] = str(int(attrs["last_file_number"]) + 1)
@@ -176,7 +178,7 @@ def create_video(output_video_path : str, fps : int = 24, size : str = None):#up
 		raise ValueError("The list of image paths is empty")
 	first_frame = cv2.imread(image_paths[0])
 	if first_frame is None:
-		raise ValueError("Cannot read image at path")
+		raise ValueError("Cannot read image at path")#This should be improved. 
 	if size is None:
 		height, width, _ = first_frame.shape
 		size = (width, height)
@@ -192,8 +194,9 @@ def create_video(output_video_path : str, fps : int = 24, size : str = None):#up
 	out.release()
 	print(f"Vido saved to {output_video_path}")
 
+#A command that lets you see the information flying through cyberspace.
 @app.command()
-def see_data():#Expand on me
+def see_data():
 	print(mcp())
 	keys = attrs.keys()#get all the settings
 	for key in keys:
@@ -376,6 +379,7 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
