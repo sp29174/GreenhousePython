@@ -30,6 +30,7 @@ def setAttributes():
 	cfg.writelines(accumulator)#append to file
 	cfg.close()
 
+#figure out where the nth photo is (or at least should be)
 def FileName(fileNumber):
     global attrs
     if (fileNumber == 0):
@@ -155,7 +156,7 @@ def light():
 
 #input camera attributes and capture image, updates attributes and returns new attributes
 @app.command()
-def cameraCapture():#updated to not badly reimplement last_file_name
+def camera_capture():#updated to not badly reimplement last_file_name
 	global attrs
 	global theCamera
 	ret, frame = theCamera.read()
@@ -362,7 +363,7 @@ class GUI:
 		global attrs
 		while True:
 			await self.lock.acquire()
-			cameraCapture()
+			camera_capture()
 			self.lock.release()
 			await asyncio.sleep(float(attrs["camera_interval"]))
 	async def doUpdateGUI(self):
@@ -375,6 +376,7 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
