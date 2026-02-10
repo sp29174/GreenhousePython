@@ -412,8 +412,5 @@ class GUI:
 		return None
 
 # Finalization and execution ****************************************************************************************
-app()
-
-
-
-
+if __name__ == "__main__":
+	app()
