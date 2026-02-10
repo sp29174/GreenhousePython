@@ -86,10 +86,16 @@ def do_shutdown(*args,**kwargs):
 	global theCamera
 	try:#we shouldn't let crashes prevent the program from closing, so these must all be wrapped with try.
 		mcp.close()#close down water control coms
+	except Exception:
+		print("Warning: we couldn't close down the water control communitcations.")
 	try:
 		theCamera.release()#turn off the damn camera
+	except Exception:
+		print("Warning: we couldn't close down the camera.")
 	try:
 		GPIO.cleanup()#knock the GPIO back to high-zed
+	except Exception:
+		print("Warning: we couldn't reset the GPIO.")
 	sys.exit(0)#ensure the proghramme actually ends
 
 # Postpostinitialization ***********************************************************************************
@@ -403,4 +409,5 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
