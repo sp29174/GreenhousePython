@@ -177,7 +177,10 @@ def camera_capture():#updated to not badly reimplement last_file_name
 	global theCamera
 	ret, frame = theCamera.read()
 	if not ret:
-		assert False#this should maybe be changed later.
+		if not attrs["is_debug"] == "True":
+			assert False
+		else:
+			print("Warning: Image capture failed to complete.")
 	else:
 		cv2.imwrite(FileName(int(attrs["last_file_number"]) + 1),frame)
 		attrs["last_file_number"] = str(int(attrs["last_file_number"]) + 1)
@@ -409,5 +412,6 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
