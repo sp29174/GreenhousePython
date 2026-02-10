@@ -164,7 +164,7 @@ def light():#This code is a disaster area. Essentially, here's the logic:
 			print("The light should be off.")
 		GPIO.output(int(attrs["lightPin" + str(n)]), light_on)
 
-#input camera attributes and capture image, updates attributes and returns new attributes
+#A command that captures a photograph, writes it to a file, and updates attrs accordingly.
 @app.command()
 def camera_capture():#updated to not badly reimplement last_file_name
 	global attrs
@@ -243,7 +243,7 @@ class GUI:
 		self.CameraPage = Gtk.CenterBox()
 		self.previewImage = Gtk.Image.new_from_file(FileName(int(attrs["last_file_number"])))
 		self.CameraPage.set_start_widget(self.previewImage)
-		self.cameraText = Gtk.Label(label="Overall, " + attrs["last_file_number"] + " images have been captured by this device.\nCurrently, images will be captured every " + attrs["last_file_number"] + " seconds.")
+		self.cameraText = Gtk.Label(label="This text should vanish in a poof of smoke.")
 		self.CameraPage.set_center_widget(self.cameraText)
 		self.captureButton = Gtk.Button.new_with_label("Capture a photograph manually.")
 		self.captureButton.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.doForcedCapture())))
@@ -403,3 +403,4 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
