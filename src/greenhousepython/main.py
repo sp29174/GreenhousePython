@@ -294,7 +294,7 @@ class GUI:
 		self.notebook.append_page(self.SettingsPage,Gtk.Label(label="Settigs"))
 		self.window.present()
 		self.tasks.append(self.loop.create_task(self.autocontrol()))
-		self.tasks.append(self.loop.create_task(self.cameracontrol()))
+		self.tasks.append(self.loop.create_task(self.cameraControl()))
 	async def doUpdateWaterControl(self,n,value):
 		global attrs
 		await self.lock.acquire()
@@ -379,6 +379,7 @@ class GUI:
 
 # Finalization and execution ****************************************************************************************
 app()
+
 
 
 
