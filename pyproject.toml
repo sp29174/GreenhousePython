@@ -13,7 +13,7 @@ dependencies = [ "astral>=2.0", "typer>=0.12.1" ]
 readme = "README.md"
 
 [project.optional-dependencies]
-camera-nonsense = ["opencv-python>=4.13.0.90"]
+camera-nonsense = ["opencv-python>=4.4.0.46"]
 rpi = [ "mcp3008", "RPi.GPIO" ]
 dev = [ "wheel", "poetry" ]
 GUI = [ "PyGObject" ]
