@@ -252,38 +252,38 @@ class GUI:
 		self.camera_page = Gtk.CenterBox()
 		self.preview_image = Gtk.Image.new_from_file(get_file_name(int(attrs["last_file_number"])))
 		self.camera_page.set_start_widget(self.preview_image)
-		self.cameraText = Gtk.Label(label="This text should vanish in a poof of smoke.")
-		self.camera_page.set_center_widget(self.cameraText)
-		self.captureBox = Gtk.Box()
-		self.captureButton = Gtk.Button.new_with_label("Capture a photograph manually.")
-		self.captureButton.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.doForcedCapture())))
-		self.captureBox.append(self.captureButton)
-		self.recordButton = Gtk.ToggleButton(label="Toggle recording.")
-		self.recordButton.connect("toggled", lambda button: self.tasks.append(self.loop.create_task(self.doToggleRecording(button.props.active))))
-		self.captureBox.append(self.recordButton)
-		self.camera_page.set_end_widget(self.captureBox)
+		self.camera_text = Gtk.Label(label="This text should vanish in a poof of smoke.")
+		self.camera_page.set_center_widget(self.camera_text)
+		self.capture_box = Gtk.Box()
+		self.capture_button = Gtk.Button.new_with_label("Capture a photograph manually.")
+		self.capture_button.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.doForcedCapture())))
+		self.capture_box.append(self.capture_button)
+		self.record_button = Gtk.ToggleButton(label="Toggle recording.")
+		self.record_button.connect("toggled", lambda button: self.tasks.append(self.loop.create_task(self.doToggleRecording(button.props.active))))
+		self.capture_box.append(self.record_button)
+		self.camera_page.set_end_widget(self.capture_box)
 		self.notebook.append_page(self.camera_page,Gtk.Label(label="Camera Control"))
-		self.WaterPage = Gtk.Notebook()
-		self.waterpages = []
-		self.waterscales = []
-		self.deadbandscales = []
+		self.water_page = Gtk.Notebook()
+		self.water_pages = []
+		self.water_scales = []
+		self.deadband_scales = []
 		for n in range(int(attrs["beds"])):
-			self.waterpages.append(Gtk.CenterBox())
-			self.waterpages[n].set_start_widget(Gtk.Label(label="This text should vanish before you can read it."))#Namely, line 312 should cause autocontrol to await doUpdateGUI which should disappear this placeholder. If anything crashes between here and line 402, this text will live and we learn of a problem.
-			self.waterscales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
-			self.waterscales[n].set_value(float(attrs["control_parameter" + str(n)]))
-			self.waterscales[n].set_hexpand(True)
-			self.waterscales[n].set_vexpand(True)
-			self.waterscales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.doUpdateWaterControl(g,scale.get_value()))))#This line of code is the answer to a specific engineering question: how many obscure features of Python can fit in one line of code? It also makes the slider schedule a task when you move it, so that it neither blocks the GUI nor fails to do anything.
-			self.waterpages[n].set_center_widget(self.waterscales[n])
-			self.deadbandscales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
-			self.deadbandscales[n].set_value(float(attrs["deadband" + str(n)]))
-			self.deadbandscales[n].set_hexpand(True)
-			self.deadbandscales[n].set_vexpand(True)
-			self.deadbandscales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.doUpdateDeadband(g,scale.get_value()))))
-			self.waterpages[n].set_end_widget(self.deadbandscales[n])
-			self.WaterPage.append_page(self.waterpages[n],Gtk.Label(label="Bed " + str(n)))
-		self.notebook.append_page(self.WaterPage,Gtk.Label(label="Water Control"))
+			self.water_pages.append(Gtk.CenterBox())
+			self.water_pages[n].set_start_widget(Gtk.Label(label="This text should vanish before you can read it."))#Namely, line 312 should cause autocontrol to await doUpdateGUI which should disappear this placeholder. If anything crashes between here and line 402, this text will live and we learn of a problem.
+			self.water_scales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
+			self.water_scales[n].set_value(float(attrs["control_parameter" + str(n)]))
+			self.water_scales[n].set_hexpand(True)
+			self.water_scales[n].set_vexpand(True)
+			self.water_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.doUpdateWaterControl(g,scale.get_value()))))#This line of code is the answer to a specific engineering question: how many obscure features of Python can fit in one line of code? It also makes the slider schedule a task when you move it, so that it neither blocks the GUI nor fails to do anything.
+			self.water_pages[n].set_center_widget(self.water_scales[n])
+			self.deadband_scales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
+			self.deadband_scales[n].set_value(float(attrs["deadband" + str(n)]))
+			self.deadband_scales[n].set_hexpand(True)
+			self.deadband_scales[n].set_vexpand(True)
+			self.deadband_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.doUpdateDeadband(g,scale.get_value()))))
+			self.water_pages[n].set_end_widget(self.deadband_scales[n])
+			self.water_page.append_page(self.water_pages[n],Gtk.Label(label="Bed " + str(n)))
+		self.notebook.append_page(self.water_page,Gtk.Label(label="Water Control"))
 		self.LightPage = Gtk.Notebook()
 		self.lightpages = []
 		self.lightscales = []
@@ -415,16 +415,17 @@ class GUI:
 		global attrs
 		for n in range(int(attrs["beds"])):
 			if (attrs["bed" + str(n)] == "True"):
-				self.waterpages[n].get_start_widget().set_label("Bed " + str(n) + " is running.")
+				self.water_pages[n].get_start_widget().set_label("Bed " + str(n) + " is running.")
 			else:
-				self.waterpages[n].get_start_widget().set_label("Bed " + str(n) + " is not running.")
+				self.water_pages[n].get_start_widget().set_label("Bed " + str(n) + " is not running.")
 		self.preview_image.set_from_file(get_file_name(int(attrs["last_file_number"])))
-		self.cameraText.set_label("Overall, " + attrs["last_file_number"] + " images have been captured by this device.\nCurrently, images will be captured every " + attrs["last_file_number"] + " seconds.")
+		self.camera_text.set_label("Overall, " + attrs["last_file_number"] + " images have been captured by this device.\nCurrently, images will be captured every " + attrs["last_file_number"] + " seconds.")
 		return None
 
 # Finalization and execution ****************************************************************************************
 if __name__ == "__main__":
 	app()
+
 
 
 
