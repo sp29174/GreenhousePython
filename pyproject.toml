@@ -2,7 +2,7 @@
 
 [project]
 name = "GreenhousePython"
-version = "0.3.0"
+version = "0.3.1"
 description = "It's a python thing that automates a greenhouse."
 license = "MIT"
 requires-python = ">=3.9,<4.0"
