@@ -8,10 +8,10 @@ latitude:43.0972
 longitude:-89.5043
 elevation:355.0
 light_pin0:21
-pumpPin:15
-waterPin0:16
-waterPin1:17
-waterPin2:18
+pump_pin:15
+water_pin0:16
+water_pin1:17
+water_pin2:18
 MAX_VALUE:65536
 is_debug:True
 recording_status:True
