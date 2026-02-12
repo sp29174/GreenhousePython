@@ -329,7 +329,6 @@ class GUI:
 		await self.lock.acquire()
 		attrs["recording_status"] = str(whermst)
 		setAttributes()
-		await self.doUpdateGUI()
 		self.lock.release()
 	async def doForcedCapture(self):
 		global attrs
@@ -426,5 +425,6 @@ class GUI:
 # Finalization and execution ****************************************************************************************
 if __name__ == "__main__":
 	app()
+
 
 
