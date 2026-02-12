@@ -234,26 +234,26 @@ class GUI:
 		asyncio.set_event_loop_policy(self.policy)
 		self.loop = self.policy.get_event_loop()
 		self.tasks = []
-		self.App = Gtk.Application(application_id="com.github.sp29174.GreenhousePython")
+		self.gui_app = Gtk.Application(application_id="com.github.sp29174.GreenhousePython")
 		if attrs["is_debug"]=="True":
 			print("we have super")
-		self.App.connect("activate",self.do_activate)
+		self.gui_app.connect("activate",self.do_activate)
 		if attrs["is_debug"]=="True":
 			print("we can bind")
-		self.App.run(None)
+		self.gui_app.run(None)
 		if attrs["is_debug"]=="True":
 			print("we get to the bloody twilight zone")
 	def do_activate(self,useless):
 		global attrs
-		self.window = Gtk.ApplicationWindow(application=self.App)
+		self.window = Gtk.ApplicationWindow(application=self.gui_app)
 		self.notebook = Gtk.Notebook()
 		self.window.set_child(self.notebook)
 		#stuff goes here
-		self.CameraPage = Gtk.CenterBox()
-		self.previewImage = Gtk.Image.new_from_file(get_file_name(int(attrs["last_file_number"])))
-		self.CameraPage.set_start_widget(self.previewImage)
+		self.camera_page = Gtk.CenterBox()
+		self.preview_image = Gtk.Image.new_from_file(get_file_name(int(attrs["last_file_number"])))
+		self.camera_page.set_start_widget(self.preview_image)
 		self.cameraText = Gtk.Label(label="This text should vanish in a poof of smoke.")
-		self.CameraPage.set_center_widget(self.cameraText)
+		self.camera_page.set_center_widget(self.cameraText)
 		self.captureBox = Gtk.Box()
 		self.captureButton = Gtk.Button.new_with_label("Capture a photograph manually.")
 		self.captureButton.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.doForcedCapture())))
@@ -261,8 +261,8 @@ class GUI:
 		self.recordButton = Gtk.ToggleButton(label="Toggle recording.")
 		self.recordButton.connect("toggled", lambda button: self.tasks.append(self.loop.create_task(self.doToggleRecording(button.props.active))))
 		self.captureBox.append(self.recordButton)
-		self.CameraPage.set_end_widget(self.captureBox)
-		self.notebook.append_page(self.CameraPage,Gtk.Label(label="Camera Control"))
+		self.camera_page.set_end_widget(self.captureBox)
+		self.notebook.append_page(self.camera_page,Gtk.Label(label="Camera Control"))
 		self.WaterPage = Gtk.Notebook()
 		self.waterpages = []
 		self.waterscales = []
@@ -418,13 +418,14 @@ class GUI:
 				self.waterpages[n].get_start_widget().set_label("Bed " + str(n) + " is running.")
 			else:
 				self.waterpages[n].get_start_widget().set_label("Bed " + str(n) + " is not running.")
-		self.previewImage.set_from_file(get_file_name(int(attrs["last_file_number"])))
+		self.preview_image.set_from_file(get_file_name(int(attrs["last_file_number"])))
 		self.cameraText.set_label("Overall, " + attrs["last_file_number"] + " images have been captured by this device.\nCurrently, images will be captured every " + attrs["last_file_number"] + " seconds.")
 		return None
 
 # Finalization and execution ****************************************************************************************
 if __name__ == "__main__":
 	app()
+
 
 
 
