@@ -74,10 +74,10 @@ mcp = MCP3008.fixed([MCP.CH0, MCP.CH1, MCP.CH2, MCP.CH3, MCP.CH4, MCP.CH5, MCP.C
 # setup other GPIO
 GPIO.setmode(GPIO.BCM)
 for x in range(int(attrs["lights"])):
-	GPIO.setup(int(attrs["lightPin" + str(x)]), GPIO.OUT)
+	GPIO.setup(int(attrs["light_pin" + str(x)]), GPIO.OUT)
 for x in range(int(attrs["beds"])):
 	GPIO.setup(int(attrs["waterPin" + str(x)]), GPIO.OUT)
-GPIO.setup(int(attrs["pumpPin"]), GPIO.OUT)
+GPIO.setup(int(attrs["pump_pin"]), GPIO.OUT)
 the_camera = cv2.VideoCapture(0)
 
 # More helpers ***********************************************************************************
@@ -132,9 +132,9 @@ def water():
 			if (attrs["bed" + str(x)] == "True"):
 				run_pump = True#If any bed is on, then run the pump.
 		if run_pump:
-			GPIO.output(int(attrs["pumpPin"]), GPIO.HIGH)
+			GPIO.output(int(attrs["pump_pin"]), GPIO.HIGH)
 		else:
-			GPIO.output(int(attrs["pumpPin"]), GPIO.LOW)
+			GPIO.output(int(attrs["pump_pin"]), GPIO.LOW)
 	except Exception:
 		print("We failed at water control. This is probably because we aren't connected to an MCP3008, which is reasonable. If it isn't reasonable, check the dependencies.")
 
@@ -168,7 +168,7 @@ def light():#This code is a disaster area. Essentially, here's the logic:
 				print("The light should be on.")
 		elif attrs["is_debug"] == "True":
 			print("The light should be off.")
-		GPIO.output(int(attrs["lightPin" + str(n)]), light_on)
+		GPIO.output(int(attrs["light_pin" + str(n)]), light_on)
 
 #A command that captures a photograph, writes it to a file, and updates attrs accordingly.
 @app.command()
@@ -372,7 +372,7 @@ class GUI:
 				print("We kinda need these to be floats.")
 				self.lock.release()
 				return None
-		elif ["lights","pumpPin","beds","MAX_VALUE"].count(setting_to_change) != 0 or setting_to_change.startswith("lightPin") or setting_to_change.startswith("waterPin"):
+		elif ["lights","pump_pin","beds","MAX_VALUE"].count(setting_to_change) != 0 or setting_to_change.startswith("light_pin") or setting_to_change.startswith("waterPin"):
 			if ["lights","beds"].count(setting_to_change) != 0:
 				print("When these are changed, the GUI needs to be rearranged, which I haven't coded yet.")
 				assert False
@@ -425,6 +425,7 @@ class GUI:
 # Finalization and execution ****************************************************************************************
 if __name__ == "__main__":
 	app()
+
 
 
 
