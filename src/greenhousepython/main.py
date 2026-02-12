@@ -258,8 +258,8 @@ class GUI:
 		self.captureButton = Gtk.Button.new_with_label("Capture a photograph manually.")
 		self.captureButton.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.doForcedCapture())))
 		self.captureBox.append(self.captureButton)
-		self.recordButton = Gtk.Button.new_with_label("This text should vanish in the blink of an eye.")
-		self.recordButton.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.doToggleRecording())))
+		self.recordButton = Gtk.ToggleButton(label="Toggle recording.")
+		self.recordButton.connect("toggled", lambda button: self.tasks.append(self.loop.create_task(self.doToggleRecording(button.props.active))))
 		self.captureBox.append(self.recordButton)
 		self.CameraPage.set_end_widget(self.captureBox)
 		self.notebook.append_page(self.CameraPage,Gtk.Label(label="Camera Control"))
@@ -324,13 +324,10 @@ class GUI:
 		self.window.present()
 		self.tasks.append(self.loop.create_task(self.autocontrol()))
 		self.tasks.append(self.loop.create_task(self.cameraControl()))
-	async def doToggleRecording(self):
+	async def doToggleRecording(self,whermst):
 		global attrs
 		await self.lock.acquire()
-		if attrs["recording_status"] == "True":
-			attrs["recording_status"] = "False"
-		if attrs["recording_status"] == "False":
-			attrs["recording_status"] = "True"
+		attrs["recording_status"] = str(whermst)
 		setAttributes()
 		await self.doUpdateGUI()
 		self.lock.release()
@@ -429,4 +426,5 @@ class GUI:
 # Finalization and execution ****************************************************************************************
 if __name__ == "__main__":
 	app()
+
 
