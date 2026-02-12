@@ -256,10 +256,10 @@ class GUI:
 		self.camera_page.set_center_widget(self.camera_text)
 		self.capture_box = Gtk.Box()
 		self.capture_button = Gtk.Button.new_with_label("Capture a photograph manually.")
-		self.capture_button.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.doForcedCapture())))
+		self.capture_button.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.force_capture())))
 		self.capture_box.append(self.capture_button)
 		self.record_button = Gtk.ToggleButton(label="Toggle recording.")
-		self.record_button.connect("toggled", lambda button: self.tasks.append(self.loop.create_task(self.doToggleRecording(button.props.active))))
+		self.record_button.connect("toggled", lambda button: self.tasks.append(self.loop.create_task(self.toggle_recording(button.props.active))))
 		self.capture_box.append(self.record_button)
 		self.camera_page.set_end_widget(self.capture_box)
 		self.notebook.append_page(self.camera_page,Gtk.Label(label="Camera Control"))
@@ -269,18 +269,18 @@ class GUI:
 		self.deadband_scales = []
 		for n in range(int(attrs["beds"])):
 			self.water_pages.append(Gtk.CenterBox())
-			self.water_pages[n].set_start_widget(Gtk.Label(label="This text should vanish before you can read it."))#Namely, line 312 should cause automatic_control to await doUpdateGUI which should disappear this placeholder. If anything crashes between here and line 402, this text will live and we learn of a problem.
+			self.water_pages[n].set_start_widget(Gtk.Label(label="This text should vanish before you can read it."))#Namely, line 312 should cause automatic_control to await update_GUI which should disappear this placeholder. If anything crashes between here and line 402, this text will live and we learn of a problem.
 			self.water_scales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
 			self.water_scales[n].set_value(float(attrs["control_parameter" + str(n)]))
 			self.water_scales[n].set_hexpand(True)
 			self.water_scales[n].set_vexpand(True)
-			self.water_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.doUpdateWaterControl(g,scale.get_value()))))#This line of code is the answer to a specific engineering question: how many obscure features of Python can fit in one line of code? It also makes the slider schedule a task when you move it, so that it neither blocks the GUI nor fails to do anything.
+			self.water_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.update_water_threshold(g,scale.get_value()))))#This line of code is the answer to a specific engineering question: how many obscure features of Python can fit in one line of code? It also makes the slider schedule a task when you move it, so that it neither blocks the GUI nor fails to do anything.
 			self.water_pages[n].set_center_widget(self.water_scales[n])
 			self.deadband_scales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
 			self.deadband_scales[n].set_value(float(attrs["deadband" + str(n)]))
 			self.deadband_scales[n].set_hexpand(True)
 			self.deadband_scales[n].set_vexpand(True)
-			self.deadband_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.doUpdateDeadband(g,scale.get_value()))))
+			self.deadband_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.update_water_deadband(g,scale.get_value()))))
 			self.water_pages[n].set_end_widget(self.deadband_scales[n])
 			self.water_page.append_page(self.water_pages[n],Gtk.Label(label="Bed " + str(n)))
 		self.notebook.append_page(self.water_page,Gtk.Label(label="Water Control"))
@@ -295,7 +295,7 @@ class GUI:
 			self.light_scales[n].set_value(float(attrs["light_length" + str(n)]))
 			self.light_scales[n].set_hexpand(True)
 			self.light_scales[n].set_vexpand(True)
-			self.light_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.doUpdateLights(g,scale.get_value()))))
+			self.light_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.update_light_length(g,scale.get_value()))))
 			self.light_pages[n].append(self.light_scales[n])
 			self.light_page.append_page(self.light_pages[n],Gtk.Label(label="Light" + str(n)))
 		self.notebook.append_page(self.light_page,Gtk.Label(label="Light Control"))
@@ -317,63 +317,63 @@ class GUI:
 		self.settings_text_entry = Gtk.Entry()
 		self.settings_config_box.set_center_widget(self.settings_text_entry)
 		self.settings_enter_button = Gtk.Button.new_with_label("Change the setting")
-		self.settings_enter_button.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.doUpdateSettings())))
+		self.settings_enter_button.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.update_settings())))
 		self.settings_config_box.set_end_widget(self.settings_enter_button)
 		self.settings_page.append(self.settings_config_box)
 		self.notebook.append_page(self.settings_page,Gtk.Label(label="Settigs"))
 		self.window.present()
 		self.tasks.append(self.loop.create_task(self.automatic_control()))
 		self.tasks.append(self.loop.create_task(self.camera_control()))
-	async def doToggleRecording(self,whermst):
+	async def toggle_recording(self,whermst):
 		global attrs
 		await self.lock.acquire()
 		attrs["recording_status"] = str(whermst)
 		set_attributes()
 		self.lock.release()
-	async def doForcedCapture(self):
+	async def force_capture(self):
 		global attrs
 		await self.lock.acquire()
 		camera_capture()
-		await self.doUpdateGUI()
+		await self.update_GUI()
 		self.lock.release()
-	async def doUpdateWaterControl(self,n,value):
+	async def update_water_threshold(self,n,value):
 		global attrs
 		await self.lock.acquire()
 		attrs["control_parameter" + str(n)] = str(value)
 		set_attributes()
 		self.lock.release()
-	async def doUpdateDeadband(self,n,value):
+	async def update_water_deadband(self,n,value):
 		global attrs
 		await self.lock.acquire()
 		attrs["deadband" + str(n)] = str(value)
 		set_attributes()
 		self.lock.release()
-	async def doUpdateLights(self,n,value):
+	async def update_light_length(self,n,value):
 		global attrs
 		await self.lock.acquire()
 		attrs["light_length" + str(n)] = str(value)
 		set_attributes()
 		self.lock.release()
-	async def doUpdateSettings(self):
+	async def update_settings(self):
 		global attrs
 		await self.lock.acquire()
 		row = self.settings_listbox.get_selected_row()
 		if row == None:
 			self.lock.release()
 			return None
-		thingToChange = row.get_child().get_text()
-		if ["file_name_prefix"].count(thingToChange) != 0:
+		setting_to_change = row.get_child().get_text()
+		if ["file_name_prefix"].count(setting_to_change) != 0:
 			print("This part needs logic for automatically renaming files, which I haven't written yet. Sorry!")
 			assert False
-		elif ["interval","longitude","latitude","elevation"].count(thingToChange) != 0:
+		elif ["interval","longitude","latitude","elevation"].count(setting_to_change) != 0:
 			try:
 				new_val = str(float(self.settings_text_entry.get_text()))
 			except ValueError:
 				print("We kinda need these to be floats.")
 				self.lock.release()
 				return None
-		elif ["lights","pumpPin","beds","MAX_VALUE"].count(thingToChange) != 0 or thingToChange.startswith("lightPin") or thingToChange.startswith("waterPin"):
-			if ["lights","beds"].count(thingToChange) != 0:
+		elif ["lights","pumpPin","beds","MAX_VALUE"].count(setting_to_change) != 0 or setting_to_change.startswith("lightPin") or setting_to_change.startswith("waterPin"):
+			if ["lights","beds"].count(setting_to_change) != 0:
 				print("When these are changed, the GUI needs to be rearranged, which I haven't coded yet.")
 				assert False
 			try:
@@ -382,16 +382,16 @@ class GUI:
 				print("We kinda need these to be ints.")
 				self.lock.release()
 				return None
-		elif ["is_debug"].count(thingToChange) != 0:
+		elif ["is_debug"].count(setting_to_change) != 0:
 			if ["True","False"].count(self.settings_text_entry.get_text()) == 0:
 				print("We kinda need these to be bools.")
 				self.lock.release()
 				return None
-		elif ["last_file_number"].count(thingToChange) != 0 or thingToChange.startswith("bed") or thingToChange.startswith("control_parameter") or thingToChange.startswith("deadband"):#this only doesn't catch beds because we already found it on line 356
+		elif ["last_file_number"].count(setting_to_change) != 0 or setting_to_change.startswith("bed") or setting_to_change.startswith("control_parameter") or setting_to_change.startswith("deadband"):#this only doesn't catch beds because we already found it on line 356
 			print("Changing this randomly will definitley break the software. If you know what you're doing, use the CLI, which is less picky")
 			self.lock.release()
 			return None
-		attrs[thingToChange] = self.settings_text_entry.get_text()
+		attrs[setting_to_change] = self.settings_text_entry.get_text()
 		set_attributes()
 		self.lock.release()
 	async def automatic_control(self):
@@ -401,17 +401,17 @@ class GUI:
 			water()
 			light()
 			self.lock.release()
-			await self.doUpdateGUI()
+			await self.update_GUI()
 			await asyncio.sleep(float(attrs["interval"]))
 	async def camera_control(self):
 		global attrs
 		while True:
 			await self.lock.acquire()
 			camera_capture()
-			await self.doUpdateGUI()
+			await self.update_GUI()
 			self.lock.release()
 			await asyncio.sleep(float(attrs["camera_interval"]))
-	async def doUpdateGUI(self):
+	async def update_GUI(self):
 		global attrs
 		for n in range(int(attrs["beds"])):
 			if (attrs["bed" + str(n)] == "True"):
@@ -425,6 +425,7 @@ class GUI:
 # Finalization and execution ****************************************************************************************
 if __name__ == "__main__":
 	app()
+
 
 
 
