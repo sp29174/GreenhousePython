@@ -4,8 +4,8 @@
 
 #Preinitialization ****************************************************************************************
 
-from typer import Typer
-app = Typer()
+from typer import Typer, Argument, Option
+app = Typer(rich_markup_mode="rich")
 attrs = {}
 
 #Helpers ****************************************************************************************
@@ -63,6 +63,7 @@ except Exception:
 from datetime import datetime, timedelta, timezone
 from astral import sun, Observer
 import signal
+from typing import Annotated
 
 # Postinitialization ****************************************************************************************
 
@@ -107,14 +108,14 @@ signal.signal(signal.SIGINT,do_shutdown)#I have no idea why these aren't the sam
 
 #a simple command to allow the user to change settings-this lets them define nonsense parameters, but I could care less, because my get_attributes can ignore them.
 #However, this almost certainly breaks if you pass in a thing that contains a newline, which we should fix later.
-@app.command()
-def change_setting(key : str, value : str):
+@app.command(help="Change the setting KEY to VALUE. Newlines and colons are not supported for technical reasons.")
+def change_setting(key : Annotated[str, Argument(help="The exact name of the setting to change or create.")], value : Annotated[str, Argument(help="The exact value that the setting should be changed to.")]):
 	global attrs
 	attrs[key] = value
 	set_attributes()
 
 #control pumps using hysteresis based on the values returned from the MCP
-@app.command()
+@app.command(help="Force the system to run the automatic water control logic without starting the GUI.")
 def water():
 	global attrs
 	run_pump = False
@@ -138,7 +139,7 @@ def water():
 	except Exception:
 		print("We failed at water control. This is probably because we aren't connected to an MCP3008, which is reasonable. If it isn't reasonable, check the dependencies.")
 
-@app.command()
+@app.command(help="Force the system to run the automatic light control logic without starting the GUI. [bold red]This will not work if the sun will not rise and set today.[/bold red]")
 def light():#This code is a disaster area. Essentially, here's the logic:
 	#If this code runs at night and before midnight, then it will be after sunset and after sunrise.
 	#If this code runs at night and after midnight, then it will be before sunset and before sunrise.
@@ -171,7 +172,7 @@ def light():#This code is a disaster area. Essentially, here's the logic:
 		GPIO.output(int(attrs["light_pin" + str(n)]), light_on)
 
 #A command that captures a photograph, writes it to a file, and updates attrs accordingly.
-@app.command()
+@app.command(help="Manually capture a photograph.")
 def camera_capture():#updated to not badly reimplement last_file_name
 	global attrs
 	global the_camera
@@ -186,8 +187,8 @@ def camera_capture():#updated to not badly reimplement last_file_name
 		attrs["last_file_number"] = str(int(attrs["last_file_number"]) + 1)
 		set_attributes()
 
-@app.command()
-def create_video(output_video_path : str, fps : int = 24, size : str = None):
+@app.command(help="Assemble the current collection of images into a mp4 video. This will:\n \n 1. Not include the placeholder image, ever. \n 2. Not recoginze images created with file numbers above last_file_number. \n 3. Pollute your shell with warnings if you have nonsequential image numbers. \n 4. Be unaware of the fact that manually captured images are not taken at regular intervals.")
+def create_video(output_video_path : Annotated[str, Argument(help="An exact file name, which must be writable, must not have stuff in it, and should not be irrational. If you run this command with sudo and pass /, then it will replace your system with a video. Don't.")], fps : Annotated[int, Option(help="The framerate that the video will be displayed at. Defaults to 24.")] = 24, size : Annotated[str, Option(help="An override to resize your images to a different resolution. This is needed internally for technical reasons, and we saw no reason not to expose it to the commandline. Defaults to your camera resolution.")] = None):
 	image_paths = []
 	for num in range(1,int(attrs["last_file_number"])+1):
 		if cv2.imread(get_file_name(num)) is not None:
@@ -430,6 +431,7 @@ class GUI:
 # Finalization and execution ****************************************************************************************
 if __name__ == "__main__":
 	app()
+
 
 
 
