@@ -19,6 +19,8 @@ class GPIO:
     pass
   def output(*args,**kwargs):
     pass
+  def cleanup(*args,**kwargs):
+    pass
 
 class MCP:
   CH0 = None
@@ -34,7 +36,7 @@ class MCP3008:
   def __init__(self):
     pass
   def __call__(self, *args, **kwargs):
-    pass
+    return [0,0,0,0,0,0,0,0]
   def fixed(*args,**kwargs):
     return MCP3008()
   def close(self):
