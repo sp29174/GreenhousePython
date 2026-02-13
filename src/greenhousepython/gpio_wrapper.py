@@ -12,6 +12,6 @@ class GPIO:
 	def setup():
 		pass
 	def cleanup():
-		pass
+		self.chip.close()
 	def output():
 		pass
