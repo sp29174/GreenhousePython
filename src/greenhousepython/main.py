@@ -211,15 +211,19 @@ def create_video(output_video_path : Annotated[str, Argument(help="An exact file
 	print(f"Video saved to {output_video_path}")
 
 #A command that lets you see the information flying through cyberspace.
-@app.command()
+@app.command(help="Prints the internal state of the program into your shell, and does nothing else.")
 def see_data():
+	global times_off
+	global mcp
+	global attrs
+	print(times_off)
 	print(mcp())
 	keys = attrs.keys()#get all the settings
 	for key in keys:
 		print(key + ":" + attrs[key])#assemble key and values into new format
 
 #A quick little command that just starts the GUI.
-@app.command()
+@app.command(help="Starts the GUI. Will fail if your system has no way to render it.")
 def start_gui():
 	global attrs
 	gui = GUI()
@@ -431,6 +435,7 @@ class GUI:
 # Finalization and execution ****************************************************************************************
 if __name__ == "__main__":
 	app()
+
 
 
 
