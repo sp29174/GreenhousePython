@@ -17,7 +17,7 @@ greenhouse = "greenhousepython.main:app"
 
 [project.optional-dependencies]
 camera-nonsense = ["opencv-python"]
-rpi = [ "mcp3008", "RPi.GPIO" ]
+rpi = [ "mcp3008", "gpio" ]
 dev = [ "wheel", "poetry>=2.0.0" ]
 GUI = [ "PyGObject" ]
 
