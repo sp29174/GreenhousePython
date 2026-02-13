@@ -3,7 +3,7 @@ from gpiod.line import Value as v
 
 #A really dodgy hack. You can use this code in your project, but should you?
 
-class GPIO:
+class gpio:
 	def __init__(self):
 		self.BCM = None
 		self.OUT = True
