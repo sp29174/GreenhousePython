@@ -33,6 +33,8 @@ class MCP:
 class MCP3008:
   def __init__(self):
     pass
+  def __call__(self, *args, **kwargs):
+    pass
   def fixed(*args,**kwargs):
     return MCP3008()
   def close(self):
