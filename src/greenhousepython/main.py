@@ -58,7 +58,8 @@ except ImportError as e:
 	if attrs["is_debug"] == "True":
 		print("WARNING: " + str(e))
 	try:
-		from greenhousepython.gpio_wrapper import GPIO
+		from greenhousepython.gpio_wrapper import gpio as g
+		GPIO = g()
 	except ImportError as e:
 		if attrs["is_debug"] == "True":
 			print("WARNING: " + str(e))
@@ -467,4 +468,5 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
