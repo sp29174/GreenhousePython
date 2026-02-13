@@ -9,9 +9,9 @@ class GPIO:
 		self.chip = ch.Chip("/dev/gpiochip0")
 	def setmode(self, *args):
 		pass
-	def setup():
+	def setup(self):
 		pass
-	def cleanup():
+	def cleanup(self):
 		self.chip.close()
-	def output():
+	def output(self):
 		pass
