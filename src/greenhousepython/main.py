@@ -44,13 +44,13 @@ has_GUI = True
 try:
 	import cv2
 except ImportError:
-	from nonsense import cv2
+	from greenhousepython.nonsense import cv2
 try:
 	import RPi.GPIO as GPIO
 	import mcp3008 as MCP
 	from mcp3008 import MCP3008
 except ImportError:
-	from nonsense import GPIO, MCP, MCP3008
+	from greenhousepython.nonsense import GPIO, MCP, MCP3008
 import sys
 import asyncio
 try:
@@ -439,6 +439,7 @@ class GUI:
 # Finalization and execution ****************************************************************************************
 if __name__ == "__main__":
 	app()
+
 
 
 
