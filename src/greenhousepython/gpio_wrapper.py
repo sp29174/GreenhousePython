@@ -7,7 +7,7 @@ class GPIO:
 		self.HIGH = None
 		self.LOW = None
 		self.chip = ch.Chip("/dev/gpiochip0")
-	def setmode(self, ):
+	def setmode(self, *args):
 		pass
 	def setup():
 		pass
