@@ -295,6 +295,8 @@ class GUI:
 		#stuff goes here
 		self.camera_page = Gtk.CenterBox()
 		self.preview_image = Gtk.Image.new_from_file(get_file_name(int(attrs["last_file_number"])))
+		self.preview_image.set_vexpand(True)#Allow the preview image to not be two pixels tall
+		self.preview_image.set_hexpand(True)
 		self.camera_page.set_start_widget(self.preview_image)
 		self.camera_text = Gtk.Label(label="This text should vanish in a poof of smoke.")
 		self.camera_page.set_center_widget(self.camera_text)
@@ -476,6 +478,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
