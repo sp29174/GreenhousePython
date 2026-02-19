@@ -12,7 +12,6 @@ pump_pin:15
 water_pin0:16
 water_pin1:17
 water_pin2:18
-MAX_VALUE:65536
 is_debug:True
 recording_status:True
 beds:3
