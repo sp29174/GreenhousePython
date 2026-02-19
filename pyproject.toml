@@ -5,7 +5,7 @@ name = "GreenhousePython"
 version = "0.3.1"
 description = "It's a python thing that automates a greenhouse."
 license = "MIT"
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.10,<4.0"#pygobject fails to install on 3.9
 authors = [ { name = "Frank J. Barth", email = "frank.barth@outlook.com" }, { name = "Phillip Spalitta", email = "sp29174@students.mcpasd.k12.wi.us" } ]
 maintainers = [ { name = "Benjamin Shrago", email = "bshrago@mcpasd.k12.wi.us" } ]
 keywords = [ "greenhouse", "automation", "the music of the spheres" ]
