@@ -20,7 +20,7 @@ camera-nonsense = ["opencv-python"]
 rpi = [ "mcp3008", "RPi.GPIO" ]#This group's days are numbered.
 non-rpi = [ "gpiod" ]
 dev = [ "wheel", "poetry>=2.0.0" ]
-GUI = [ "PyGObject" ]
+GUI = [ "PyGObject>=3.54.0" ]
 
 [build-system]
 requires = ["poetry-core>2.0.0,<3.0.0"]
