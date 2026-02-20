@@ -328,7 +328,7 @@ class GUI:
 		self.water_pages = []
 		self.water_scales = []
 		self.deadband_scales = []
-		for n in range(int(attrs["beds"])):
+		for n in range(attrs["beds"]):
 			self.water_pages.append(Gtk.CenterBox())
 			self.water_pages[n].set_start_widget(Gtk.Label(label="This text should vanish before you can read it."))#Namely, line 312 should cause automatic_control to await update_GUI which should disappear this placeholder. If anything crashes between here and line 402, this text will live and we learn of a problem.
 			self.water_scales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
@@ -348,7 +348,7 @@ class GUI:
 		self.light_page = Gtk.Notebook()
 		self.light_pages = []
 		self.light_scales = []
-		for n in range(int(attrs["lights"])):
+		for n in range(attrs["lights"]):
 			self.light_pages.append(Gtk.Box())
 			self.light_pages[n].append(Gtk.Label(label="This is a test of the light control interface."))
 			self.light_pages[n].append(Gtk.Label(label="This will eventually display an indicator of if the light is running and a slider to control hours."))
@@ -490,3 +490,4 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
