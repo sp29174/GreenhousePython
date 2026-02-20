@@ -429,7 +429,7 @@ class GUI:
 		if ["file_name_prefix"].count(setting_to_change) != 0:
 			print("This part needs logic for automatically renaming files, which I haven't written yet. Sorry!")
 			assert False
-		elif ["interval","camera_inteval","longitude","latitude","elevation"].count(setting_to_change) != 0 or or setting_to_change.startswith("control_parameter") or setting_to_change.startswith("deadband"):
+		elif ["interval","camera_inteval","longitude","latitude","elevation"].count(setting_to_change) != 0 or setting_to_change.startswith("control_parameter") or setting_to_change.startswith("deadband"):
 			try:
 				new_val = float(self.settings_text_entry.get_text())
 			except ValueError:
@@ -496,6 +496,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
