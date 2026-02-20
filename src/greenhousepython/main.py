@@ -429,34 +429,38 @@ class GUI:
 		if ["file_name_prefix"].count(setting_to_change) != 0:
 			print("This part needs logic for automatically renaming files, which I haven't written yet. Sorry!")
 			assert False
-		elif ["interval","longitude","latitude","elevation"].count(setting_to_change) != 0:
+		elif ["interval","camera_inteval","longitude","latitude","elevation"].count(setting_to_change) != 0 or or setting_to_change.startswith("control_parameter") or setting_to_change.startswith("deadband"):
 			try:
-				new_val = str(float(self.settings_text_entry.get_text()))
+				new_val = float(self.settings_text_entry.get_text())
 			except ValueError:
 				print("We kinda need these to be floats.")
 				self.lock.release()
 				return None
-		elif ["lights","pump_pin","beds"].count(setting_to_change) != 0 or setting_to_change.startswith("light_pin") or setting_to_change.startswith("water_pin"):
+		elif ["lights","pump_pin","beds","last_file_number"].count(setting_to_change) != 0 or setting_to_change.startswith("light_pin") or setting_to_change.startswith("water_pin"):
 			if ["lights","beds"].count(setting_to_change) != 0:
 				print("When these are changed, the GUI needs to be rearranged, which I haven't coded yet.")
 				assert False
 			try:
-				new_val = str(int(self.settings_text_entry.get_text()))
+				new_val = int(self.settings_text_entry.get_text())
 			except ValueError:
 				print("We kinda need these to be ints.")
 				self.lock.release()
 				return None
-		elif ["is_debug"].count(setting_to_change) != 0:
-			if ["True","False"].count(self.settings_text_entry.get_text()) == 0:
+		elif ["is_debug","is_recording"].count(setting_to_change) != 0 or setting_to_change.startswith("bed"):#this only doesn't catch beds because we already found it on line 440
+			if "True" == self.settings_text_entry.get_text():
+				new_val = True
+			elif "False" == self.settings_text_entry.get_text():
+				new_val = False
+			else:
 				print("We kinda need these to be bools.")
 				self.lock.release()
 				return None
-		elif ["last_file_number"].count(setting_to_change) != 0 or setting_to_change.startswith("bed") or setting_to_change.startswith("control_parameter") or setting_to_change.startswith("deadband"):#this only doesn't catch beds because we already found it on line 356
-			print("Changing this randomly will definitley break the software. If you know what you're doing, use the CLI, which is less picky")
+		else:
+			print("Confusion noise")
 			self.lock.release()
 			return None
-		attrs[setting_to_change] = self.settings_text_entry.get_text()
-		set_attributes()
+		attrs[setting_to_change] = new_val
+		attrs.sync()
 		self.lock.release()
 	async def automatic_control(self):
 		global attrs
@@ -492,6 +496,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
