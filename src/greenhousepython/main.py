@@ -52,7 +52,9 @@ def get_file_name(file_number):
 has_GUI = True
 try:
 	import cv2
-	cv2.VideoCapture(0).release()#Fix bug where we crash because there's no camera
+	x = cv2.VideoCapture(0)
+	x.read()
+	x.release()#Fix bug where we crash because there's no camera
 except ImportError:
 	from greenhousepython.nonsense import cv2
 try:
@@ -490,6 +492,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
