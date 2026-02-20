@@ -271,7 +271,7 @@ def see_data():
 	print(mcp())
 	keys = attrs.keys()#get all the settings
 	for key in keys:
-		print(key + ":" + attrs[key])#assemble key and values into new format
+		print(key + ":" + str(attrs[key]))#assemble key and values into new format
 
 #A quick little command that just starts the GUI.
 @app.command(help="Starts the GUI. Will fail if your system has no way to render it.")
@@ -496,6 +496,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
