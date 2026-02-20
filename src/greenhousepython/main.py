@@ -14,7 +14,7 @@ if not attrs:
 	attrs["interval"] = 1
 	attrs["file_name_prefix"] = "gi"
 	attrs["lights"] = 1
-	attrs["light_length"] = 0.5
+	attrs["light_length0"] = 0.5
 	attrs["latitude"] = 43.0972
 	attrs["longitude"] = -89.5043
 	attrs["elevation"] = 355.0
@@ -496,6 +496,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
