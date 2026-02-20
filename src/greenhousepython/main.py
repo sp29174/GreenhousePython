@@ -11,7 +11,7 @@ attrs = shelve.open("cfg.txt", writeback = True)
 if not attrs:
 	attrs["last_file_number"] = 0
 	attrs["camera_interval"] = 3600
-	attrr["interval"] = 1
+	attrs["interval"] = 1
 	attrs["file_name_prefix"] = "gi"
 	attrs["lights"] = 1
 	attrs["light_length"] = 0.5
@@ -490,5 +490,6 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
