@@ -232,7 +232,7 @@ def camera_capture():#updated to not badly reimplement last_file_name
 		else:
 			print("Warning: Image capture failed to complete.")
 	else:
-		cv2.imwrite(get_file_name(attrs["last_file_number"] + 1, frame)
+		cv2.imwrite(get_file_name(attrs["last_file_number"] + 1), frame)
 		attrs["last_file_number"] = attrs["last_file_number"] + 1
 		attrs.sync()
 
@@ -490,4 +490,5 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
