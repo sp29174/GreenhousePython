@@ -158,7 +158,6 @@ def change_setting(key : Annotated[str, Argument(help="The exact name of the set
 			new_val = float(value)
 		except ValueError:
 			print("We kinda need these to be floats.")
-			self.lock.release()
 			return None
 	elif ["lights","pump_pin","beds","last_file_number"].count(key) != 0 or key.startswith("light_pin") or key.startswith("water_pin"):
 		if ["lights","beds"].count(setting_to_change) != 0:
@@ -493,6 +492,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
