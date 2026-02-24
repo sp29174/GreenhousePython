@@ -269,6 +269,7 @@ def see_data():
 	global attrs
 	print(times_off)
 	print(mcp())
+	print(mcp(1))
 	keys = attrs.keys()#get all the settings
 	for key in keys:
 		print(key + ":" + str(attrs[key]))#assemble key and values into new format
@@ -496,6 +497,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
