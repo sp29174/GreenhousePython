@@ -419,7 +419,7 @@ class GUI:
 	async def toggle_recording(self,whermst):
 		global attrs
 		await self.lock.acquire()
-		attrs["recording_status"] = whermst
+		attrs["is_recording"] = whermst
 		attrs.sync()
 		self.lock.release()
 	async def force_capture(self):
@@ -471,7 +471,7 @@ class GUI:
 		global attrs
 		while True:
 			await self.lock.acquire()
-			if attrs["recording_status"]:
+			if attrs["is_recording"]:
 				camera_capture()
 			await self.update_GUI()
 			self.lock.release()
@@ -492,6 +492,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
