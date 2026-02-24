@@ -150,8 +150,37 @@ signal.signal(signal.SIGINT,do_shutdown)#I have no idea why these aren't the sam
 #However, this almost certainly breaks if you pass in a thing that contains a newline, which we should fix later.
 @app.command(help="Change the setting KEY to VALUE. Newlines and colons are not supported for technical reasons. BROKEN while we switch to Shelves.")
 def change_setting(key : Annotated[str, Argument(help="The exact name of the setting to change or create.")], value : Annotated[str, Argument(help="The exact value that the setting should be changed to.")]):
-	global attrs
-	attrs[key] = value
+	if ["file_name_prefix"].count(key) != 0:
+		print("This part needs logic for automatically renaming files, which I haven't written yet. Sorry!")
+		assert False
+	elif ["interval","camera_inteval","longitude","latitude","elevation"].count(key) != 0 or key.startswith("control_parameter") or key.startswith("deadband"):
+		try:
+			new_val = float(value)
+		except ValueError:
+			print("We kinda need these to be floats.")
+			self.lock.release()
+			return None
+	elif ["lights","pump_pin","beds","last_file_number"].count(key) != 0 or key.startswith("light_pin") or key.startswith("water_pin"):
+		if ["lights","beds"].count(setting_to_change) != 0:
+			print("When these are changed, the GUI needs to be rearranged, which I haven't coded yet.")
+			assert False
+		try:
+			new_val = int(value)
+		except ValueError:
+			print("We kinda need these to be ints.")
+			return None
+	elif ["is_debug","is_recording"].count(key) != 0 or key.startswith("bed"):#this only doesn't catch beds because we already found it on line 440
+		if "True" == value:
+			new_val = True
+		elif "False" == value:
+			new_val = False
+		else:
+			print("We kinda need these to be bools.")
+			return None
+	else:
+		print("Confusion noise")
+		return None
+	attrs[setting_to_change] = new_val
 	attrs.sync()
 
 #control pumps using hysteresis based on the values returned from the MCP
@@ -427,41 +456,8 @@ class GUI:
 			self.lock.release()
 			return None
 		setting_to_change = row.get_child().get_text()
-		if ["file_name_prefix"].count(setting_to_change) != 0:
-			print("This part needs logic for automatically renaming files, which I haven't written yet. Sorry!")
-			assert False
-		elif ["interval","camera_inteval","longitude","latitude","elevation"].count(setting_to_change) != 0 or setting_to_change.startswith("control_parameter") or setting_to_change.startswith("deadband"):
-			try:
-				new_val = float(self.settings_text_entry.get_text())
-			except ValueError:
-				print("We kinda need these to be floats.")
-				self.lock.release()
-				return None
-		elif ["lights","pump_pin","beds","last_file_number"].count(setting_to_change) != 0 or setting_to_change.startswith("light_pin") or setting_to_change.startswith("water_pin"):
-			if ["lights","beds"].count(setting_to_change) != 0:
-				print("When these are changed, the GUI needs to be rearranged, which I haven't coded yet.")
-				assert False
-			try:
-				new_val = int(self.settings_text_entry.get_text())
-			except ValueError:
-				print("We kinda need these to be ints.")
-				self.lock.release()
-				return None
-		elif ["is_debug","is_recording"].count(setting_to_change) != 0 or setting_to_change.startswith("bed"):#this only doesn't catch beds because we already found it on line 440
-			if "True" == self.settings_text_entry.get_text():
-				new_val = True
-			elif "False" == self.settings_text_entry.get_text():
-				new_val = False
-			else:
-				print("We kinda need these to be bools.")
-				self.lock.release()
-				return None
-		else:
-			print("Confusion noise")
-			self.lock.release()
-			return None
-		attrs[setting_to_change] = new_val
-		attrs.sync()
+		initial_val = self.settings_text_entry.get_text()
+		change_setting(setting_to_change,initial_val)
 		self.lock.release()
 	async def automatic_control(self):
 		global attrs
@@ -497,6 +493,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
