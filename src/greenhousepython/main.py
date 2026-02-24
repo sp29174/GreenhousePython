@@ -484,7 +484,7 @@ class GUI:
 			else:
 				self.water_pages[n].get_start_widget().set_label("Bed " + str(n) + " is not running.")
 		self.preview_image.set_from_file(get_file_name(attrs["last_file_number"]))
-		self.camera_text.set_label("Overall, " + attrs["last_file_number"] + " images have been captured by this device.\nCurrently, images will be captured every " + attrs["last_file_number"] + " seconds.")
+		self.camera_text.set_label("Overall, " + str(attrs["last_file_number"]) + " images have been captured by this device.\nCurrently, images will be captured every " + str(attrs["last_file_number"]) + " seconds.")
 		return None
 
 # Finalization and execution ****************************************************************************************
@@ -492,6 +492,7 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
