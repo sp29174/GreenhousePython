@@ -1,176 +1,282 @@
 # 11/11/2025
 # 
 # The main file.
-camera_nonsense = False
-file_debug = True
 
-if camera_nonsense:
-	from picamera2 import Picamera2
-	import cv2
-else:
-	from nonsense import Picamera2, cv2
-from PIL import Image, ImageTk
-import RPi.GPIO as GPIO
-import tkinter as tk
-from tkinter import ttk
-import datetime
-from datetime import timedelta, timezone
-from suntime import Sun
-import busio
-import digitalio
-import board
-import adafruit_mcp3xxx.mcp3008 as MCP
-from adafruit_mcp3xxx.analog_in import AnalogIn
+#Preinitialization ****************************************************************************************
 
-# CFG ****************************************************************************************
-norm_font = 'Calibri 18'
-recording_status = "Start Recording"
-light_length = 16
-header_font = 'Calibri 50 bold'
-resolution = '1920x1080'
-latitude = 43.0972
-longitude = -89.5043
-dt = 200
-lightPin = 21
-waterPin = 16
-MAX_VALUE = 65535
+from typer import Typer, Argument, Option
+import shelve
+app = Typer(rich_markup_mode="rich")
+attrs = shelve.open("cfg.txt", writeback = True)
+if not attrs:
+	attrs["last_file_number"] = 0
+	attrs["camera_interval"] = 3600
+	attrs["interval"] = 1
+	attrs["file_name_prefix"] = "gi"
+	attrs["lights"] = 1
+	attrs["light_length0"] = 0.5
+	attrs["latitude"] = 43.0972
+	attrs["longitude"] = -89.5043
+	attrs["elevation"] = 355.0
+	attrs["light_pin0"] = 21
+	attrs["pump_pin"] = 15
+	attrs["water_pin0"] = 16
+	attrs["water_pin1"] = 17
+	attrs["water_pin2"] = 18
+	attrs["is_debug"] = True
+	attrs["is_recording"] = True
+	attrs["beds"] = 3
+	attrs["bed0"] = False
+	attrs["bed1"] = False
+	attrs["bed2"] = False
+	attrs["control_parameter0"] = 0.0
+	attrs["deadband0"] = 0.0
+	attrs["control_parameter1"] = 0.0
+	attrs["deadband1"] = 0.0
+	attrs["control_parameter2"] = 0.0
+	attrs["deadband2"] = 0.0
+	attrs.sync()
+	#create default attrs
 
-# init part 1
+#Helpers ****************************************************************************************
 
-# create the spi bus
-spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
-# create the cs (chip select)
-cs = digitalio.DigitalInOut(board.CE0)
-# create the mcp object
-mcp = MCP.MCP3008(spi, cs)
-chan0 = AnalogIn(mcp, MCP.P0)#these pins should not be hard-coded!
-chan1 = AnalogIn(mcp, MCP.P1)
-chan2 = AnalogIn(mcp, MCP.P2)
-chan_list = [chan0, chan1, chan2]
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(waterPin, GPIO.OUT)
-GPIO.setup(lightPin, GPIO.OUT)
-
-# methods   ***********************************************************************************
-
-def testing():
-	print(light_length)
-	
-# new_light_control
-# 
-# Get user input and store it
-# Clear the input
-# Set light_length to the stored input value
-
-def new_light_control():
-	global light_length
-	global light_cycle
-	new_light_length = light_cycle.get()
-	light_cycle.delete(0, len(new_light_length))
-	if(new_light_length != ""):
-		try:
-			if(int(new_light_length) <= 24):
-				light_length = int(new_light_length)
-			else:
-				light_length = 24
-			print(light_length)
-			light_label.config(text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.")
-		except ValueError as e:
-			print("Invalid value entered. Please enter a valid value.")
-			print("length is still " + str(light_length))
-
-#break things into 20% intervals from 0 to 50k based on the values returned from the MCP
-def water(control_parameter):
-	global MAX_VALUE
-	moisture = 0
-	for x in range(3):#this logic must be fixed, it does not comply w/ the design reqs
-		moisture += get_data(x)
-	moisture = moisture / 3
-	if(MAX_VALUE * control_parameter > moisture):
-		GPIO.output(waterPin, GPIO.HIGH)
-		print("high")
-	else:
-		GPIO.output(waterPin, GPIO.LOW)
-		print("low")
-		
-def image_update(attrs,camera):
-    global image_label
-    cameraCapture(attrs,camera)
-    img = ImageTk.PhotoImage(Image.open(lastFileName()))
-    image_label.configure(image=img) 
-    image_label.image = img
-	
-# TODO: Fix
-def repeater(dt,latitude,longitude):
-	current_time = datetime.datetime.now(timezone.utc) - timedelta(hours=5)#add variable timezone, this is stuck on UTC-5
-	four_pm = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, datetime.datetime.today().day) + timedelta(hours=16)#This is the least efficient way to do this
-	print(current_time.time())
-	print(four_pm.time())
-	print(current_time.time() > four_pm.time())
-	if current_time.time() > four_pm.time():
-		light(light_length,latitude,longitude,theSun)
-	window.after(dt, lambda : repeater(dt,latitude,longitude))
-
-def light(light_length,latitude,longitude,sun):
-  mcpasd = datetime.datetime.now(timezone.utc) - timedelta(hours=5)
-  # Get today's sunrise and sunset in CST
-  today_sr = sun.get_sunrise_time() + timedelta(hours=7)
-  today_ss = sun.get_sunset_time() + timedelta(hours=7)
-  if today_sr > mcpasd:
-    today_sr = today_sr - timedelta(days=1)
-  if today_sr > today_ss:
-    today_ss = today_ss + timedelta(days=1)
-  today_suntime = today_ss - today_sr
-  light_on_time = today_suntime - today_suntime + timedelta(hours = light_length)
-  today_suntime = mcpasd - today_sr
-  if(mcpasd.time() > today_ss.time() and today_suntime < light_on_time):
-    light_on = True
-  else:
-    light_on = False
-  GPIO.output(lightPin, light_on)
-	
-def getDataAttributes():
-    dataIndex = open("dataIndex.txt", "r")#this must be fixed
-    last_file_number = dataIndex.readline().split()[1]
-    last_file_number = int(last_file_number)
-    interval_in_seconds = dataIndex.readline().split()[1]
-    interval_in_seconds = int(interval_in_seconds)
-    prefix = dataIndex.readline().split()[1]
-    dataIndex.close()
-    return [last_file_number, interval_in_seconds, prefix]
-
-# sets attributes in dataindex.txt file
-def setAttributes(attributes):
-    dataIndex = open("dataIndex.txt", "w")
-    dataIndex.writelines(["last_file_number: " + str(attributes[0]), '\n', "interval_in_seconds: " + str(attributes[1]), '\n', "file_name_prefix: " + attributes[2]])
-    dataIndex.close()
-
-#input camera attributes and capture image, updates attributes and returns new attributes
-def cameraCapture(attributes,camera):
-	if not camera_nonsense:
-		return attributes
-	name = "../../images/" + attributes[2] + (str(attributes[0] + 1)) + ".jpg"
-	camera.capture_file(name)
-	attributes[0] += 1
-	setAttributes(attributes)
-	return attributes
-
-def lastFileName():
-    attributes = getDataAttributes()
-    if (attributes[0] == 0):
+#figure out where the nth photo is (or at least should be)
+def get_file_name(file_number):
+    global attrs
+    if (file_number == 0):
         return "../../images/placeholder.jpg"
-    return "../../images/" + attributes[2] + str(attributes[0]) + ".jpg"
+    return "../../images/" + attrs["file_name_prefix"] + str(file_number) + ".jpg"
 
-def create_video(image_paths, output_video_path, fps=24, size=None):
-	if not camera_nonsense:
+# Initialization ****************************************************************************************
+
+has_GUI = True
+try:
+	import cv2
+	x = cv2.VideoCapture(0)
+	x.read()
+	x.release()#Fix bug where we crash because there's no camera
+except ImportError:
+	from greenhousepython.nonsense import cv2
+try:
+	import mcp3008 as MCP
+	from mcp3008 import MCP3008
+except ImportError as e:
+	if attrs["is_debug"]:
+		print("WARNING: " + str(e))
+	from greenhousepython.nonsense import MCP, MCP3008
+try:
+	from greenhousepython.gpio_wrapper import gpio as g
+	GPIO = g()
+except Exception as e:
+	if attrs["is_debug"]:
+		print("WARNING: " + str(e))
+	try:
+		import RPi.GPIO as GPIO
+	except ImportError as e:
+		if attrs["is_debug"]:
+			print("WARNING: " + str(e))
+		from greenhousepython.nonsense import GPIO
+import sys
+import asyncio
+try:
+	import gi
+	gi.require_version("Gtk", "4.0")
+	from gi.repository import GLib, Gtk
+	from gi.events import GLibEventLoopPolicy
+except Exception as e:
+	if attrs["is_debug"]:
+		print("WARNING: " + str(e))
+	has_GUI = False
+from datetime import datetime, timedelta, timezone
+from astral import sun, Observer
+import signal
+from typing import Annotated
+
+# Postinitialization ****************************************************************************************
+
+times_off = []
+for n in range(attrs["lights"]):
+	times_off.append(datetime.now(timezone.utc))
+# create the mcp object
+mcp = MCP3008.fixed([MCP.CH0, MCP.CH1, MCP.CH2, MCP.CH3, MCP.CH4, MCP.CH5, MCP.CH6, MCP.CH7])
+# setup other GPIO
+GPIO.setmode(GPIO.BCM)
+for x in range(attrs["lights"]):
+	GPIO.setup(attrs["light_pin" + str(x)], GPIO.OUT)
+for x in range(attrs["beds"]):
+	GPIO.setup(attrs["water_pin" + str(x)], GPIO.OUT)
+GPIO.setup(attrs["pump_pin"], GPIO.OUT)
+the_camera = cv2.VideoCapture(0)
+
+# More helpers ***********************************************************************************
+def do_shutdown(*args,**kwargs):
+	global mcp
+	global the_camera
+	global attrs
+	if attrs["is_debug"] == "True":
+		print("Shutting down...")
+	try:#we shouldn't let crashes prevent the program from closing, so these must all be wrapped with try.
+		mcp.close()#close down water control coms
+	except Exception as e:
+		if attrs["is_debug"]:
+			print("WARNING: " + str(e))
+		else:
+			print("Warning: we couldn't close down the water control communitcations.")
+	try:
+		the_camera.release()#turn off the damn camera
+	except Exception as e:
+		if attrs["is_debug"]:
+			print("WARNING: " + str(e))
+		else:
+			print("Warning: we couldn't close down the camera.")
+	try:
+		GPIO.cleanup()#knock the GPIO back to high-zed
+	except Exception as e:
+		if attrs["is_debug"]:
+			print("WARNING: " + str(e))
+		else:
+			print("Warning: we couldn't reset the GPIO.")
+	attrs.close()
+	sys.exit(0)#ensure the proghramme actually ends
+
+# Postpostinitialization ***********************************************************************************
+
+signal.signal(signal.SIGTERM,do_shutdown)
+signal.signal(signal.SIGINT,do_shutdown)#I have no idea why these aren't the same signal. The program kicks the bucket either way.
+
+# CLI commands   ***********************************************************************************
+
+#a simple command to allow the user to change settings-this lets them define nonsense parameters, but I could care less, because my get_attributes can ignore them.
+#However, this almost certainly breaks if you pass in a thing that contains a newline, which we should fix later.
+@app.command(help="Change the setting KEY to VALUE. Newlines and colons are not supported for technical reasons. BROKEN while we switch to Shelves.")
+def change_setting(key : Annotated[str, Argument(help="The exact name of the setting to change or create.")], value : Annotated[str, Argument(help="The exact value that the setting should be changed to.")]):
+	if ["file_name_prefix"].count(key) != 0:
+		print("This part needs logic for automatically renaming files, which I haven't written yet. Sorry!")
+		assert False
+	elif ["interval","camera_inteval","longitude","latitude","elevation"].count(key) != 0 or key.startswith("control_parameter") or key.startswith("deadband"):
+		try:
+			new_val = float(value)
+		except ValueError:
+			print("We kinda need these to be floats.")
+			return None
+	elif ["lights","pump_pin","beds","last_file_number"].count(key) != 0 or key.startswith("light_pin") or key.startswith("water_pin"):
+		if ["lights","beds"].count(setting_to_change) != 0:
+			print("When these are changed, the GUI needs to be rearranged, which I haven't coded yet.")
+			assert False
+		try:
+			new_val = int(value)
+		except ValueError:
+			print("We kinda need these to be ints.")
+			return None
+	elif ["is_debug","is_recording"].count(key) != 0 or key.startswith("bed"):#this only doesn't catch beds because we already found it on line 440
+		if "True" == value:
+			new_val = True
+		elif "False" == value:
+			new_val = False
+		else:
+			print("We kinda need these to be bools.")
+			return None
+	else:
+		print("Confusion noise")
 		return None
+	attrs[setting_to_change] = new_val
+	attrs.sync()
+
+#control pumps using hysteresis based on the values returned from the MCP
+@app.command(help="Force the system to run the automatic water control logic without starting the GUI.")
+def water():
+	global attrs
+	run_pump = False
+	try:#my crummy mock of mcp3008.MCP3008 can't make sense of line 118, so this eyesore is trapped in a try-catch.
+		for x in range(attrs["beds"]):
+			moisture = mcp(1)[x]#normalize values to one using mcp3008.MCP3008 (see https://github.com/luxedo/RPi_mcp3008/blob/master/mcp3008.py#L73)
+			if (not attrs["bed" + str(x)]) and (moisture < attrs["control_parameter" + str(x)] - (attrs["deadband" + str(x)]/2)):#this if-else is basically an inelegant hysteresis controller. On the other hand, we're being rewarded for not destroying the pump, not for elegantly destroying the pump.
+				GPIO.output(int(attrs["water_pin" + str(x)]), GPIO.HIGH)
+				attrs["bed" + str(x)] = "True"
+				attrs.sync()
+			elif attrs["bed" + str(x)] and (moisture > attrs["control_parameter" + str(x)] + (attrs["deadband" + str(x)]/2)):
+				GPIO.output(attrs["water_pin" + str(x)], GPIO.LOW)
+				attrs["bed" + str(x)] = False
+				attrs.sync()
+			if (attrs["bed" + str(x)] == "True"):
+				run_pump = True#If any bed is on, then run the pump.
+		if run_pump:
+			GPIO.output(int(attrs["pump_pin"]), GPIO.HIGH)
+		else:
+			GPIO.output(int(attrs["pump_pin"]), GPIO.LOW)
+	except Exception as e:
+		if attrs["is_debug"]:
+			print("WARNING: " + str(e))
+		else:
+			print("We failed at water control. This is probably because we aren't connected to an MCP3008, which is reasonable. If it isn't reasonable, check the dependencies.")
+
+@app.command(help="Force the system to run the automatic light control logic without starting the GUI. [bold red]This will not work if the sun will not rise and set today.[/bold red]")
+def light():#This code is a disaster area. Essentially, here's the logic:
+	#If this code runs at night and before midnight, then it will be after sunset and after sunrise.
+	#If this code runs at night and after midnight, then it will be before sunset and before sunrise.
+	#If this code runs during the day, then it will be before sunset and after sunrise.
+	#If this code runs and it is after sunset and before sunrise, time itself has crashed.
+	#The problem comes when it's after midnight and we need to figure out when to turn the lights off: if we use the sunset time on the current day, we will never turn the lights off. Bad.
+	#The solution I found is to calculate the time in UTC when we need to turn off the lights, do said calculation before midnight when the API is still talking about the correct sunset, and then just intentionally let this number get stale it's night and before midnight, at which point we will be talking about the right sunset again.
+	#A consequence of this is that if you adjust the light length at any reasonable hour, it will only update the next day.
+	#Another consequence of this is that if you run this code in Iceland or something where the sun won't rise on certain days of the year, this code will catch fire.
+	#There must be a better solution than this, but I couldn't find it. Shrug emoji.
+	global attrs
+	global times_off
+	observer = Observer(attrs["latitude"],attrs["longitude"],attrs["elevation"])
+	try:
+		the_sun = sun.daylight(observer)#The sun is a deadly laser	
+	except ValueError as e:#the sun doesn't rise/set today. We therefore need to fudge the sun. This means that, for our purposes, the sun rose at midnight and set a very long time ago.
+		if attrs["is_debug"]:
+			print(str(e))
+		the_sun = [datetime(datetime.year,datetime.month,datetime.day),datetime.min]
+	if (datetime.now(timezone.utc) >= the_sun[1]):
+		if attrs["is_debug"]:
+			print("We think that it's after sunset.")
+		for n in range(attrs["lights"]):
+			times_off[n] = the_sun[0] + timedelta(days=attrs["light_length" + str(n)])
+	elif attrs["is_debug"]:
+		print("We think that it's before sunset.")
+	for n in range(attrs["lights"]):
+		light_on = False
+		if (datetime.now(timezone.utc) < times_off[n]):
+			light_on = True
+			if attrs["is_debug"]:
+				print("The light should be on.")
+		elif attrs["is_debug"]:
+			print("The light should be off.")
+		if light_on:
+			GPIO.output(attrs["light_pin" + str(n)], GPIO.HIGH)
+		else:
+			GPIO.output(attrs["light_pin" + str(n)], GPIO.LOW)
+
+#A command that captures a photograph, writes it to a file, and updates attrs accordingly.
+@app.command(help="Manually capture a photograph.")
+def camera_capture():#updated to not badly reimplement last_file_name
+	global attrs
+	global the_camera
+	ret, frame = the_camera.read()
+	if not ret:
+		if not attrs["is_debug"]:
+			assert False#Fuck this!
+		else:
+			print("Warning: Image capture failed to complete.")
+	else:
+		cv2.imwrite(get_file_name(attrs["last_file_number"] + 1), frame)
+		attrs["last_file_number"] = attrs["last_file_number"] + 1
+		attrs.sync()
+
+@app.command(help="Assemble the current collection of images into a mp4 video. This will:\n \n 1. Not include the placeholder image, ever. \n 2. Not recoginze images created with file numbers above last_file_number. \n 3. Pollute your shell with warnings if you have nonsequential image numbers. \n 4. Be unaware of the fact that manually captured images are not taken at regular intervals.")
+def create_video(output_video_path : Annotated[str, Argument(help="An exact file name, which must be writable, must not have stuff in it, and should not be irrational. If you run this command with sudo and pass /, then it will replace your system with a video. Don't.")], fps : Annotated[int, Option(help="The framerate that the video will be displayed at. Defaults to 24.")] = 24, size : Annotated[str, Option(help="An override to resize your images to a different resolution. This is needed internally for technical reasons, and we saw no reason not to expose it to the commandline. Defaults to your camera resolution.")] = None):
+	image_paths = []
+	for num in range(1,attrs["last_file_number"] + 1):
+		if cv2.imread(get_file_name(num)) is not None:
+			image_paths.append(get_file_name(num))
+		else:
+			print("Warning: could not read " + get_file_name(num) + ", skipping.")
 	if not image_paths:
-		raise ValueError("The list of image paths is empty")
-	print(":IORHGUIGHUBHSULIGH")
-	print(image_paths[0])
+		raise ValueError("Umm, we need images to make a video.")
 	first_frame = cv2.imread(image_paths[0])
-	if first_frame is None:
-		raise ValueError("Cannot read image at path")
 	if size is None:
 		height, width, _ = first_frame.shape
 		size = (width, height)
@@ -178,161 +284,214 @@ def create_video(image_paths, output_video_path, fps=24, size=None):
 	out = cv2.VideoWriter(output_video_path, fourcc, fps, size)
 	for path in image_paths:
 		frame = cv2.imread(path)
-		if frame is None:
-			print(f"Warning: Could not read {path}, skipping.")
-			continue
-	frame_resized = cv2.resize(frame, size)
-	out.write(frame_resized)
+		frame_resized = cv2.resize(frame, size)
+		out.write(frame_resized)
 	out.release()
-	print(f"Vido saved to {output_video_path}")
+	print(f"Video saved to {output_video_path}")
 
+#A command that lets you see the information flying through cyberspace.
+@app.command(help="Prints the internal state of the program into your shell, and does nothing else.")
 def see_data():
-	print('Chan 0 Raw ADC Value: ', chan0.value)
-	print('Chan 0 ADC Voltage: ' + str(chan0.voltage) + 'V')
-	print('Chan 1 Raw ADC Value: ', chan1.value)
-	print('Chan 1 ADC Voltage: ' + str(chan1.voltage) + 'V')
-	print('Chan 2 Raw ADC Value: ', chan2.value)
-	print('Chan 2 ADC Voltage: ' + str(chan2.voltage) + 'V')
+	global times_off
+	global mcp
+	global attrs
+	print(times_off)
+	print(mcp())
+	print(mcp(1))
+	keys = attrs.keys()#get all the settings
+	for key in keys:
+		print(key + ":" + str(attrs[key]))#assemble key and values into new format
 
-def get_data(num):
-	num = int(num)
-	return(chan_list[num].value)
+#A quick little command that just starts the GUI.
+@app.command(help="Starts the GUI. Will fail if your system has no way to render it.")
+def start_gui():
+	global attrs
+	gui = GUI()
 
-def compare(num):
-	for x in chan_list:
-		if(num > 1.2 * x or num < 0.8 * x):
-			return False
-	return True
-	
 # GUI ****************************************************************************************	
 
-# window
-window = tk.Tk()
-window.title =('Greenhouse')
-window.geometry(resolution)#This needs to be changed
+class GUI:
+	def __init__(self):
+		global has_GUI
+		assert has_GUI#thou shalt not start the GUI without a GUI. See lines 54-60 for more info.
+		self.lock = asyncio.Lock()
+		self.policy = GLibEventLoopPolicy()
+		asyncio.set_event_loop_policy(self.policy)
+		self.loop = self.policy.get_event_loop()
+		self.tasks = []
+		self.gui_app = Gtk.Application(application_id="com.github.sp29174.GreenhousePython")
+		if attrs["is_debug"]:
+			print("we have super")
+		self.gui_app.connect("activate",self.do_activate)
+		if attrs["is_debug"]:
+			print("we can bind")
+		self.gui_app.run(None)
+		if attrs["is_debug"]:
+			print("we get to the bloody twilight zone")
+		do_shutdown()
+	def do_activate(self,useless):
+		global attrs
+		self.window = Gtk.ApplicationWindow(application=self.gui_app)
+		self.notebook = Gtk.Notebook()
+		self.window.set_child(self.notebook)
+		#stuff goes here
+		self.camera_page = Gtk.CenterBox()
+		self.preview_image = Gtk.Image.new_from_file(get_file_name(attrs["last_file_number"]))
+		self.preview_image.set_vexpand(True)#Allow the preview image to not be two pixels tall
+		self.preview_image.set_hexpand(True)
+		self.camera_page.set_start_widget(self.preview_image)
+		self.camera_text = Gtk.Label(label="This text should vanish in a poof of smoke.")
+		self.camera_page.set_center_widget(self.camera_text)
+		self.capture_box = Gtk.Box()
+		self.capture_button = Gtk.Button.new_with_label("Capture a photograph manually.")
+		self.capture_button.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.force_capture())))
+		self.capture_box.append(self.capture_button)
+		self.record_button = Gtk.ToggleButton(label="Toggle recording.")
+		if attrs["is_recording"]:
+			self.record_button.set_active(True)
+		else:
+			self.record_button.set_active(False)
+		self.record_button.connect("toggled", lambda button: self.tasks.append(self.loop.create_task(self.toggle_recording(button.props.active))))
+		self.capture_box.append(self.record_button)
+		self.camera_page.set_end_widget(self.capture_box)
+		self.notebook.append_page(self.camera_page,Gtk.Label(label="Camera Control"))
+		self.water_page = Gtk.Notebook()
+		self.water_pages = []
+		self.water_scales = []
+		self.deadband_scales = []
+		for n in range(attrs["beds"]):
+			self.water_pages.append(Gtk.CenterBox())
+			self.water_pages[n].set_start_widget(Gtk.Label(label="This text should vanish before you can read it."))#Namely, line 312 should cause automatic_control to await update_GUI which should disappear this placeholder. If anything crashes between here and line 402, this text will live and we learn of a problem.
+			self.water_scales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
+			self.water_scales[n].set_value(attrs["control_parameter" + str(n)])
+			self.water_scales[n].set_hexpand(True)
+			self.water_scales[n].set_vexpand(True)
+			self.water_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.update_water_threshold(g,scale.get_value()))))#This line of code is the answer to a specific engineering question: how many obscure features of Python can fit in one line of code? It also makes the slider schedule a task when you move it, so that it neither blocks the GUI nor fails to do anything.
+			self.water_pages[n].set_center_widget(self.water_scales[n])
+			self.deadband_scales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
+			self.deadband_scales[n].set_value(attrs["deadband" + str(n)])
+			self.deadband_scales[n].set_hexpand(True)
+			self.deadband_scales[n].set_vexpand(True)
+			self.deadband_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.update_water_deadband(g,scale.get_value()))))
+			self.water_pages[n].set_end_widget(self.deadband_scales[n])
+			self.water_page.append_page(self.water_pages[n],Gtk.Label(label="Bed " + str(n)))
+		self.notebook.append_page(self.water_page,Gtk.Label(label="Water Control"))
+		self.light_page = Gtk.Notebook()
+		self.light_pages = []
+		self.light_scales = []
+		for n in range(attrs["lights"]):
+			self.light_pages.append(Gtk.Box())
+			self.light_pages[n].append(Gtk.Label(label="This is a test of the light control interface."))
+			self.light_pages[n].append(Gtk.Label(label="This will eventually display an indicator of if the light is running and a slider to control hours."))
+			self.light_scales.append(Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL,0,1,0.01))
+			self.light_scales[n].set_value(attrs["light_length" + str(n)])
+			self.light_scales[n].set_hexpand(True)
+			self.light_scales[n].set_vexpand(True)
+			self.light_scales[n].connect("value-changed" , lambda scale, g=n : self.tasks.append(self.loop.create_task(self.update_light_length(g,scale.get_value()))))
+			self.light_pages[n].append(self.light_scales[n])
+			self.light_page.append_page(self.light_pages[n],Gtk.Label(label="Light" + str(n)))
+		self.notebook.append_page(self.light_page,Gtk.Label(label="Light Control"))
+		self.help_page = Gtk.Box()
+		self.help_page.append(Gtk.Label(label="This is a test of whether buttons work."))
+		self.help_page.append(Gtk.Button.new_with_label("this is a button."))
+		self.notebook.append_page(self.help_page,Gtk.Label(label="Help"))
+		self.settings_page = Gtk.Box()
+		self.settings_page.append(Gtk.Label(label="This window should allow you to adjust settings."))
+		self.settings_listbox = Gtk.ListBox()
+		for key in attrs.keys():
+			tmp = Gtk.ListBoxRow()
+			tmp.set_child(Gtk.Label(label=key))
+			self.settings_listbox.append(tmp)
+		self.settings_page.append(self.settings_listbox)
+		self.settings_config_box = Gtk.CenterBox()
+		self.settings_config_label = Gtk.Label(label="In order for you to change a setting, you must choose the setting to change.")
+		self.settings_config_box.set_start_widget(self.settings_config_label)
+		self.settings_text_entry = Gtk.Entry()
+		self.settings_config_box.set_center_widget(self.settings_text_entry)
+		self.settings_enter_button = Gtk.Button.new_with_label("Change the setting")
+		self.settings_enter_button.connect("clicked", lambda button: self.tasks.append(self.loop.create_task(self.update_settings())))
+		self.settings_config_box.set_end_widget(self.settings_enter_button)
+		self.settings_page.append(self.settings_config_box)
+		self.notebook.append_page(self.settings_page,Gtk.Label(label="Settigs"))
+		self.window.present()
+		self.tasks.append(self.loop.create_task(self.automatic_control()))
+		self.tasks.append(self.loop.create_task(self.camera_control()))
+	async def toggle_recording(self,whermst):
+		global attrs
+		await self.lock.acquire()
+		attrs["is_recording"] = whermst
+		attrs.sync()
+		self.lock.release()
+	async def force_capture(self):
+		global attrs
+		await self.lock.acquire()
+		camera_capture()
+		await self.update_GUI()
+		self.lock.release()
+	async def update_water_threshold(self,n,value):
+		global attrs
+		await self.lock.acquire()
+		attrs["control_parameter" + str(n)] = value
+		attrs.sync()
+		self.lock.release()
+	async def update_water_deadband(self,n,value):
+		global attrs
+		await self.lock.acquire()
+		attrs["deadband" + str(n)] = value
+		attrs.sync()
+		self.lock.release()
+	async def update_light_length(self,n,value):
+		global attrs
+		await self.lock.acquire()
+		attrs["light_length" + str(n)] = value
+		attrs.sync()
+		self.lock.release()
+	async def update_settings(self):
+		assert False#This is BROKEN until we finish migrating to shelves
+		global attrs
+		await self.lock.acquire()
+		row = self.settings_listbox.get_selected_row()
+		if row == None:
+			self.lock.release()
+			return None
+		setting_to_change = row.get_child().get_text()
+		initial_val = self.settings_text_entry.get_text()
+		change_setting(setting_to_change,initial_val)
+		self.lock.release()
+	async def automatic_control(self):
+		global attrs
+		while True:
+			await self.lock.acquire()
+			water()
+			light()
+			self.lock.release()
+			await self.update_GUI()
+			await asyncio.sleep(attrs["interval"])
+	async def camera_control(self):
+		global attrs
+		while True:
+			await self.lock.acquire()
+			if attrs["is_recording"]:
+				camera_capture()
+			await self.update_GUI()
+			self.lock.release()
+			await asyncio.sleep(attrs["camera_interval"])
+	async def update_GUI(self):
+		global attrs
+		for n in range(attrs["beds"]):
+			if attrs["bed" + str(n)]:
+				self.water_pages[n].get_start_widget().set_label("Bed " + str(n) + " is running.")
+			else:
+				self.water_pages[n].get_start_widget().set_label("Bed " + str(n) + " is not running.")
+		self.preview_image.set_from_file(get_file_name(attrs["last_file_number"]))
+		self.camera_text.set_label("Overall, " + str(attrs["last_file_number"]) + " images have been captured by this device.\nCurrently, images will be captured every " + str(attrs["last_file_number"]) + " seconds.")
+		return None
 
-# title
-title_label = ttk.Label(master = window, text = 'Greenhouse', font = header_font)
-title_label.pack()
-
-#first layer
-layer1_frame = ttk.Frame(master = window)
-
-# image information
-image_frame = ttk.Frame(master = layer1_frame)
-image = Image.open(lastFileName())
-image2 = image.resize((640, 480))
-last_plant_image = ImageTk.PhotoImage(image2)
-image_label = ttk.Label(master = image_frame, image = last_plant_image)
-
-image_label_frame = ttk.Frame(master = image_frame)
-interval_label = ttk.Label(master = image_label_frame, text = 'Interval is set to ', font = norm_font)
-capture_label = ttk.Label(master = image_label_frame, text = 'There have been __ captures\nsince last time-lapse.', font = norm_font)
-
-# packing image stuff
-image_label.pack(side = 'left', padx = 10, pady = 10)
-interval_label.pack(padx = 5, pady = 30)
-capture_label.pack(padx = 5, pady = 5)
-image_label_frame.pack(side = 'left', padx = 10, pady = 10)
-image_frame.pack(side = 'left')
-
-# far right info
-top_right_frame = ttk.Frame(master = layer1_frame)
-last_capture = ttk.Label(master = top_right_frame, text = 'Last capture was taken ___ minutes ago.', font = norm_font)
-zone_frame = ttk.Frame(master = top_right_frame)
-zone_label = ttk.Label(master = zone_frame, text = "Zone Moistures", font = norm_font)
-bzone1 = ttk.Button(master = zone_frame, text = "Left Bed: " + str(get_data(0)))#These only update once
-bzone2 = ttk.Button(master = zone_frame, text = "Middle Bed: " + str(get_data(1)))
-bzone3 = ttk.Button(master = zone_frame, text = "Right Bed: " + str(get_data(2)))
-
-moisture_frame = ttk.Frame(master = top_right_frame)
-moisture_label = ttk.Label(master = moisture_frame, text = "Select Moisture Level", font = norm_font)
-top_buttons = ttk.Frame(master = moisture_frame)
-bottom_buttons = ttk.Frame(master = moisture_frame)
-bmoisture0 = ttk.Button(master = top_buttons, text = "0%", command = lambda : water(0))#these should not be hardcoded
-bmoisture1 = ttk.Button(master = top_buttons, text = "20%", command = lambda : water(0.2))
-bmoisture2 = ttk.Button(master = top_buttons, text = "40%", command = lambda : water(0.4))
-bmoisture3 = ttk.Button(master = bottom_buttons, text = "60%", command = lambda : water(0.6))
-bmoisture4 = ttk.Button(master = bottom_buttons, text = "80%", command = lambda : water(0.8))
-bmoisture5 = ttk.Button(master = bottom_buttons, text = "100%", command = lambda : water(1))
-
-# far right packing
-last_capture.pack(padx = 10, pady = 20)
-zone_label.pack(padx = 10, pady = 20)
-bzone1.pack(side = 'left', padx = 5, pady = 5)
-bzone2.pack(side = 'left', padx = 5, pady = 5)
-bzone3.pack(side = 'left', padx = 5, pady = 5)
-zone_frame.pack(padx = 10, pady = 10)
-
-moisture_label.pack(padx = 5, pady = 20)
-bmoisture0.pack(side = 'left', padx = 5, pady = 5)
-bmoisture1.pack(side = 'left', padx = 5, pady = 5)
-bmoisture2.pack(padx = 5, pady = 5)
-top_buttons.pack(padx = 5, pady = 5)
-bmoisture3.pack(side = 'left', padx = 5, pady = 5)
-bmoisture4.pack(side = 'left', padx = 5, pady = 5)
-bmoisture5.pack(padx = 5, pady = 5)
-bottom_buttons.pack(padx = 5, pady = 5)
-moisture_frame.pack(padx = 10, pady = 10)
-
-top_right_frame.pack(padx=10, pady=10)
-layer1_frame.pack(padx = 20, pady = 20)
-
-# lower layer
-layer2_frame = ttk.Frame(master = window)
-
-# captures picture, command= cameraCapture
-# ISSUE: taking picture on boot
-#I disagree, that's a feature!
-manual_pic_button = ttk.Button(master = layer2_frame, text = "Take Manual\nPicture", command = lambda : image_update(attrs,theCamera))
-
-# should start recording function
-start_record = ttk.Button(master = layer2_frame, text = recording_status)
-light_label = ttk.Label(master = layer2_frame, text = "Enter the number of hours the selected\ngrowlight should remain on.\nCurrently " + str(light_length) + " hours per day.", font = norm_font)
-light_cycle = ttk.Entry(master = layer2_frame)
-enter_button = ttk.Button(master = layer2_frame, text = "Enter Hours", command = new_light_control)
-
-#packing lower layer
-manual_pic_button.pack(side = 'left', padx = 25, pady = 5)
-start_record.pack(side = 'left', padx = 25, pady = 5)
-light_label.pack(padx = 25, pady = 5)
-light_cycle.pack(padx = 25, pady = 5)
-enter_button.pack(padx = 25, pady = 5)
-layer2_frame.pack(padx = 5, pady = 5)
-
-
-# startup ****************************************************************************************
-
-#get attrs
-attrs = getDataAttributes()
-see_data()
-theSun = Sun(latitude, longitude)
-theCamera = Picamera2()
-camera_cfg = theCamera.create_still_configuration()
-theCamera.start()
-window.after(dt, lambda : repeater(dt,latitude,longitude))
-window.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Finalization and execution ****************************************************************************************
+if attrs["is_debug"] == "True":
+	print(__name__)
+if __name__ == "__main__":
+	app()
 
 
 
