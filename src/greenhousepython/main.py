@@ -113,7 +113,7 @@ def do_shutdown(*args,**kwargs):
 	global mcp
 	global the_camera
 	global attrs
-	if attrs["is_debug"] == "True":
+	if attrs["is_debug"]:
 		print("Shutting down...")
 	try:#we shouldn't let crashes prevent the program from closing, so these must all be wrapped with try.
 		mcp.close()#close down water control coms
@@ -166,7 +166,7 @@ def change_setting(key : Annotated[str, Argument(help="The exact name of the set
 		except ValueError:
 			print("We kinda need these to be ints.")
 			return None
-	elif ["is_debug","is_recording"].count(key) != 0 or key.startswith("bed"):#this only doesn't catch beds because we already found it on line 440
+	elif ["is_debug","is_recording"].count(key) != 0 or key.startswith("bed"):#this only doesn't catch beds because we already found it on line 160
 		if "True" == value:
 			new_val = True
 		elif "False" == value:
@@ -217,7 +217,7 @@ def light():#This code is a disaster area. Essentially, here's the logic:
 	#The problem comes when it's after midnight and we need to figure out when to turn the lights off: if we use the sunset time on the current day, we will never turn the lights off. Bad.
 	#The solution I found is to calculate the time in UTC when we need to turn off the lights, do said calculation before midnight when the API is still talking about the correct sunset, and then just intentionally let this number get stale it's night and before midnight, at which point we will be talking about the right sunset again.
 	#A consequence of this is that if you adjust the light length at any reasonable hour, it will only update the next day.
-	#Another consequence of this is that if you run this code in Iceland or something where the sun won't rise on certain days of the year, this code will catch fire.
+	#Another consequence of this is that if you run this code in Iceland or something where the sun won't rise on certain days of the year, this code will have to bodge the sun.
 	#There must be a better solution than this, but I couldn't find it. Shrug emoji.
 	global attrs
 	global times_off
@@ -489,5 +489,6 @@ if attrs["is_debug"]:
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
