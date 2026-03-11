@@ -445,7 +445,6 @@ class GUI:
 		attrs.sync()
 		self.lock.release()
 	async def update_settings(self):
-		assert False#This is BROKEN until we finish migrating to shelves
 		global attrs
 		await self.lock.acquire()
 		row = self.settings_listbox.get_selected_row()
@@ -490,3 +489,4 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
