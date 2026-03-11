@@ -485,8 +485,9 @@ class GUI:
 		return None
 
 # Finalization and execution ****************************************************************************************
-if attrs["is_debug"] == "True":
+if attrs["is_debug"]:
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
