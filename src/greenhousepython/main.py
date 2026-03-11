@@ -146,9 +146,7 @@ signal.signal(signal.SIGINT,do_shutdown)#I have no idea why these aren't the sam
 
 # CLI commands   ***********************************************************************************
 
-#a simple command to allow the user to change settings-this lets them define nonsense parameters, but I could care less, because my get_attributes can ignore them.
-#However, this almost certainly breaks if you pass in a thing that contains a newline, which we should fix later.
-@app.command(help="Change the setting KEY to VALUE. Newlines and colons are not supported for technical reasons. BROKEN while we switch to Shelves.")
+@app.command(help="Change the setting KEY to VALUE.")
 def change_setting(key : Annotated[str, Argument(help="The exact name of the setting to change or create.")], value : Annotated[str, Argument(help="The exact value that the setting should be changed to.")]):
 	if ["file_name_prefix"].count(key) != 0:
 		print("This part needs logic for automatically renaming files, which I haven't written yet. Sorry!")
@@ -177,7 +175,7 @@ def change_setting(key : Annotated[str, Argument(help="The exact name of the set
 			print("We kinda need these to be bools.")
 			return None
 	else:
-		print("Confusion noise")
+		print("Confusion noise: '" + key + "' is not actually a thing.")
 		return None
 	attrs[setting_to_change] = new_val
 	attrs.sync()
@@ -492,16 +490,3 @@ if attrs["is_debug"] == "True":
 	print(__name__)
 if __name__ == "__main__":
 	app()
-
-
-
-
-
-
-
-
-
-
-
-
-
