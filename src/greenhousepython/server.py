@@ -49,7 +49,6 @@ def get_file_name(file_number):
 
 # Initialization ****************************************************************************************
 
-has_GUI = True
 try:
 	import cv2
 	x = cv2.VideoCapture(0)
@@ -301,6 +300,7 @@ if attrs["is_debug"]:
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
