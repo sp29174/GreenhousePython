@@ -77,16 +77,6 @@ except Exception as e:
 			print("WARNING: " + str(e))
 		from greenhousepython.nonsense import GPIO
 import sys
-import asyncio
-try:
-	import gi
-	gi.require_version("Gtk", "4.0")
-	from gi.repository import GLib, Gtk
-	from gi.events import GLibEventLoopPolicy
-except Exception as e:
-	if attrs["is_debug"]:
-		print("WARNING: " + str(e))
-	has_GUI = False
 from datetime import datetime, timedelta, timezone
 from astral import sun, Observer
 import signal
@@ -301,16 +291,17 @@ def see_data():
 		print(key + ":" + str(attrs[key]))#assemble key and values into new format
 
 #A quick little command that just starts the GUI.
-@app.command(help="Starts the GUI. Will fail if your system has no way to render it.")
-def start_gui():
+@app.command(help="Starts the main server thing.")
+def open_socket():
 	global attrs
-	gui = GUI()
+	#socket logic goes here
 
 # Finalization and execution ****************************************************************************************
 if attrs["is_debug"]:
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
