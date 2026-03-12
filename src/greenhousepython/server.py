@@ -4,6 +4,7 @@
 
 #Preinitialization ****************************************************************************************
 
+import socket
 from typer import Typer, Argument, Option
 import shelve
 app = Typer(rich_markup_mode="rich")
@@ -300,6 +301,7 @@ if attrs["is_debug"]:
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
