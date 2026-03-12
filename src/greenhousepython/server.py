@@ -294,6 +294,10 @@ def see_data():
 @app.command(help="Starts the main server thing.")
 def open_socket(port : Annotated[int, Argument(help="The port to open a socket on.")]):
 	global attrs
+	s = socket.socket()
+	s.bind(('',port))
+	s.listen(1)
+	conn, addr = s.accept()
 	#socket logic goes here
 
 # Finalization and execution ****************************************************************************************
@@ -301,6 +305,7 @@ if attrs["is_debug"]:
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
