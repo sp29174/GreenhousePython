@@ -32,8 +32,6 @@ class wrapper_object:
 			self.attrs["deadband2"] = 0.0
 			self.attrs.sync()
 			#create default attrs
-	def data():
-		return attrs
 	def hash():
 		sha = hashlib.sha256()
 		sha.update(open("cfg.txt").read())
@@ -44,11 +42,3 @@ class wrapper_object:
 			file.write(new_data)
 		attrs = shelve.open("cfg.txt", writeback = True)
 
-#Helpers ****************************************************************************************
-
-#figure out where the nth photo is (or at least should be)
-def get_file_name(file_number):
-    global attrs
-    if (file_number == 0):
-        return "../../images/placeholder.jpg"
-    return "../../images/" + attrs["file_name_prefix"] + str(file_number) + ".jpg"
