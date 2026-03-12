@@ -29,3 +29,13 @@ if not attrs:
 	attrs["deadband2"] = 0.0
 	attrs.sync()
 	#create default attrs
+
+
+#Helpers ****************************************************************************************
+
+#figure out where the nth photo is (or at least should be)
+def get_file_name(file_number):
+    global attrs
+    if (file_number == 0):
+        return "../../images/placeholder.jpg"
+    return "../../images/" + attrs["file_name_prefix"] + str(file_number) + ".jpg"
