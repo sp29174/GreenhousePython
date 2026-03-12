@@ -13,7 +13,9 @@ dependencies = [ "astral>=2.0", "typer>=0.12.1" ]
 readme = "README.md"
 
 [project.scripts]
-greenhouse = "greenhousepython.server:app"
+greenhouse = "greenhousepython.client:app"
+greenhouse-server = "greenhousepython.server:app"
+
 
 [project.optional-dependencies]
 camera-nonsense = ["opencv-python"]
