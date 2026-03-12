@@ -16,11 +16,10 @@ readme = "README.md"
 greenhaus = "greenhaus.main:app"
 
 [project.optional-dependencies]
-camera-nonsense = ["opencv-python"]
-rpi = [ "mcp3008>=1.0.0", "RPi.GPIO" ]#This group's days are numbered.
-non-rpi = [ "gpiod" ]
+camera = ["opencv-python"]
+gpio = [ "mcp3008>=1.0.0", "RPi.GPIO" ]#This group's days are numbered.
 dev = [ "wheel", "poetry>=2.0.0" ]
-GUI = [ "PyGObject>=3.54.0" ]
+gui = [ "PyGObject>=3.54.0" ]
 
 [build-system]
 requires = ["poetry-core>2.0.0,<3.0.0"]
