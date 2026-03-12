@@ -5,6 +5,7 @@
 #lights
 #water
 
+attrs = {}
 has_GUI = True
 import socket
 from typer import Typer, Argument, Option
@@ -16,8 +17,7 @@ try:
 	from gi.repository import GLib, Gtk
 	from gi.events import GLibEventLoopPolicy
 except Exception as e:
-	if attrs["is_debug"]:
-		print("WARNING: " + str(e))
+	print("WARNING: " + str(e))
 	has_GUI = False
 
 # GUI ****************************************************************************************	
