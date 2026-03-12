@@ -198,5 +198,9 @@ class GUI:
 		self.camera_text.set_label("Overall, " + str(attrs["last_file_number"]) + " images have been captured by this device.\nCurrently, images will be captured every " + str(attrs["last_file_number"]) + " seconds.")
 		return None
 
-if __name__ == "__main__":
-	gui = GUI()
+@app.command(help="Connects to the main server thing.")
+def connect(addr : Annotated[str, Argument(help="The ip address to connect to.")], port : Annotated[int, Argument(help="The port to look for a socket on.")]):
+	global attrs
+	s = socket.socket()
+	s.connect((addr,port))
+	#socket logic goes here
