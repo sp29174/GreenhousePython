@@ -12,6 +12,17 @@ app = Typer(rich_markup_mode="rich")
 
 import greenhousepython.file_management as fm
 wrapper = fm.wrapper_object()
+
+#Helpers ****************************************************************************************
+
+#figure out where the nth photo is (or at least should be)
+def get_file_name(file_number):
+    global wrapper
+    if (file_number == 0):
+        return "../../images/placeholder.jpg"
+    return "../../images/" + wrapperattrs["file_name_prefix"] + str(file_number) + ".jpg"
+
+
 try:
 	import cv2
 	x = cv2.VideoCapture(0)
@@ -64,7 +75,7 @@ the_camera = cv2.VideoCapture(0)
 def do_shutdown(*args,**kwargs):
 	global mcp
 	global the_camera
-	global wrapper.attrs
+	global wrapper
 	if wrapper.attrs["is_debug"]:
 		print("Shutting down...")
 	try:#we shouldn't let crashes prevent the program from closing, so these must all be wrapped with try.
@@ -135,7 +146,7 @@ def change_setting(key : Annotated[str, Argument(help="The exact name of the set
 #control pumps using hysteresis based on the values returned from the MCP
 @app.command(help="Force the system to run the automatic water control logic without starting the GUI.")
 def water():
-	global wrapper.attrs
+	global wrapper
 	run_pump = False
 	try:#my crummy mock of mcp3008.MCP3008 can't make sense of line 118, so this eyesore is trapped in a try-catch.
 		for x in range(wrapper.attrs["beds"]):
@@ -171,7 +182,7 @@ def light():#This code is a disaster area. Essentially, here's the logic:
 	#A consequence of this is that if you adjust the light length at any reasonable hour, it will only update the next day.
 	#Another consequence of this is that if you run this code in Iceland or something where the sun won't rise on certain days of the year, this code will have to bodge the sun.
 	#There must be a better solution than this, but I couldn't find it. Shrug emoji.
-	global wrapper.attrs
+	global wrapper
 	global times_off
 	observer = Observer(wrapper.attrs["latitude"],wrapper.attrs["longitude"],wrapper.attrs["elevation"])
 	try:
@@ -203,7 +214,7 @@ def light():#This code is a disaster area. Essentially, here's the logic:
 #A command that captures a photograph, writes it to a file, and updates wrapper.attrs accordingly.
 @app.command(help="Manually capture a photograph.")
 def camera_capture():#updated to not badly reimplement last_file_name
-	global wrapper.attrs
+	global wrapper
 	global the_camera
 	ret, frame = the_camera.read()
 	if not ret:
@@ -244,7 +255,7 @@ def create_video(output_video_path : Annotated[str, Argument(help="An exact file
 def see_data():
 	global times_off
 	global mcp
-	global wrapper.attrs
+	global wrapper
 	print(times_off)
 	print(mcp())
 	print(mcp(1))
@@ -255,7 +266,7 @@ def see_data():
 #A quick little command that just starts the GUI.
 @app.command(help="Starts the main server thing.")
 def open_socket(port : Annotated[int, Argument(help="The port to open a socket on.")], reverseport : Annotated[int, Argument(help="The port to recieve data from.")]):
-	global wrapper.attrs
+	global wrapper
 	s = socket.socket()
 	s.bind(('',port))
 	s.listen(1)
@@ -269,6 +280,7 @@ if wrapper.attrs["is_debug"]:
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
