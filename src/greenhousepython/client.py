@@ -1,3 +1,14 @@
+import asyncio
+try:
+	import gi
+	gi.require_version("Gtk", "4.0")
+	from gi.repository import GLib, Gtk
+	from gi.events import GLibEventLoopPolicy
+except Exception as e:
+	if attrs["is_debug"]:
+		print("WARNING: " + str(e))
+	has_GUI = False
+
 # GUI ****************************************************************************************	
 
 class GUI:
@@ -175,3 +186,6 @@ class GUI:
 		self.preview_image.set_from_file(get_file_name(attrs["last_file_number"]))
 		self.camera_text.set_label("Overall, " + str(attrs["last_file_number"]) + " images have been captured by this device.\nCurrently, images will be captured every " + str(attrs["last_file_number"]) + " seconds.")
 		return None
+
+if __name__ == "__main__":
+	gui = GUI()
