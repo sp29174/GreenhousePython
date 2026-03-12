@@ -199,8 +199,14 @@ class GUI:
 		return None
 
 @app.command(help="Connects to the main server thing.")
-def connect(addr : Annotated[str, Argument(help="The ip address to connect to.")], port : Annotated[int, Argument(help="The port to look for a socket on.")]):
+def connect(addr : Annotated[str, Argument(help="The ip address to connect to.")], port : Annotated[int, Argument(help="The port to look for a socket on.")], reverseport : Annotated[int, Argument(help="The port to return data from.")]):
 	global attrs
+	u = socket.socket()
+	u.connect((addr,port))
 	s = socket.socket()
-	s.connect((addr,port))
+	s.bind(('',reverseport))
+	s.listen(1)
+	conn, nuaddr = s.accept()
+	assert addr = nuaddr
+	
 	#socket logic goes here
