@@ -4,6 +4,8 @@
 #change_setting
 #lights
 #water
+#Basic idea: both systems simultaneously run identical logic to manage attrs, send it via socket.sendfile, and compare md5 hashes to sync.
+
 
 attrs = {}
 has_GUI = True
