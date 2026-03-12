@@ -292,12 +292,14 @@ def see_data():
 
 #A quick little command that just starts the GUI.
 @app.command(help="Starts the main server thing.")
-def open_socket(port : Annotated[int, Argument(help="The port to open a socket on.")]):
+def open_socket(port : Annotated[int, Argument(help="The port to open a socket on.")], reverseport : Annotated[int, Argument(help="The port to recieve data from.")]):
 	global attrs
 	s = socket.socket()
 	s.bind(('',port))
 	s.listen(1)
 	conn, addr = s.accept()
+	u = socket.socket()
+	u.connect((addr,reverseport))
 	#socket logic goes here
 
 # Finalization and execution ****************************************************************************************
@@ -305,6 +307,7 @@ if attrs["is_debug"]:
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
