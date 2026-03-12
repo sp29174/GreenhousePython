@@ -292,7 +292,7 @@ def see_data():
 
 #A quick little command that just starts the GUI.
 @app.command(help="Starts the main server thing.")
-def open_socket():
+def open_socket(port : Annotated[int, Argument(help="The port to open a socket on.")]):
 	global attrs
 	#socket logic goes here
 
@@ -301,6 +301,7 @@ if attrs["is_debug"]:
 	print(__name__)
 if __name__ == "__main__":
 	app()
+
 
 
 
