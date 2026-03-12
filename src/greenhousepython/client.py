@@ -7,6 +7,8 @@
 
 has_GUI = True
 import socket
+from typer import Typer, Argument, Option
+app = Typer(rich_markup_mode="rich")
 import asyncio
 try:
 	import gi
