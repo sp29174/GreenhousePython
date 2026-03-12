@@ -1,3 +1,11 @@
+#Things needed:
+#attrs
+#camera_capture
+#change_setting
+#lights
+#water
+
+has_GUI = True
 import asyncio
 try:
 	import gi
