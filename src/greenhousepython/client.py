@@ -6,6 +6,7 @@
 #water
 
 has_GUI = True
+import socket
 import asyncio
 try:
 	import gi
