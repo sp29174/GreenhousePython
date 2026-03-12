@@ -1,7 +1,7 @@
 #TODO: add classifiers
 
 [project]
-name = "GreenhousePython"
+name = "greenhaus"
 version = "0.3.1"
 description = "It's a python thing that automates a greenhouse."
 license = "MIT"
@@ -13,7 +13,7 @@ dependencies = [ "astral>=2.0", "typer>=0.12.1" ]
 readme = "README.md"
 
 [project.scripts]
-greenhouse = "greenhousepython.main:app"
+greenhaus = "greenhaus.main:app"
 
 [project.optional-dependencies]
 camera-nonsense = ["opencv-python"]
