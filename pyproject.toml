@@ -21,7 +21,7 @@ greenhouse-server = "greenhousepython.server:app"
 camera-nonsense = ["opencv-python"]
 rpi = [ "mcp3008>=1.0.0", "RPi.GPIO" ]#This group's days are numbered.
 non-rpi = [ "gpiod" ]
-dev = [ "wheel", "poetry>=2.0.0" ]
+dev = [ "wheel", "poetry>=2.3.4" ]
 GUI = [ "PyGObject>=3.54.0" ]
 
 [build-system]
